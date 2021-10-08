@@ -1,0 +1,164 @@
+---
+version: '3'
+
+x-logging:
+  &default-logging
+  driver: loki
+  options:
+    loki-url: http://localhost:3100/loki/api/v1/push
+
+services:
+  # https://github.com/bastienwirtz/homer/blob/main/docker-compose.yml
+  homer:
+    container_name: homer
+    image: b4bz/homer
+    logging: *default-logging
+    ports:
+      - '8080:8080'
+    volumes:
+      - '${VOLUME_ROOT}/homer/assets/:/www/assets/'
+    restart: unless-stopped
+
+  # https://www.home-assistant.io/installation/generic-x86-64#install-home-assistant-container
+  home-assistant:
+    container_name: home-assistant
+    image: ghcr.io/home-assistant/home-assistant:stable
+    logging: *default-logging
+    ports:
+      - '8123:8123'
+    volumes:
+      - '/etc/localtime:/etc/localtime:ro'
+      - '${VOLUME_ROOT}/home-assistant/config/:/config/'
+    restart: unless-stopped
+
+  # https://github.com/pi-hole/docker-pi-hole/
+  pihole:
+    container_name: pihole
+    image: pihole/pihole:latest
+    logging: *default-logging
+    ports:
+      - '${PIHOLE_ServerIP}:53:53/tcp'
+      - '${PIHOLE_ServerIP}:53:53/udp'
+      - '${PIHOLE_ServerIP}:67:67/udp'
+      - '8053:80/tcp'
+    environment:
+      TZ:
+      WEBPASSWORD: '${PIHOLE_WEBPASSWORD}'
+      ServerIP: '${PIHOLE_ServerIP}'
+      ADMIN_EMAIL: '${PIHOLE_ADMIN_EMAIL}'
+      PIHOLE_DNS_: '${PIHOLE_PIHOLE_DNS_}'
+      DNSSEC: 'true'
+      TEMPERATUREUNIT: 'f'
+      #WEB_PORT: '8053'
+    volumes:
+      - '${VOLUME_ROOT}/Pi-hole/etc/:/etc/pihole/'
+      - '${VOLUME_ROOT}/Pi-hole/dnsmasq.d/:/etc/dnsmasq.d/'
+    # Recommended but not required (DHCP needs NET_ADMIN)
+    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
+    cap_add:
+      - NET_ADMIN
+    restart: unless-stopped
+
+  # https://grafana.com/grafana/plugins/fetzerch-sunandmoon-datasource/?tab=installation
+  grafana:
+    container_name: grafana
+    image: grafana/grafana:8.2.0
+    logging: *default-logging
+    depends_on:
+      - loki
+      - prometheus
+    ports:
+      - '3000:3000'
+    volumes:
+      - '${VOLUME_ROOT}/grafana/var/:/var/lib/grafana/'
+    restart: unless-stopped
+
+  loki:
+    container_name: loki
+    image: grafana/loki:2.3.0
+    logging: *default-logging
+    ports:
+      - '3100:3100'
+    volumes:
+      - '${VOLUME_ROOT}/loki/loki/:/loki/'
+    restart: unless-stopped
+
+  prometheus:
+    container_name: prometheus
+    image: prom/prometheus:v2.30.3
+    logging: *default-logging
+    depends_on:
+      - loki
+    volumes:
+      - '${VOLUME_ROOT}/prometheus/:/prometheus/'
+      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+      - '--web.console.libraries=/usr/share/prometheus/console_libraries'
+      - '--web.console.templates=/usr/share/prometheus/consoles'
+    ports:
+      - '9090:9090'
+    restart: unless-stopped
+
+  #prometheus-moto-exporter:
+  #  build:
+  #    context: prometheus-moto-exporter/
+  #  container_name: prom-moto
+  #  image: prometheus-moto-exporter
+  #  logging: *default-logging
+  #  restart: unless-stopped
+
+  #prometheus-onhub-exporter:
+  #  build:
+  #    context: prometheus-onhub-exporter/
+  #  container_name: prom-onhub
+  #  image: prometheus-onhub-exporter
+  #  logging: *default-logging
+  #  environment:
+  #    ONHUB_HOST: 'onhub.here'
+  #  restart: unless-stopped
+
+  prometheus-solaredge-exporter:
+    container_name: prom-solaredge
+    image: chrisjohnson00/solaredge-prometheus-exporter
+    logging: *default-logging
+    environment:
+      API_KEY: '${SOLAREDGE_API_KEY}'
+      TZ:
+    restart: unless-stopped
+
+  # https://github.com/billykwooten/openweather-exporter
+  prometheus-openweather-exporter:
+    container_name: prom-openweather
+    image: billykwooten/openweather-exporter
+    logging: *default-logging
+    environment:
+      OW_CITY: '${OPENWEATHER_CITY}'
+      OW_APIKEY: '${OPENWEATHER_APIKEY}'
+    restart: unless-stopped
+
+  #mealie:
+  #  container_name: mealie
+  #  image: hkotel/mealie:latest
+  #  restart: unless-stopped
+  #  ports:
+  #    - 9925:80
+  #  environment:
+  #    # https://hay-kot.github.io/mealie/documentation/getting-started/install/#env-variables
+  #    PUID: 1000
+  #    PGID: 1000
+  #    TZ: America/Anchorage
+  #    # Default Recipe Settings
+  #    RECIPE_PUBLIC: true
+  #    RECIPE_SHOW_NUTRITION: true
+  #    RECIPE_SHOW_ASSETS: true
+  #    RECIPE_LANDSCAPE_VIEW: true
+  #    RECIPE_DISABLE_COMMENTS: false
+  #    RECIPE_DISABLE_AMOUNT: false
+  #    # Gunicorn
+  #    WEB_CONCURRENCY: 2
+  #    # WORKERS_PER_CORE: 0.5
+  #    # MAX_WORKERS: 8
+  #  volumes:
+  #    - ./mealie/data/:/app/data
