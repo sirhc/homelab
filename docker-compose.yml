@@ -138,27 +138,17 @@ services:
       OW_APIKEY: '${OPENWEATHER_APIKEY}'
     restart: unless-stopped
 
-  #mealie:
-  #  container_name: mealie
-  #  image: hkotel/mealie:latest
-  #  restart: unless-stopped
-  #  ports:
-  #    - 9925:80
-  #  environment:
-  #    # https://hay-kot.github.io/mealie/documentation/getting-started/install/#env-variables
-  #    PUID: 1000
-  #    PGID: 1000
-  #    TZ: America/Anchorage
-  #    # Default Recipe Settings
-  #    RECIPE_PUBLIC: true
-  #    RECIPE_SHOW_NUTRITION: true
-  #    RECIPE_SHOW_ASSETS: true
-  #    RECIPE_LANDSCAPE_VIEW: true
-  #    RECIPE_DISABLE_COMMENTS: false
-  #    RECIPE_DISABLE_AMOUNT: false
-  #    # Gunicorn
-  #    WEB_CONCURRENCY: 2
-  #    # WORKERS_PER_CORE: 0.5
-  #    # MAX_WORKERS: 8
-  #  volumes:
-  #    - ./mealie/data/:/app/data
+  mealie:
+    container_name: mealie
+    image: hkotel/mealie:v0.5.3
+    logging: *default-logging
+    ports:
+      - '9925:80'
+    environment:
+      # https://hay-kot.github.io/mealie/documentation/getting-started/install/#env-variables
+      PUID: 1024
+      PGID: 100
+      TZ: America/Los_Angeles
+    volumes:
+      - ${VOLUME_ROOT}/mealie/data/:/app/data/
+    restart: unless-stopped
