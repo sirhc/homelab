@@ -49,7 +49,7 @@ services:
       PIHOLE_DNS_: '${PIHOLE_PIHOLE_DNS_}'
       DNSSEC: 'true'
       TEMPERATUREUNIT: 'f'
-      #WEB_PORT: '8053'
+      # WEB_PORT: '8053'
     volumes:
       - '${VOLUME_ROOT}/Pi-hole/etc/:/etc/pihole/'
       - '${VOLUME_ROOT}/Pi-hole/dnsmasq.d/:/etc/dnsmasq.d/'
@@ -101,23 +101,23 @@ services:
       - '9090:9090'
     restart: unless-stopped
 
-  #prometheus-moto-exporter:
-  #  build:
-  #    context: prometheus-moto-exporter/
-  #  container_name: prom-moto
-  #  image: prometheus-moto-exporter
-  #  logging: *default-logging
-  #  restart: unless-stopped
+  # prometheus-moto-exporter:
+  #   build:
+  #     context: prometheus-moto-exporter/
+  #   container_name: prom-moto
+  #   image: prometheus-moto-exporter
+  #   logging: *default-logging
+  #   restart: unless-stopped
 
-  #prometheus-onhub-exporter:
-  #  build:
-  #    context: prometheus-onhub-exporter/
-  #  container_name: prom-onhub
-  #  image: prometheus-onhub-exporter
-  #  logging: *default-logging
-  #  environment:
-  #    ONHUB_HOST: 'onhub.here'
-  #  restart: unless-stopped
+  # prometheus-onhub-exporter:
+  #   build:
+  #     context: prometheus-onhub-exporter/
+  #   container_name: prom-onhub
+  #   image: prometheus-onhub-exporter
+  #   logging: *default-logging
+  #   environment:
+  #     ONHUB_HOST: 'onhub.here'
+  #   restart: unless-stopped
 
   prometheus-solaredge-exporter:
     container_name: prom-solaredge
