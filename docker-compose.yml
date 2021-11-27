@@ -1,11 +1,16 @@
 ---
 version: '3'
 
+networks:
+  front-end:
+  logging:
+  automation:
+
 x-logging:
   &default-logging
   driver: loki
   options:
-    loki-url: http://localhost:3100/loki/api/v1/push
+    loki-url: http://${LOG_HOST:-localhost}:3100/loki/api/v1/push
 
 services:
   # https://github.com/bastienwirtz/homer/blob/main/docker-compose.yml
@@ -17,6 +22,8 @@ services:
       - '8080:8080'
     volumes:
       - '${VOLUME_ROOT}/homer/assets/:/www/assets/'
+    networks:
+      - front-end
     restart: unless-stopped
 
   # https://www.home-assistant.io/installation/generic-x86-64#install-home-assistant-container
@@ -29,6 +36,30 @@ services:
     volumes:
       - '/etc/localtime:/etc/localtime:ro'
       - '${VOLUME_ROOT}/home-assistant/config/:/config/'
+    networks:
+      - front-end
+      - automation
+    devices:
+      - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if00-port0:/dev/zwave
+      - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if01-port0:/dev/zigbee
+    restart: unless-stopped
+
+  # https://zwave-js.github.io/zwavejs2mqtt/#/getting-started/docker?id=run-as-a-service
+  zwavejs2mqtt:
+    container_name: zwavejs2mqtt
+    image: zwavejs/zwavejs2mqtt:latest
+    logging: *default-logging
+    ports:
+      - '8091:8091'  # web interface
+    environment:
+      SESSION_SECRET: ${ZWAVE_SESSION_SECRET}
+      TZ: America/Los_Angeles
+    volumes:
+      - '${VOLUME_ROOT}/zwavejs2mqtt/store:/usr/src/app/store'
+    networks:
+      - automation
+    devices:
+      - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if00-port0:/dev/zwave
     restart: unless-stopped
 
   # https://github.com/pi-hole/docker-pi-hole/
@@ -53,6 +84,8 @@ services:
     volumes:
       - '${VOLUME_ROOT}/Pi-hole/etc/:/etc/pihole/'
       - '${VOLUME_ROOT}/Pi-hole/dnsmasq.d/:/etc/dnsmasq.d/'
+    networks:
+      - front-end
     # Recommended but not required (DHCP needs NET_ADMIN)
     #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
@@ -71,6 +104,9 @@ services:
       - '3000:3000'
     volumes:
       - '${VOLUME_ROOT}/grafana/var/:/var/lib/grafana/'
+    networks:
+      - front-end
+      - logging
     restart: unless-stopped
 
   loki:
@@ -81,6 +117,8 @@ services:
       - '3100:3100'
     volumes:
       - '${VOLUME_ROOT}/loki/loki/:/loki/'
+    networks:
+      - logging
     restart: unless-stopped
 
   prometheus:
@@ -92,6 +130,8 @@ services:
     volumes:
       - '${VOLUME_ROOT}/prometheus/:/prometheus/'
       - './prometheus.yml:/etc/prometheus/prometheus.yml'
+    networks:
+      - logging
     command:
       - '--config.file=/etc/prometheus/prometheus.yml'
       - '--storage.tsdb.path=/prometheus'
@@ -126,6 +166,8 @@ services:
     environment:
       API_KEY: '${SOLAREDGE_API_KEY}'
       TZ:
+    networks:
+      - logging
     restart: unless-stopped
 
   # https://github.com/billykwooten/openweather-exporter
@@ -136,6 +178,8 @@ services:
     environment:
       OW_CITY: '${OPENWEATHER_CITY}'
       OW_APIKEY: '${OPENWEATHER_APIKEY}'
+    networks:
+      - logging
     restart: unless-stopped
 
   mealie:
@@ -151,4 +195,6 @@ services:
       TZ: America/Los_Angeles
     volumes:
       - ${VOLUME_ROOT}/mealie/data/:/app/data/
+    networks:
+      - front-end
     restart: unless-stopped
