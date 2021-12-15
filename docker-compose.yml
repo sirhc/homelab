@@ -95,7 +95,7 @@ services:
   # https://grafana.com/grafana/plugins/fetzerch-sunandmoon-datasource/?tab=installation
   grafana:
     container_name: grafana
-    image: grafana/grafana:8.2.0
+    image: grafana/grafana:latest
     logging: *default-logging
     depends_on:
       - loki
@@ -111,7 +111,7 @@ services:
 
   loki:
     container_name: loki
-    image: grafana/loki:2.3.0
+    image: grafana/loki:latest
     logging: *default-logging
     ports:
       - '3100:3100'
@@ -123,7 +123,7 @@ services:
 
   prometheus:
     container_name: prometheus
-    image: prom/prometheus:v2.30.3
+    image: prom/prometheus:latest
     logging: *default-logging
     depends_on:
       - loki
@@ -184,7 +184,7 @@ services:
 
   mealie:
     container_name: mealie
-    image: hkotel/mealie:v0.5.3
+    image: hkotel/mealie:latest
     logging: *default-logging
     ports:
       - '9925:80'
