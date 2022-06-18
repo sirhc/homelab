@@ -26,7 +26,7 @@ x-logging:
 services:
   homer:
     container_name: homer
-    image: b4bz/homer
+    image: b4bz/homer:latest
     logging: *default-logging
     ports:
       - '8080:8080'
@@ -39,7 +39,7 @@ services:
 
   home-assistant:
     container_name: home-assistant
-    image: ghcr.io/home-assistant/home-assistant:stable
+    image: ghcr.io/home-assistant/home-assistant:latest
     logging: *default-logging
     ports:
       - '8123:8123'
@@ -170,7 +170,7 @@ services:
 
   prometheus-solaredge-exporter:
     container_name: prom-solaredge
-    image: chrisjohnson00/solaredge-prometheus-exporter
+    image: chrisjohnson00/solaredge-prometheus-exporter:latest
     logging: *default-logging
     environment:
       API_KEY: '${SOLAREDGE_API_KEY}'
@@ -181,7 +181,7 @@ services:
 
   prometheus-openweather-exporter:
     container_name: prom-openweather
-    image: billykwooten/openweather-exporter
+    image: billykwooten/openweather-exporter:latest
     logging: *default-logging
     environment:
       OW_CITY: '${OPENWEATHER_CITY}'
