@@ -30,14 +30,58 @@ x-logging: &default-logging
     loki-url: http://${LOG_HOST:-localhost}:3100/loki/api/v1/push
 
 services:
+  traefik:
+    container_name: traefik
+    image: traefik:latest
+    logging: *default-logging
+    depends_on:
+      - loki
+    command:
+      - '--api.insecure=true'
+      - '--providers.docker=true'
+      - '--providers.docker.exposedbydefault=false'
+      - '--entrypoints.web.address=:80'
+    ports:
+      - '80:80'
+      - '443:443'
+      - '8080:8080'
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock
+    networks:
+      - front-end
+    restart: unless-stopped
+
+  whoami:
+    container_name: whoami
+    image: traefik/whoami:latest
+    logging: *default-logging
+    depends_on:
+      - loki
+    labels:
+      traefik.enable: true
+      traefik.http.routers.whoami.rule: Host(`whoami.${DOMAIN}`)
+      traefik.http.routers.whoami.entrypoints: web
+      traefik.http.middlewares.cors_headers.headers.accesscontrolallowheaders: authorization
+      traefik.http.middlewares.cors_headers.headers.accesscontrolallowmethods: GET,OPTIONS
+      traefik.http.middlewares.cors_headers.headers.accesscontrolalloworiginlist: http://${DOMAIN}
+      traefik.http.middlewares.cors_headers.headers.accesscontrolmaxage: 100
+      traefik.http.middlewares.cors_headers.headers.addvaryheader: true
+    networks:
+      - front-end
+    restart: unless-stopped
+
   homer:
     container_name: homer
     image: b4bz/homer:latest
     logging: *default-logging
     depends_on:
       - loki
-    ports:
-      - '8080:8080'
+    labels:
+      traefik.enable: true
+      traefik.http.routers.homer.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.homer.entrypoints: web
+      traefik.http.services.homer.loadbalancer.server.port: 8080
     environment:
       INIT_ASSETS: 0
     volumes:
@@ -53,8 +97,12 @@ services:
     logging: *default-logging
     depends_on:
       - loki
-    ports:
-      - '8123:8123'
+    labels:
+      traefik.enable: true
+      traefik.docker.network: homelab_front-end
+      traefik.http.routers.home-assistant.rule: Host(`home.${DOMAIN}`)
+      traefik.http.routers.home-assistant.entrypoints: web
+      traefik.http.services.home-assistant.loadbalancer.server.port: 8123
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - home-assistant_config:/config
@@ -72,8 +120,6 @@ services:
     logging: *default-logging
     depends_on:
       - loki
-    ports:
-      - '8091:8091'  # web interface
     environment:
       SESSION_SECRET: ${ZWAVE_SESSION_SECRET}
     volumes:
@@ -85,6 +131,11 @@ services:
     devices:
       - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if00-port0:/dev/zwave
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.zwave.rule: Host(`zwave.${DOMAIN}`)
+      traefik.http.routers.zwave.entrypoints: web
+      traefik.http.services.zwave.loadbalancer.server.port: 8091
 
   pihole:
     container_name: pihole
@@ -121,8 +172,6 @@ services:
     depends_on:
       - loki
       - prometheus
-    ports:
-      - '3000:3000'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - grafana:/var/lib/grafana
@@ -130,6 +179,12 @@ services:
       - front-end
       - logging
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.docker.network: homelab_front-end
+      traefik.http.routers.grafana.rule: Host(`grafana.${DOMAIN}`)
+      traefik.http.routers.grafana.entrypoints: web
+      traefik.http.services.grafana.loadbalancer.server.port: 3000
 
   loki:
     container_name: loki
@@ -142,6 +197,11 @@ services:
     networks:
       - logging
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.loki.rule: Host(`loki.${DOMAIN}`)
+      traefik.http.routers.loki.entrypoints: web
+      traefik.http.services.loki.loadbalancer.server.port: 3100
 
   prometheus:
     container_name: prometheus
@@ -160,9 +220,12 @@ services:
       - '--storage.tsdb.path=/prometheus'
       - '--web.console.libraries=/usr/share/prometheus/console_libraries'
       - '--web.console.templates=/usr/share/prometheus/consoles'
-    ports:
-      - '9090:9090'
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.prom.rule: Host(`prom.${DOMAIN}`)
+      traefik.http.routers.prom.entrypoints: web
+      traefik.http.services.prom.loadbalancer.server.port: 9090
 
   # prometheus-moto-exporter:
   #   build:
@@ -213,14 +276,18 @@ services:
     logging: *default-logging
     depends_on:
       - loki
-    ports:
-      - '9925:80'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - mealie_data:/app/data
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.mealie.rule: Host(`mealie.${DOMAIN}`)
+      traefik.http.routers.mealie.entrypoints: web
+      traefik.http.routers.mealie.middlewares: cors_headers
+      traefik.http.services.mealie.loadbalancer.server.port: 80
 
   jellyfin:
     container_name: jellyfin
@@ -236,6 +303,11 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.jellyfin.rule: Host(`jellyfin.${DOMAIN}`)
+      traefik.http.routers.jellyfin.entrypoints: web
+      traefik.http.services.jellyfin.loadbalancer.server.port: 8096
 
   radarr:
     container_name: radarr
@@ -250,6 +322,13 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.radarr.rule: Host(`radarr.${DOMAIN}`)
+      traefik.http.routers.radarr.entrypoints: web
+      traefik.http.routers.radarr.middlewares: cors_headers
+      traefik.http.services.radarr.loadbalancer.server.port: 7878
+
   sonarr:
     container_name: sonarr
     image: lscr.io/linuxserver/sonarr:latest
@@ -263,6 +342,12 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.sonarr.rule: Host(`sonarr.${DOMAIN}`)
+      traefik.http.routers.sonarr.entrypoints: web
+      traefik.http.routers.sonarr.middlewares: cors_headers
+      traefik.http.services.sonarr.loadbalancer.server.port: 8989
 
   lidarr:
     container_name: lidarr
@@ -277,6 +362,12 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.lidarr.rule: Host(`lidarr.${DOMAIN}`)
+      traefik.http.routers.lidarr.entrypoints: web
+      traefik.http.routers.lidarr.middlewares: cors_headers
+      traefik.http.services.lidarr.loadbalancer.server.port: 8686
 
   readarr:
     container_name: readarr
@@ -291,6 +382,12 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.readarr.rule: Host(`readarr.${DOMAIN}`)
+      traefik.http.routers.readarr.entrypoints: web
+      traefik.http.routers.readarr.middlewares: cors_headers
+      traefik.http.services.readarr.loadbalancer.server.port: 8787
 
   nzbget:
     container_name: nzbget
@@ -305,3 +402,9 @@ services:
     networks:
       - front-end
     restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.nzbget.rule: Host(`nzbget.${DOMAIN}`)
+      traefik.http.routers.nzbget.entrypoints: web
+      traefik.http.routers.nzbget.middlewares: cors_headers
+      traefik.http.services.nzbget.loadbalancer.server.port: 6789
