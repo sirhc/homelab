@@ -210,6 +210,19 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - mealie_data:/app/data
+
+  jellyfin:
+    container_name: jellyfin
+    image: jellyfin/jellyfin:latest
+    logging: *default-logging
+    depends_on:
+      - loki
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /media:/media
+      - jellyfin_cache:/cache
+      - jellyfin_config:/config
+    restart: unless-stopped
     volumes:
     networks:
       - front-end
