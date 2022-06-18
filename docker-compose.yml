@@ -6,6 +6,17 @@ networks:
   logging:
   automation:
 
+volumes:
+  grafana:
+  home-assistant_config:
+  homer_assets:
+  loki:
+  mealie_data:
+  pihole_dnsmasq:
+  pihole_etc:
+  prometheus:
+  zwavejs2mqtt_store:
+
 x-logging:
   &default-logging
   driver: loki
@@ -20,7 +31,8 @@ services:
     ports:
       - '8080:8080'
     volumes:
-      - '${VOLUME_ROOT}/homer/assets/:/www/assets/'
+      - /etc/localtime:/etc/localtime:ro
+      - homer_assets:/www/assets
     networks:
       - front-end
     restart: unless-stopped
@@ -32,8 +44,8 @@ services:
     ports:
       - '8123:8123'
     volumes:
-      - '/etc/localtime:/etc/localtime:ro'
-      - '${VOLUME_ROOT}/home-assistant/config/:/config/'
+      - /etc/localtime:/etc/localtime:ro
+      - home-assistant_config:/config
     networks:
       - front-end
       - automation
@@ -52,7 +64,8 @@ services:
       SESSION_SECRET: ${ZWAVE_SESSION_SECRET}
       TZ: America/Los_Angeles
     volumes:
-      - '${VOLUME_ROOT}/zwavejs2mqtt/store:/usr/src/app/store'
+      - /etc/localtime:/etc/localtime:ro
+      - zwavejs2mqtt_store:/usr/src/app/store
     networks:
       - automation
     devices:
@@ -78,8 +91,9 @@ services:
       TEMPERATUREUNIT: 'f'
       # WEB_PORT: '8053'
     volumes:
-      - '${VOLUME_ROOT}/Pi-hole/etc/:/etc/pihole/'
-      - '${VOLUME_ROOT}/Pi-hole/dnsmasq.d/:/etc/dnsmasq.d/'
+      - /etc/localtime:/etc/localtime:ro
+      - pihole_dnsmasq:/etc/dnsmasq.d
+      - pihole_etc:/etc/pihole
     networks:
       - front-end
     cap_add:
@@ -96,7 +110,8 @@ services:
     ports:
       - '3000:3000'
     volumes:
-      - '${VOLUME_ROOT}/grafana/var/:/var/lib/grafana/'
+      - /etc/localtime:/etc/localtime:ro
+      - grafana:/var/lib/grafana
     networks:
       - front-end
       - logging
@@ -108,7 +123,8 @@ services:
     ports:
       - '3100:3100'
     volumes:
-      - '${VOLUME_ROOT}/loki/loki/:/loki/'
+      - /etc/localtime:/etc/localtime:ro
+      - loki:/loki
     networks:
       - logging
     restart: unless-stopped
@@ -120,8 +136,9 @@ services:
     depends_on:
       - loki
     volumes:
-      - '${VOLUME_ROOT}/prometheus/:/prometheus/'
-      - './prometheus.yml:/etc/prometheus/prometheus.yml'
+      - /etc/localtime:/etc/localtime:ro
+      - ./config/prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus:/prometheus
     networks:
       - logging
     command:
@@ -179,13 +196,10 @@ services:
     logging: *default-logging
     ports:
       - '9925:80'
-    environment:
-      # https://hay-kot.github.io/mealie/documentation/getting-started/install/#env-variables
-      PUID: 1024
-      PGID: 100
-      TZ: America/Los_Angeles
     volumes:
-      - ${VOLUME_ROOT}/mealie/data/:/app/data/
+      - /etc/localtime:/etc/localtime:ro
+      - mealie_data:/app/data
+    volumes:
     networks:
       - front-end
     restart: unless-stopped
