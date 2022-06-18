@@ -10,6 +10,8 @@ volumes:
   grafana:
   home-assistant_config:
   homer_assets:
+  jellyfin_cache:
+  jellyfin_config:
   loki:
   mealie_data:
   pihole_dnsmasq:
