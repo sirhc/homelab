@@ -28,6 +28,8 @@ services:
     container_name: homer
     image: b4bz/homer:latest
     logging: *default-logging
+    depends_on:
+      - loki
     ports:
       - '8080:8080'
     volumes:
@@ -41,6 +43,8 @@ services:
     container_name: home-assistant
     image: ghcr.io/home-assistant/home-assistant:latest
     logging: *default-logging
+    depends_on:
+      - loki
     ports:
       - '8123:8123'
     volumes:
@@ -58,6 +62,8 @@ services:
     container_name: zwavejs2mqtt
     image: zwavejs/zwavejs2mqtt:latest
     logging: *default-logging
+    depends_on:
+      - loki
     ports:
       - '8091:8091'  # web interface
     environment:
@@ -76,6 +82,8 @@ services:
     container_name: pihole
     image: pihole/pihole:latest
     logging: *default-logging
+    depends_on:
+      - loki
     ports:
       - '${PIHOLE_ServerIP}:53:53/tcp'
       - '${PIHOLE_ServerIP}:53:53/udp'
@@ -172,6 +180,8 @@ services:
     container_name: prom-solaredge
     image: chrisjohnson00/solaredge-prometheus-exporter:latest
     logging: *default-logging
+    depends_on:
+      - loki
     environment:
       API_KEY: '${SOLAREDGE_API_KEY}'
       TZ:
@@ -183,6 +193,8 @@ services:
     container_name: prom-openweather
     image: billykwooten/openweather-exporter:latest
     logging: *default-logging
+    depends_on:
+      - loki
     environment:
       OW_CITY: '${OPENWEATHER_CITY}'
       OW_APIKEY: '${OPENWEATHER_APIKEY}'
@@ -194,6 +206,8 @@ services:
     container_name: mealie
     image: hkotel/mealie:latest
     logging: *default-logging
+    depends_on:
+      - loki
     ports:
       - '9925:80'
     volumes:
