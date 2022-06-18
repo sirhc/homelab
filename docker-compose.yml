@@ -31,6 +31,8 @@ services:
       - loki
     ports:
       - '8080:8080'
+    environment:
+      INIT_ASSETS: 0
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - homer_assets:/www/assets
