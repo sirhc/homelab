@@ -105,7 +105,6 @@ services:
   loki:
     container_name: loki
     image: grafana/loki:latest
-    logging: *default-logging
     ports:
       - '3100:3100'
     volumes:
