@@ -13,7 +13,6 @@ x-logging:
     loki-url: http://${LOG_HOST:-localhost}:3100/loki/api/v1/push
 
 services:
-  # https://github.com/bastienwirtz/homer/blob/main/docker-compose.yml
   homer:
     container_name: homer
     image: b4bz/homer
@@ -26,7 +25,6 @@ services:
       - front-end
     restart: unless-stopped
 
-  # https://www.home-assistant.io/installation/generic-x86-64#install-home-assistant-container
   home-assistant:
     container_name: home-assistant
     image: ghcr.io/home-assistant/home-assistant:stable
@@ -44,7 +42,6 @@ services:
       - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if01-port0:/dev/zigbee
     restart: unless-stopped
 
-  # https://zwave-js.github.io/zwavejs2mqtt/#/getting-started/docker?id=run-as-a-service
   zwavejs2mqtt:
     container_name: zwavejs2mqtt
     image: zwavejs/zwavejs2mqtt:latest
@@ -62,7 +59,6 @@ services:
       - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if00-port0:/dev/zwave
     restart: unless-stopped
 
-  # https://github.com/pi-hole/docker-pi-hole/
   pihole:
     container_name: pihole
     image: pihole/pihole:latest
@@ -86,13 +82,10 @@ services:
       - '${VOLUME_ROOT}/Pi-hole/dnsmasq.d/:/etc/dnsmasq.d/'
     networks:
       - front-end
-    # Recommended but not required (DHCP needs NET_ADMIN)
-    #   https://github.com/pi-hole/docker-pi-hole#note-on-capabilities
     cap_add:
       - NET_ADMIN
     restart: unless-stopped
 
-  # https://grafana.com/grafana/plugins/fetzerch-sunandmoon-datasource/?tab=installation
   grafana:
     container_name: grafana
     image: grafana/grafana:latest
@@ -170,7 +163,6 @@ services:
       - logging
     restart: unless-stopped
 
-  # https://github.com/billykwooten/openweather-exporter
   prometheus-openweather-exporter:
     container_name: prom-openweather
     image: billykwooten/openweather-exporter
