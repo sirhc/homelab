@@ -96,7 +96,6 @@ services:
       PIHOLE_DNS_: '${PIHOLE_PIHOLE_DNS_}'
       DNSSEC: 'true'
       TEMPERATUREUNIT: 'f'
-      # WEB_PORT: '8053'
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - pihole_dnsmasq:/etc/dnsmasq.d
