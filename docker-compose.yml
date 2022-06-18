@@ -17,8 +17,7 @@ volumes:
   prometheus:
   zwavejs2mqtt_store:
 
-x-logging:
-  &default-logging
+x-logging: &default-logging
   driver: loki
   options:
     loki-url: http://${LOG_HOST:-localhost}:3100/loki/api/v1/push
@@ -68,7 +67,6 @@ services:
       - '8091:8091'  # web interface
     environment:
       SESSION_SECRET: ${ZWAVE_SESSION_SECRET}
-      TZ: America/Los_Angeles
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - zwavejs2mqtt_store:/usr/src/app/store
@@ -90,7 +88,6 @@ services:
       - '${PIHOLE_ServerIP}:67:67/udp'
       - '8053:80/tcp'
     environment:
-      TZ:
       WEBPASSWORD: '${PIHOLE_WEBPASSWORD}'
       ServerIP: '${PIHOLE_ServerIP}'
       ADMIN_EMAIL: '${PIHOLE_ADMIN_EMAIL}'
@@ -184,7 +181,6 @@ services:
       - loki
     environment:
       API_KEY: '${SOLAREDGE_API_KEY}'
-      TZ:
     networks:
       - logging
     restart: unless-stopped
