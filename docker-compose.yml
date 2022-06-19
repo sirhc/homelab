@@ -251,6 +251,8 @@ services:
     logging: *default-logging
     depends_on:
       - loki
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
     environment:
       API_KEY: '${SOLAREDGE_API_KEY}'
     networks:
