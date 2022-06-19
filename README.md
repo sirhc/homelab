@@ -9,19 +9,21 @@ Sensitive values are stored in the `.env` file, which is explicitly ignored by
 Git. Values that are expected in this file are,
 
 ```
-VOLUME_ROOT=<path to docker volumes>
-PIHOLE_WEBPASSWORD=
-PIHOLE_ServerIP=
+DOMAIN=example.com
+LOG_HOST=
+OPENWEATHER_APIKEY=
+OPENWEATHER_CITY=
 PIHOLE_ADMIN_EMAIL=
 PIHOLE_PIHOLE_DNS_=
+PIHOLE_ServerIP=
+PIHOLE_WEBPASSWORD=
 SOLAREDGE_API_KEY=
-OPENWEATHER_CITY=
-OPENWEATHER_APIKEY=
+ZWAVE_SESSION_SECRET=
 ```
 
 ## Networking
 
-As I add services to my home lab, the liklihood of multiple services choosing
+As I add services to my home lab, the likelihood of multiple services choosing
 to use the same port increases. Even if I configure the exposed ports to be
 different (although reverse proxying will fix that in the future), there will
 be conflict on the internal Docker networks.
