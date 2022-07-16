@@ -6,9 +6,10 @@ show-services:
 ps:
 	@docker-compose ps
 
-update:
+update: pull reload
+
+pull:
 	docker-compose pull
-	docker-compose up --detach
 
 reload:
 	docker-compose up --detach
