@@ -1,3 +1,5 @@
+SHELL = zsh
+
 all:
 
 show-services:
@@ -6,7 +8,7 @@ show-services:
 ps:
 	@docker-compose ps
 
-update: pull outdated reload
+update: pull outdated confirm-reload reload
 
 pull:
 	@docker-compose pull
@@ -14,6 +16,10 @@ pull:
 outdated:
 	@printf '\nImages with newer versions:\n'
 	@docker images | grep '<none>' | sed -e 's/^/  /' | sort
+	@printf '\n'
+
+confirm-reload:
+	@read -q 'REPLY?Reload containers? (y/N) '
 	@printf '\n'
 
 reload:
