@@ -8,7 +8,7 @@ show-services:
 ps:
 	@docker-compose ps
 
-update: pull outdated confirm-reload reload
+update: pull outdated confirm-reload reload clean
 
 pull:
 	@docker-compose pull
@@ -24,3 +24,6 @@ confirm-reload:
 
 reload:
 	@docker-compose up --detach
+
+clean:
+	@docker image prune
