@@ -27,3 +27,6 @@ reload:
 
 clean:
 	@docker image prune
+
+restart-dns:
+	@docker-compose restart pihole
