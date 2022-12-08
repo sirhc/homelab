@@ -15,7 +15,7 @@ pull:
 
 outdated:
 	@printf '\nImages with newer versions:\n'
-	@docker images | grep '<none>' | sed -e 's/^/  /' | sort
+	@docker images | sort | grep -B1 '<none>' | grep -v '^-' | sed -e '/<none>/s/^/\x1b[31m/' -e '/<none>/s/$$/\x1b[0m/' -e 's/^/  /'
 	@printf '\n'
 
 confirm-reload:
