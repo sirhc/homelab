@@ -22,7 +22,7 @@ volumes:
   radarr_config:
   readarr_config:
   sonarr_config:
-  zwavejs2mqtt_store:
+  zwave-js-ui_store:
 
 x-logging: &default-logging
   driver: loki
@@ -114,17 +114,18 @@ services:
       - /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if01-port0:/dev/zigbee
     restart: unless-stopped
 
-  zwavejs2mqtt:
-    container_name: zwavejs2mqtt
-    image: zwavejs/zwavejs2mqtt:latest
+  zwave-js-ui:
+    container_name: zwave-js-ui
+    image: zwavejs/zwave-js-ui:latest
     logging: *default-logging
     depends_on:
       - loki
     environment:
       SESSION_SECRET: ${ZWAVE_SESSION_SECRET}
+      ZWAVEJS_EXTERNAL_CONFIG: /usr/src/app/store/.config-db
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - zwavejs2mqtt_store:/usr/src/app/store
+      - zwave-js-ui_store:/usr/src/app/store
     networks:
       - front-end
       - automation
@@ -133,6 +134,7 @@ services:
     restart: unless-stopped
     labels:
       traefik.enable: true
+      traefik.docker.network: homelab_front-end
       traefik.http.routers.zwave.rule: Host(`zwave.${DOMAIN}`)
       traefik.http.routers.zwave.entrypoints: web
       traefik.http.services.zwave.loadbalancer.server.port: 8091
