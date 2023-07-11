@@ -146,13 +146,16 @@ services:
     depends_on:
       - loki
     ports:
-      - '${PIHOLE_ServerIP}:53:53/tcp'
-      - '${PIHOLE_ServerIP}:53:53/udp'
-      - '${PIHOLE_ServerIP}:67:67/udp'
+      - '${PIHOLE_ServerIP1}:53:53/tcp'
+      - '${PIHOLE_ServerIP1}:53:53/udp'
+      - '${PIHOLE_ServerIP1}:67:67/udp'
+      - '${PIHOLE_ServerIP2}:53:53/tcp'
+      - '${PIHOLE_ServerIP2}:53:53/udp'
+      - '${PIHOLE_ServerIP2}:67:67/udp'
       - '8053:80/tcp'
     environment:
       WEBPASSWORD: '${PIHOLE_WEBPASSWORD}'
-      ServerIP: '${PIHOLE_ServerIP}'
+      ServerIP: '${PIHOLE_ServerIP1}'
       ADMIN_EMAIL: '${PIHOLE_ADMIN_EMAIL}'
       PIHOLE_DNS_: '${PIHOLE_PIHOLE_DNS_}'
       DNSSEC: 'true'
