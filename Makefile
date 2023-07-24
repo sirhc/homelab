@@ -19,7 +19,7 @@ outdated:
 	@printf '\n'
 
 confirm-reload:
-	@read -q 'REPLY?Reload containers? (y/N) '
+	@read -r 'REPLY?Reload containers? [y/N] ' && [[ $$REPLY =~ '^[Yy]$$' ]]
 	@printf '\n'
 
 reload:
