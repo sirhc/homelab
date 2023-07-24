@@ -6,12 +6,12 @@ show-services:
 	@yq -o json '.services' docker-compose.yml | jq -r '. | keys[]' | sort
 
 ps:
-	@docker-compose ps
+	@docker compose ps
 
 update: pull outdated confirm-reload reload clean
 
 pull:
-	@docker-compose pull
+	@docker compose pull
 
 outdated:
 	@printf '\nImages with newer versions:\n'
@@ -23,10 +23,10 @@ confirm-reload:
 	@printf '\n'
 
 reload:
-	@docker-compose up --detach
+	@docker compose up --detach
 
 clean:
 	@docker image prune
 
 restart-dns:
-	@docker-compose restart pihole
+	@docker compose restart pihole
