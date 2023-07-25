@@ -158,7 +158,6 @@ services:
       ServerIP: '${PIHOLE_ServerIP1}'
       ADMIN_EMAIL: '${PIHOLE_ADMIN_EMAIL}'
       PIHOLE_DNS_: '${PIHOLE_PIHOLE_DNS_}'
-      DNSSEC: 'true'
       TEMPERATUREUNIT: 'f'
     volumes:
       - /etc/localtime:/etc/localtime:ro
