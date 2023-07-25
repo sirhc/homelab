@@ -7,6 +7,7 @@ networks:
   automation:
 
 volumes:
+  calibre_config:
   grafana:
   home-assistant_config:
   homer_assets:
@@ -314,6 +315,24 @@ services:
       traefik.http.routers.jellyfin.rule: Host(`jellyfin.${DOMAIN}`)
       traefik.http.routers.jellyfin.entrypoints: web
       traefik.http.services.jellyfin.loadbalancer.server.port: 8096
+
+  calibre-web:
+    container_name: calibre-web
+    image: lscr.io/linuxserver/calibre-web:latest
+    logging: *default-logging
+    depends_on:
+      - loki
+    volumes:
+      - /media/Books:/books
+      - calibre_config:/config
+    networks:
+      - front-end
+    restart: unless-stopped
+    labels:
+      traefik.enable: true
+      traefik.http.routers.calibre.rule: Host(`calibre.${DOMAIN}`)
+      traefik.http.routers.calibre.entrypoints: web
+      traefik.http.services.calibre.loadbalancer.server.port: 8083
 
   radarr:
     container_name: radarr
