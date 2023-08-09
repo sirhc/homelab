@@ -10,6 +10,7 @@ volumes:
   calibre_config:
   grafana:
   home-assistant_config:
+  homepage_config:
   homer_assets:
   jellyfin_cache:
   jellyfin_config:
@@ -80,7 +81,7 @@ services:
       - loki
     labels:
       traefik.enable: true
-      traefik.http.routers.homer.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.homer.rule: Host(homer.`${DOMAIN}`)
       traefik.http.routers.homer.entrypoints: web
       traefik.http.services.homer.loadbalancer.server.port: 8080
     environment:
@@ -88,6 +89,27 @@ services:
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - homer_assets:/www/assets
+    networks:
+      - front-end
+    restart: unless-stopped
+
+  homepage:
+    container_name: homepage
+    image: ghcr.io/benphelps/homepage:latest
+    logging: *default-logging
+    depends_on:
+      - loki
+    labels:
+      traefik.enable: true
+      traefik.http.routers.homepage.rule: Host(`${DOMAIN}`)
+      traefik.http.routers.homepage.entrypoints: web
+      traefik.http.services.homepage.loadbalancer.server.port: 3000
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - /home:/home:ro
+      - /media:/media:ro
+      - homepage_config:/app/config
     networks:
       - front-end
     restart: unless-stopped
