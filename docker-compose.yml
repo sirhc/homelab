@@ -11,7 +11,6 @@ volumes:
   grafana:
   home-assistant_config:
   homepage_config:
-  homer_assets:
   jellyfin_cache:
   jellyfin_config:
   lidarr_config:
@@ -69,26 +68,6 @@ services:
       traefik.http.middlewares.cors_headers.headers.accesscontrolalloworiginlist: http://${DOMAIN}
       traefik.http.middlewares.cors_headers.headers.accesscontrolmaxage: 100
       traefik.http.middlewares.cors_headers.headers.addvaryheader: true
-    networks:
-      - front-end
-    restart: unless-stopped
-
-  homer:
-    container_name: homer
-    image: b4bz/homer:latest
-    logging: *default-logging
-    depends_on:
-      - loki
-    labels:
-      traefik.enable: true
-      traefik.http.routers.homer.rule: Host(homer.`${DOMAIN}`)
-      traefik.http.routers.homer.entrypoints: web
-      traefik.http.services.homer.loadbalancer.server.port: 8080
-    environment:
-      INIT_ASSETS: 0
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - homer_assets:/www/assets
     networks:
       - front-end
     restart: unless-stopped
