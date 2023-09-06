@@ -1,3 +1,4 @@
+*.pem
 .env
-data/
-tmp/
+compose.override.yaml
+compose.override/

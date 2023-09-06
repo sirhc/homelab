@@ -1,32 +1,31 @@
-SHELL = zsh
+SHELL   = zsh
+COMPOSE = docker compose
+
+.ONESHELL:
 
 all:
 
-show-services:
-	@yq -o json '.services' docker-compose.yml | jq -r '. | keys[]' | sort
+start:
+	$(COMPOSE) up --detach
+
+stop:
+	$(COMPOSE) down
 
 ps:
-	@docker compose ps
+	$(COMPOSE) ps
 
-update: pull outdated confirm-reload reload clean
+.PHONY: config
+config:
+	$(COMPOSE) config
 
-pull:
-	@docker compose pull
+.PHONY: services
+services:
+	$(COMPOSE) config | yq '.services | keys | .[]' | sort
 
-outdated:
-	@printf '\nImages with newer versions:\n'
-	@docker images | sort | grep -B1 '<none>' | grep -v '^-' | sed -e '/<none>/s/^/\x1b[31m/' -e '/<none>/s/$$/\x1b[0m/' -e 's/^/  /'
-	@printf '\n'
-
-confirm-reload:
-	@read -r 'REPLY?Reload containers? [y/N] ' && [[ $$REPLY =~ '^[Yy]$$' ]]
-	@printf '\n'
-
-reload:
-	@docker compose up --detach
-
-clean:
-	@docker image prune
-
-restart-dns:
-	@docker compose restart pihole
+# Quickly start or restart a service with `make <service>`.
+%:
+	if [[ -n "$$( docker ps --no-trunc --filter name=^$@$$ --quiet )" ]]; then
+	  $(COMPOSE) restart $@
+	else
+	  $(COMPOSE) up --detach $@
+	fi

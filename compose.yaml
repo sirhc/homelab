@@ -1,0 +1,9 @@
+---
+version: "3.8"
+
+include:
+  - services/admin.yaml
+  - services/apps.yaml
+  - services/home.yaml
+  - services/media.yaml
+  - services/monitoring.yaml

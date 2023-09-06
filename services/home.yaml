@@ -1,0 +1,54 @@
+---
+version: "3.8"
+
+services:
+  homepage:
+    image: ghcr.io/benphelps/homepage:v0.6.29
+    container_name: homepage
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+      - homepage_config:/app/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.homepage.entrypoints=https
+      - traefik.http.routers.homepage.rule=Host(`${DOMAIN}`)
+      - traefik.http.services.homepage.loadbalancer.server.port=3000
+
+  home-assistant:
+    image: ghcr.io/home-assistant/home-assistant:latest
+    container_name: home-assistant
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - home-assistant_config:/config
+    devices: []
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.home-assistant.entrypoints=https
+      - traefik.http.routers.home-assistant.rule=Host(`home.${DOMAIN}`)
+      - traefik.http.services.home-assistant.loadbalancer.server.port=8123
+    privileged: true
+
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    container_name: zwave-js-ui
+    restart: unless-stopped
+    environment:
+      - SESSION_SECRET=${ZWAVE_SESSION_SECRET}
+      - ZWAVEJS_EXTERNAL_CONFIG=/usr/src/app/store/.config-db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - zwave-js-ui_store:/usr/src/app/store
+    devices: []
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.zwave-js-ui.entrypoints=https
+      - traefik.http.routers.zwave-js-ui.rule=Host(`zwave.${DOMAIN}`)
+      - traefik.http.services.zwave-js-ui.loadbalancer.server.port=8091
+
+volumes:
+  homepage_config:
+  home-assistant_config:
+  zwave-js-ui_store:
