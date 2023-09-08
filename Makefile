@@ -14,6 +14,9 @@ stop:
 ps:
 	$(COMPOSE) ps
 
+update:
+	$(COMPOSE) pull
+
 .PHONY: config
 config:
 	$(COMPOSE) config
