@@ -8,14 +8,25 @@ all:
 start:
 	$(COMPOSE) up --detach
 
+restart:
+	$(COMPOSE) up --detach
+
 stop:
 	$(COMPOSE) down
 
 ps:
 	$(COMPOSE) ps
 
-update:
+pull:
 	$(COMPOSE) pull
+
+start-plex:
+	sudo systemctl start plexmediaserver.service
+
+stop-plex:
+	sudo systemctl stop plexmediaserver.service
+
+stop-plex:
 
 .PHONY: config
 config:
