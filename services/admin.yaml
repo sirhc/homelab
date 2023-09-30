@@ -11,6 +11,7 @@ services:
       - --global.sendAnonymousUsage=false
       - --api.dashboard=true
       - --api.insecure=true
+      - --log.level=INFO
       - --providers.docker.endpoint=unix:///var/run/docker.sock
       - --providers.docker.exposedByDefault=false
       - --providers.docker.watch=true
