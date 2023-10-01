@@ -2,27 +2,36 @@
 version: "3.8"
 
 services:
-  # plex:
-  #   image: plexinc/pms-docker:beta
-  #   container_name: plex
-  #   restart: unless-stopped
-  #   ports:
-  #     - 1900:1900/udp
-  #     - 3005:3005/tcp
-  #     - 8324:8324/tcp
-  #     - 32400:32400/tcp
-  #     - 32410:32410/udp
-  #     - 32412:32412/udp
-  #     - 32413:32413/udp
-  #     - 32414:32414/udp
-  #     - 32469:32469/tcp
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.plex.entrypoints=https
-  #     - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
-  #     - traefik.http.services.plex.loadbalancer.server.port=32400
+  plex:
+    image: plexinc/pms-docker:beta
+    container_name: plex
+    restart: unless-stopped
+    environment:
+      - ADVERTISE_IP=${PLEX_ADVERTISE_IP}
+      - ALLOWED_NETWORKS=${PLEX_ALLOWED_NETWORKS}
+      - PLEX_CLAIM
+    ports:
+      - 1900:1900/udp
+      - 3005:3005/tcp
+      - 8324:8324/tcp
+      - 32400:32400/tcp
+      - 32410:32410/udp
+      - 32412:32412/udp
+      - 32413:32413/udp
+      - 32414:32414/udp
+      - 32469:32469/tcp
+    devices:
+      - /dev/dri:/dev/dri
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /media:/media
+      - /dev/shm:/transcode
+      - plex_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.plex.entrypoints=https
+      - traefik.http.routers.plex.rule=Host(`plex.${DOMAIN}`)
+      - traefik.http.services.plex.loadbalancer.server.port=32400
 
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
@@ -90,6 +99,7 @@ services:
       - traefik.http.services.readarr.loadbalancer.server.port=8787
 
 volumes:
+  plex_config:
   sabnzbd_config:
   radarr_config:
   sonarr_config:
