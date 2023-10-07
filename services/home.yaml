@@ -3,7 +3,7 @@ version: "3.8"
 
 services:
   homepage:
-    image: ghcr.io/benphelps/homepage:v0.6.29
+    image: ghcr.io/benphelps/homepage:latest
     container_name: homepage
     restart: unless-stopped
     volumes:
