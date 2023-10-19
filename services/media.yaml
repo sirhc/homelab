@@ -98,6 +98,16 @@ services:
       - traefik.http.routers.readarr.rule=Host(`readarr.${DOMAIN}`)
       - traefik.http.services.readarr.loadbalancer.server.port=8787
 
+  isponsorblocktv:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    container_name: isponsorblocktv
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - isponsorblocktv_data:/app/data
+    # command: # only used for initial setup with `docker compose run isponsorblocktv`
+    #   - --setup-cli
+
 volumes:
   plex_config:
   sabnzbd_config:
