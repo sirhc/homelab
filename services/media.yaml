@@ -115,3 +115,4 @@ volumes:
   sonarr_config:
   lidarr_config:
   readarr_config:
+  isponsorblocktv_data:
