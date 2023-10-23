@@ -1,14 +1,9 @@
 SHELL   = zsh
 COMPOSE = docker compose
 
-.ONESHELL:
-
 all:
 
 start:
-	$(COMPOSE) up --detach
-
-restart:
 	$(COMPOSE) up --detach
 
 stop:
@@ -17,16 +12,10 @@ stop:
 ps:
 	$(COMPOSE) ps
 
-pull:
+update:
 	$(COMPOSE) pull
-
-start-plex:
-	sudo systemctl start plexmediaserver.service
-
-stop-plex:
-	sudo systemctl stop plexmediaserver.service
-
-stop-plex:
+	@read -r 'REPLY?Restart services? [y/N] '; [[ $${REPLY:l} =~ '^y(es)?' ]]
+	$(COMPOSE) up --detach
 
 .PHONY: config
 config:
