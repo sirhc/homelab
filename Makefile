@@ -18,6 +18,9 @@ update:
 	$(MAKE) start
 	docker image prune
 
+restart-plex:
+	$(COMPOSE) restart plex
+
 .PHONY: config
 config:
 	$(COMPOSE) config
