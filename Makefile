@@ -15,7 +15,8 @@ ps:
 update:
 	$(COMPOSE) pull
 	@read -r 'REPLY?Restart services? [y/N] '; [[ $${REPLY:l} =~ '^y(es)?' ]]
-	$(COMPOSE) up --detach
+	$(MAKE) start
+	docker image prune
 
 .PHONY: config
 config:
