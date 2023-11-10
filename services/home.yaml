@@ -23,19 +23,18 @@ services:
     container_name: home-assistant
     restart: unless-stopped
     networks:
-      - homekit
       - default
+      - homekit
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - home-assistant_config:/config
     devices: []
     labels:
       - traefik.enable=true
-      - traefik.docker.network=default
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_default
       - traefik.http.routers.home-assistant.entrypoints=https
       - traefik.http.routers.home-assistant.rule=Host(`home.${DOMAIN}`)
       - traefik.http.services.home-assistant.loadbalancer.server.port=8123
-    privileged: true
 
   homebridge:
     image: homebridge/homebridge:latest
@@ -44,14 +43,14 @@ services:
     ports:
       - 51690:51690
     networks:
-      - homekit
       - default
+      - homekit
     volumes:
       - /etc/localtime:/etc/localtime:ro
       - homebridge_config:/homebridge
     labels:
       - traefik.enable=true
-      - traefik.docker.network=default
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_default
       - traefik.http.routers.homebridge.entrypoints=https
       - traefik.http.routers.homebridge.rule=Host(`homebridge.${DOMAIN}`)
       - traefik.http.services.homebridge.loadbalancer.server.port=8581
