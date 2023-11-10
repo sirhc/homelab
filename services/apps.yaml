@@ -2,18 +2,21 @@
 version: "3.8"
 
 services:
-  # calibre:
-  #   image: lscr.io/linuxserver/calibre-web:latest
-  #   container_name: calibre
-  #   restart: unless-stopped
-  #   volumes:
-  #     - /etc/localtime:/etc/localtime:ro
-  #     - calibre_config:/config
-  #   labels:
-  #     - traefik.enable=true
-  #     - traefik.http.routers.calibre.entrypoints=https
-  #     - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
-  #     - traefik.http.services.calibre.loadbalancer.server.port=8083
+  calibre:
+    image: lscr.io/linuxserver/calibre-web:latest
+    container_name: calibre
+    restart: unless-stopped
+    environment:
+      - DOCKER_MODS=linuxserver/mods:universal-calibre
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - /media/Books:/books
+      - calibre_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.calibre.entrypoints=https
+      - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
+      - traefik.http.services.calibre.loadbalancer.server.port=8083
 
   mealie:
     image: ghcr.io/mealie-recipes/mealie:nightly
@@ -29,5 +32,5 @@ services:
       - traefik.http.services.mealie.loadbalancer.server.port=9000
 
 volumes:
-  # calibre_config:
+  calibre_config:
   mealie_data:
