@@ -46,6 +46,19 @@ services:
       - traefik.http.routers.sabnzbd.entrypoints=https
       - traefik.http.services.sabnzbd.loadbalancer.server.port=8080
 
+  prowlarr:
+    image: lscr.io/linuxserver/prowlarr:latest
+    container_name: prowlarr
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - prowlarr_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prowlarr.entrypoints=https
+      - traefik.http.routers.prowlarr.rule=Host(`prowlarr.${DOMAIN}`)
+      - traefik.http.services.prowlarr.loadbalancer.server.port=9696
+
   radarr:
     image: lscr.io/linuxserver/radarr:latest
     container_name: radarr
@@ -111,6 +124,7 @@ services:
 volumes:
   plex_config:
   sabnzbd_config:
+  prowlarr_config:
   radarr_config:
   sonarr_config:
   lidarr_config:
