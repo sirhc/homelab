@@ -24,7 +24,6 @@ services:
       - /dev/dri:/dev/dri
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /media:/media
       - /dev/shm:/transcode
       - plex_config:/config
     labels:

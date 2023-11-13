@@ -10,7 +10,6 @@ services:
       - DOCKER_MODS=linuxserver/mods:universal-calibre
     volumes:
       - /etc/localtime:/etc/localtime:ro
-      - /media/Books:/books
       - calibre_config:/config
     labels:
       - traefik.enable=true
