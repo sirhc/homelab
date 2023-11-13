@@ -21,6 +21,10 @@ update:
 restart-plex:
 	$(COMPOSE) restart plex
 
+# Stop containers accessing /media.
+stop-media:
+	$(COMPOSE) stop calibre homepage plex lidarr radarr readarr sabnzbd sonarr
+
 .PHONY: config
 config:
 	$(COMPOSE) config
