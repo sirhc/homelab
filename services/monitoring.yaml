@@ -4,7 +4,6 @@ version: "3.8"
 services:
   loki:
     image: grafana/loki:2.8.4
-    container_name: loki
     restart: unless-stopped
     volumes:
       - loki_data:/loki
@@ -12,7 +11,6 @@ services:
 
   promtail:
     image: grafana/promtail:2.8.4
-    container_name: promtail
     restart: unless-stopped
     command:
       - -config.file=/etc/promtail/config.yaml
@@ -26,7 +24,6 @@ services:
 
   prometheus:
     image: prom/prometheus:latest
-    container_name: prometheus
     restart: unless-stopped
     command:
       - --config.file=/etc/prometheus/prometheus.yaml
@@ -45,7 +42,6 @@ services:
 
   prometheus-exporter-openweather:
     image: billykwooten/openweather-exporter:latest
-    container_name: prometheus-exporter-openweather
     restart: unless-stopped
     environment:
       - OW_CITY=${OPENWEATHER_CITY}
@@ -55,7 +51,6 @@ services:
 
   prometheus-exporter-solaredge:
     image: chrisjohnson00/solaredge-prometheus-exporter:latest
-    container_name: prometheus-exporter-solaredge
     restart: unless-stopped
     environment:
       - API_KEY=${SOLAREDGE_API_KEY}
@@ -64,7 +59,6 @@ services:
 
   grafana:
     image: grafana/grafana:10.1.1
-    container_name: grafana
     restart: unless-stopped
     environment:
       - GF_AUTH_ANONYMOUS_ENABLED=true
@@ -82,7 +76,6 @@ services:
 
   glances:
     image: nicolargo/glances:latest-full
-    container_name: glances
     restart: unless-stopped
     environment:
       - GLANCES_OPT=-w

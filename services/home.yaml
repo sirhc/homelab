@@ -4,7 +4,6 @@ version: "3.8"
 services:
   homepage:
     image: ghcr.io/benphelps/homepage:latest
-    container_name: homepage
     restart: unless-stopped
     volumes:
       - /etc/localtime:/etc/localtime:ro
@@ -18,7 +17,6 @@ services:
 
   home-assistant:
     image: ghcr.io/home-assistant/home-assistant:latest
-    container_name: home-assistant
     restart: unless-stopped
     networks:
       - default
@@ -36,7 +34,6 @@ services:
 
   homebridge:
     image: homebridge/homebridge:latest
-    container_name: homebridge
     restart: unless-stopped
     ports:
       - 51690:51690
@@ -55,7 +52,6 @@ services:
 
   zwave-js-ui:
     image: zwavejs/zwave-js-ui:latest
-    container_name: zwave-js-ui
     restart: unless-stopped
     environment:
       - SESSION_SECRET=${ZWAVE_SESSION_SECRET}

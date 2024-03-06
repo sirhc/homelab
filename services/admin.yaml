@@ -4,7 +4,6 @@ version: "3.8"
 services:
   traefik:
     image: traefik:2.10
-    container_name: traefik
     restart: unless-stopped
     command:
       - --global.checkNewVersion=false
@@ -50,7 +49,6 @@ services:
 
   whoami:
     image: traefik/whoami:latest
-    container_name: whoami
     restart: unless-stopped
     labels:
       - traefik.enable=true
@@ -59,7 +57,6 @@ services:
 
   pihole:
     image: pihole/pihole:latest
-    container_name: pihole
     restart: unless-stopped
     environment:
       - WEBPASSWORD=${PIHOLE_WEBPASSWORD}
