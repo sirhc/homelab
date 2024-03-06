@@ -68,6 +68,11 @@ services:
       - traefik.enable=true
       - traefik.http.routers.pihole.entrypoints=https
       - traefik.http.routers.pihole.rule=Host(`dns.${DOMAIN}`)
+      - traefik.http.routers.pihole.middlewares=pihole-admin
+      - traefik.http.middlewares.pihole-admin.redirectregex.permanent=true
+      - traefik.http.middlewares.pihole-admin.redirectregex.regex=^https://dns.${DOMAIN}/$$
+      - traefik.http.middlewares.pihole-admin.redirectregex.replacement=https://dns.${DOMAIN}/admin
+      - traefik.http.middlewares.pihole-admin.addprefix.prefix=/admin
       - traefik.http.services.pihole.loadbalancer.server.port=80
     dns: []
 
