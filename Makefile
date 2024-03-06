@@ -35,8 +35,8 @@ services:
 
 # Quickly start or restart a service with `make <service>`.
 %:
-	if [[ -n "$$( docker ps --no-trunc --filter name=^$@$$ --quiet )" ]]; then
-	  $(COMPOSE) restart $@
-	else
-	  $(COMPOSE) up --detach $@
+	if [[ -n "$$( docker ps --no-trunc --filter name=^$@$$ --quiet )" ]]; then \
+	  $(COMPOSE) restart $@; \
+	else \
+	  $(COMPOSE) up --detach $@; \
 	fi
