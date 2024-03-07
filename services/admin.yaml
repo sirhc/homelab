@@ -71,7 +71,23 @@ services:
       - traefik.http.services.pihole.loadbalancer.server.port=80
     dns: []
 
+  authelia:
+    image: authelia/authelia:latest
+    container_name: authelia
+    restart: unless-stopped
+    volumes:
+      - authelia_config:/config
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.authelia.entrypoints=https
+      - traefik.http.routers.authelia.rule=Host(`authelia.${DOMAIN}`)
+      # - traefik.http.middlewares.authelia.forwardauth.address=http://authelia:9091/api/authz/forward-auth?authelia-url=https://authelia.${DOMAIN}
+      # - traefik.http.middlewares.authelia.forwardauth.authResponseHeaders=Remote-User,Remote-Groups,Remote-Name,Remote-Email
+      # - traefik.http.middlewares.authelia.forwardauth.trustForwardHeader=true
+
 volumes:
   traefik_acme:
   pihole_conf:
   pihole_dnsmasq:
+  authelia_config:
