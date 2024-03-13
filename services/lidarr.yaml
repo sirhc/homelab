@@ -1,0 +1,18 @@
+---
+version: "3.8"
+
+services:
+  lidarr:
+    image: lscr.io/linuxserver/lidarr:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - lidarr_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.lidarr.entrypoints=https
+      - traefik.http.routers.lidarr.rule=Host(`lidarr.${DOMAIN}`)
+      - traefik.http.services.lidarr.loadbalancer.server.port=8686
+
+volumes:
+  lidarr_config:

@@ -2,8 +2,27 @@
 version: "3.8"
 
 include:
-  - services/admin.yaml
-  - services/apps.yaml
-  - services/home.yaml
-  - services/media.yaml
-  - services/monitoring.yaml
+  - services/calibre.yaml
+  - services/glances.yaml
+  - services/grafana.yaml
+  - services/home-assistant.yaml
+  - services/homebridge.yaml
+  - services/homepage.yaml
+  - services/isponsorblocktv.yaml
+  - services/lidarr.yaml
+  - services/loki.yaml
+  - services/mealie.yaml
+  - services/pihole.yaml
+  - services/plex.yaml
+  - services/prometheus-exporter-openweather.yaml
+  - services/prometheus-exporter-solaredge.yaml
+  - services/prometheus.yaml
+  - services/promtail.yaml
+  - services/prowlarr.yaml
+  - services/radarr.yaml
+  - services/readarr.yaml
+  - services/sabnzbd.yaml
+  - services/sonarr.yaml
+  - services/traefik.yaml
+  - services/whoami.yaml
+  - services/zwave-js-ui.yaml

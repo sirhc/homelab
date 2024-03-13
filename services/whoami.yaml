@@ -1,0 +1,11 @@
+---
+version: "3.8"
+
+services:
+  whoami:
+    image: traefik/whoami:latest
+    restart: unless-stopped
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.whoami.entrypoints=https
+      - traefik.http.routers.whoami.rule=Host(`whoami.${DOMAIN}`)

@@ -1,0 +1,16 @@
+---
+version: "3.8"
+
+services:
+  promtail:
+    image: grafana/promtail:2.8.4
+    restart: unless-stopped
+    command:
+      - -config.file=/etc/promtail/config.yaml
+    volumes:
+      - ./config/promtail.yaml:/etc/promtail/config.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+      - /var/lib/docker/containers:/var/lib/docker/containers:ro
+      - /var/run/docker.sock:/var/run/docker.sock:ro
+    depends_on:
+      - loki

@@ -1,0 +1,24 @@
+---
+version: "3.8"
+
+services:
+  prometheus:
+    image: prom/prometheus:latest
+    restart: unless-stopped
+    command:
+      - --config.file=/etc/prometheus/prometheus.yaml
+      - --storage.tsdb.path=/prometheus
+      - --web.console.libraries=/usr/share/prometheus/console_libraries
+      - --web.console.templates=/usr/share/prometheus/consoles
+    volumes:
+      - prometheus_data:/prometheus
+      - ./config/prometheus.yaml:/etc/prometheus/prometheus.yaml:ro
+      - /etc/localtime:/etc/localtime:ro
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.prometheus.entrypoints=https
+      - traefik.http.routers.prometheus.rule=Host(`prometheus.${DOMAIN}`)
+      - traefik.http.services.prometheus.loadbalancer.server.port=9090
+
+volumes:
+  prometheus_data:

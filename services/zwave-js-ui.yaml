@@ -1,0 +1,22 @@
+---
+version: "3.8"
+
+services:
+  zwave-js-ui:
+    image: zwavejs/zwave-js-ui:latest
+    restart: unless-stopped
+    environment:
+      - SESSION_SECRET=${ZWAVE_SESSION_SECRET}
+      - ZWAVEJS_EXTERNAL_CONFIG=/usr/src/app/store/.config-db
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - zwave-js-ui_store:/usr/src/app/store
+    devices: []
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.zwave-js-ui.entrypoints=https
+      - traefik.http.routers.zwave-js-ui.rule=Host(`zwave.${DOMAIN}`)
+      - traefik.http.services.zwave-js-ui.loadbalancer.server.port=8091
+
+volumes:
+  zwave-js-ui_store:

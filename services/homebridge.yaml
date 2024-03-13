@@ -1,0 +1,34 @@
+---
+version: "3.8"
+
+services:
+  homebridge:
+    image: homebridge/homebridge:latest
+    restart: unless-stopped
+    ports:
+      - 51690:51690
+    networks:
+      - default
+      - homekit
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - homebridge_config:/homebridge
+    labels:
+      - traefik.enable=true
+      - traefik.docker.network=${COMPOSE_PROJECT_NAME}_default
+      - traefik.http.routers.homebridge.entrypoints=https
+      - traefik.http.routers.homebridge.rule=Host(`homebridge.${DOMAIN}`)
+      - traefik.http.services.homebridge.loadbalancer.server.port=8581
+
+networks:
+  homekit:
+    driver: macvlan
+    driver_opts:
+      parent: enp0s25
+    ipam:
+      config:
+        - subnet: 192.168.86.0/24
+          gateway: 192.168.86.1
+
+volumes:
+  homebridge_config:

@@ -1,0 +1,17 @@
+---
+version: "3.8"
+
+# To perform initial setup:
+#
+#   > docker compose run isponsorblocktv --setup-cli
+
+services:
+  isponsorblocktv:
+    image: ghcr.io/dmunozv04/isponsorblocktv
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - isponsorblocktv_data:/app/data
+
+volumes:
+  isponsorblocktv_data:

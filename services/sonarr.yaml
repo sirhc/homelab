@@ -1,0 +1,18 @@
+---
+version: "3.8"
+
+services:
+  sonarr:
+    image: lscr.io/linuxserver/sonarr:latest
+    restart: unless-stopped
+    volumes:
+      - /etc/localtime:/etc/localtime:ro
+      - sonarr_config:/config
+    labels:
+      - traefik.enable=true
+      - traefik.http.routers.sonarr.entrypoints=https
+      - traefik.http.routers.sonarr.rule=Host(`sonarr.${DOMAIN}`)
+      - traefik.http.services.sonarr.loadbalancer.server.port=8989
+
+volumes:
+  sonarr_config:

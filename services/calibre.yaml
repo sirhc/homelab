@@ -16,18 +16,5 @@ services:
       - traefik.http.routers.calibre.rule=Host(`calibre.${DOMAIN}`)
       - traefik.http.services.calibre.loadbalancer.server.port=8083
 
-  mealie:
-    image: ghcr.io/mealie-recipes/mealie:nightly
-    restart: unless-stopped
-    volumes:
-      - /etc/localtime:/etc/localtime:ro
-      - mealie_data:/app/data
-    labels:
-      - traefik.enable=true
-      - traefik.http.routers.mealie.entrypoints=https
-      - traefik.http.routers.mealie.rule=Host(`mealie.${DOMAIN}`)
-      - traefik.http.services.mealie.loadbalancer.server.port=9000
-
 volumes:
   calibre_config:
-  mealie_data:
