@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   lidarr:
     image: lscr.io/linuxserver/lidarr:latest

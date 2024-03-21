@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   zwave-js-ui:
     image: zwavejs/zwave-js-ui:latest

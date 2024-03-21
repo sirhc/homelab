@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 include:
   - services/calibre.yaml
   - services/glances.yaml

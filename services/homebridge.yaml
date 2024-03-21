@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   homebridge:
     image: homebridge/homebridge:latest

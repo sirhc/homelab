@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   prometheus-exporter-openweather:
     image: billykwooten/openweather-exporter:latest

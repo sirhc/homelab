@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 # To perform initial setup:
 #
 #   > docker compose run isponsorblocktv --setup-cli

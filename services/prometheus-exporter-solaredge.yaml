@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   prometheus-exporter-solaredge:
     image: chrisjohnson00/solaredge-prometheus-exporter:latest

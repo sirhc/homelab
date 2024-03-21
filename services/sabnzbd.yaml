@@ -1,6 +1,4 @@
 ---
-version: "3.8"
-
 services:
   sabnzbd:
     image: lscr.io/linuxserver/sabnzbd:latest
