@@ -1,5 +1,6 @@
 SHELL   = zsh
-COMPOSE = docker compose
+DOCKER  = docker
+COMPOSE = $(DOCKER) compose
 
 all:
 
@@ -14,9 +15,8 @@ ps:
 
 update:
 	$(COMPOSE) pull
-	@read -r 'REPLY?Restart services? [y/N] '; [[ $${REPLY:l} =~ '^y(es)?' ]]
-	$(MAKE) start
-	docker image prune
+	$(COMPOSE) up --detach
+	$(DOCKER) image prune --force
 
 restart-plex:
 	$(COMPOSE) restart plex
