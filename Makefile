@@ -20,6 +20,7 @@ update:
 
 restart-plex:
 	$(COMPOSE) restart plex
+	$(COMPOSE) logs -f plex
 
 # Stop containers accessing /media.
 stop-media:
