@@ -7,6 +7,7 @@ include:
   - services/homebridge.yaml
   - services/homepage.yaml
   - services/isponsorblocktv.yaml
+  - services/jellyfin.yaml
   - services/lidarr.yaml
   - services/loki.yaml
   - services/mealie.yaml
