@@ -22,11 +22,11 @@ networks:
   homekit:
     driver: macvlan
     driver_opts:
-      parent: enp0s25
+      parent: ${HOMEKIT_NETWORK_PARENT}
     ipam:
       config:
-        - subnet: 192.168.86.0/24
-          gateway: 192.168.86.1
+        - subnet: ${HOMEKIT_NETWORK_SUBNET}
+          gateway: ${HOMEKIT_NETWORK_GATEWAY}
 
 volumes:
   homebridge_config:
