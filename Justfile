@@ -30,3 +30,7 @@ prune:
 # Stop containers that access the /media volume (for NAS maintenance)
 stop-media:
   docker compose stop $( yq e '.services | to_entries | map(select(.value.volumes)) | map(.key) | .[]' compose.override.yaml )
+
+# Install the Jellyfin app on a Samsung TV
+install-jellyfin ip:
+  docker run --rm --ulimit nofile=1024:65536 ghcr.io/georift/install-jellyfin-tizen {{ ip }}
