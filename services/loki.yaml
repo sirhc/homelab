@@ -1,7 +1,7 @@
 ---
 services:
   loki:
-    image: grafana/loki:2.8.4
+    image: grafana/loki:latest
     restart: unless-stopped
     volumes:
       - loki_data:/loki

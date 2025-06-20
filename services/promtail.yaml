@@ -1,7 +1,7 @@
 ---
 services:
   promtail:
-    image: grafana/promtail:2.8.4
+    image: grafana/promtail:latest
     restart: unless-stopped
     command:
       - -config.file=/etc/promtail/config.yaml
