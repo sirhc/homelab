@@ -19,7 +19,6 @@ include:
   - services/promtail.yaml
   - services/prowlarr.yaml
   - services/radarr.yaml
-  - services/readarr.yaml
   - services/sabnzbd.yaml
   - services/sonarr.yaml
   - services/traefik.yaml
