@@ -24,6 +24,10 @@ update: && prune
 prune:
   docker image prune --force
 
+# Run a shell in the given container
+shell service shell="bash":
+  docker compose exec -it {{ service }} {{ shell }}
+
 # This stops any containers with a volume override, since the only reason for the override is to include the mount to
 # the media volume.
 #
