@@ -1,0 +1,22 @@
+[Unit]
+Description=Lidarr
+Documentation=https://lidarr.audio/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+HostName=%N
+
+Image=lscr.io/linuxserver/lidarr:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8686
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media:/data:rw
+Volume=%E/%N:/config:Z

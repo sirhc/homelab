@@ -1,9 +1,0 @@
----
-services:
-  prometheus-exporter-solaredge:
-    image: chrisjohnson00/solaredge-prometheus-exporter:latest
-    restart: unless-stopped
-    environment:
-      - API_KEY=${SOLAREDGE_API_KEY}
-    volumes:
-      - /etc/localtime:/etc/localtime:ro

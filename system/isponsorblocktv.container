@@ -1,0 +1,17 @@
+[Unit]
+Description=iSponsorBlockTV
+Documentation=https://github.com/dmunozv04/iSponsorBlockTV
+
+[Container]
+
+HostName=%N
+
+Image=ghcr.io/dmunozv04/isponsorblocktv
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=isponsorblocktv.volume:/app/data:Z

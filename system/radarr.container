@@ -1,0 +1,22 @@
+[Unit]
+Description=Radarr
+Documentation=https://radarr.video/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+HostName=%N
+
+Image=lscr.io/linuxserver/radarr:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=7878
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media:/data:rw
+Volume=%E/%N:/config:Z

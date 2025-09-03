@@ -1,0 +1,26 @@
+[Unit]
+Description=Z-Wave JS UI
+Documentation=https://zwave-js.github.io/zwave-js-ui/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
+
+# Environment=SESSION_SECRET=
+EnvironmentFile=%N.env
+
+HostName=%N
+
+Image=docker.io/zwavejs/zwave-js-ui:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8091
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=zwave-js-ui.volume:/usr/src/app/store

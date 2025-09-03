@@ -1,0 +1,41 @@
+[Unit]
+Description=Plex
+Documentation=https://github.com/plexinc/pms-docker
+
+[Service]
+ExecStartPre=mkdir -p %C/%N
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+AddDevice=/dev/dri/card0:/dev/dri/card0
+AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
+
+# Environment=ADVERTISE_IP=
+# Environment=ALLOWED_NETWORKS=
+# Environment=PLEX_CLAIM=
+
+HostName=%N
+
+Image=docker.io/plexinc/pms-docker:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=32400
+
+Network=homelab.network
+
+; PublishPort=1900:1900/udp
+; PublishPort=3005:3005/tcp
+; PublishPort=8324:8324/tcp
+; PublishPort=32400:32400/tcp
+; PublishPort=32410:32410/udp
+; PublishPort=32412:32412/udp
+; PublishPort=32413:32413/udp
+; PublishPort=32414:32414/udp
+; PublishPort=32469:32469/tcp
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media:/media
+Volume=%C/%N:/transcode:Z
+Volume=%E/%N:/config:Z

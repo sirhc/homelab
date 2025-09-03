@@ -1,0 +1,32 @@
+[Unit]
+Description=Glances
+Documentation=https://glances.readthedocs.io/en/latest/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+Environment=GLANCES_OPT=-w
+
+HostName=%N
+
+Image=docker.io/nicolargo/glances:latest-full
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=61208
+
+Network=homelab.network
+
+# Needed to read /var/run/socker.sock.
+# SecurityLabelType=container_runtime_t
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/home:/mnt/home:ro
+Volume=/media:/mnt/media:ro
+Volume=%E/%N:/glances/conf:Z
+# This fails with `Exception: Can't create Image from [...]` ¯\_(ツ)_/¯
+# Volume=%t/podman/podman.sock:%t/podman/podman.sock:ro,z
+
+# At the moment, there's no mechanism for `podman run --pid=host`.

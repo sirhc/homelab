@@ -1,0 +1,26 @@
+[Unit]
+Description=Home Assistant
+Documentation=https://www.home-assistant.io/docs/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
+AddDevice=${ZIGBEE_DEVICE_ID}:/dev/zigbee
+
+EnvironmentFile=%N.env
+
+HostName=%N
+
+Image=ghcr.io/home-assistant/home-assistant:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`home.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8123
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%E/%N:/config:Z

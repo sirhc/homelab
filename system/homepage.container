@@ -1,0 +1,31 @@
+[Unit]
+Description=Homepage
+Documentation=https://gethomepage.dev/configs/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
+
+[Container]
+
+HostName=%N
+
+Environment=HOMEPAGE_ALLOWED_HOSTS=${DOMAIN}
+
+Image=ghcr.io/gethomepage/homepage:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=3000
+
+Network=homelab.network
+
+# Needed to read /var/run/socker.sock.
+SecurityLabelType=container_runtime_t
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/home:/mnt/home:ro
+Volume=/media:/mnt/media:ro
+Volume=%E/%N:/app/config:Z
+Volume=%L/%N:/app/config/logs:Z
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z

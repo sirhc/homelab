@@ -1,0 +1,24 @@
+[Unit]
+Description=Calibre
+Documentation=https://github.com/janeczku/calibre-web
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+Environment=DOCKER_MODS=linuxserver/mods:universal-calibre
+
+HostName=%N
+
+Image=lscr.io/linuxserver/calibre-web:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8083
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media/Books:/books
+Volume=%E/%N:/config:Z
