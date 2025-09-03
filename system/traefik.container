@@ -28,7 +28,7 @@ Network=homelab.network
 PublishPort=80:80
 PublishPort=443:443
 
-# Needed to read /var/run/socker.sock.
+# Needed to read /var/run/docker.sock.
 SecurityLabelType=container_runtime_t
 
 Volume=/etc/localtime:/etc/localtime:ro
