@@ -8,8 +8,6 @@ ExecStartPre=mkdir -p %C/%N/transcodes
 ExecStartPre=mkdir -p %E/%N
 ExecStartPre=mkdir -p %L/%N
 
-SuccessExitStatus=0 143
-
 [Container]
 
 AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
