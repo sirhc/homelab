@@ -10,8 +10,6 @@ ExecStartPre=mkdir -p %E/%N
 AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
 AddDevice=${ZIGBEE_DEVICE_ID}:/dev/zigbee
 
-EnvironmentFile=%N.env
-
 HostName=%N
 
 Image=ghcr.io/home-assistant/home-assistant:latest

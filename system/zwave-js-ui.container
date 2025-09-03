@@ -10,7 +10,7 @@ ExecStartPre=mkdir -p %E/%N
 AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
 
 # Environment=SESSION_SECRET=
-EnvironmentFile=%N.env
+EnvironmentFile=./%N.env
 
 HostName=%N
 

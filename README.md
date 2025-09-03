@@ -42,6 +42,9 @@ directory. In my environment, I use `environment/homelab.conf` (shown here defin
 
 ```env
 DOMAIN=localhost
+
+ZIGBEE_DEVICE_ID=/dev/null
+ZWAVE_DEVICE_ID=/dev/null
 ```
 
 Files in the `environment` directory are symlinked to `~/.config/environment.d` by the `install-environment` Justfile
@@ -50,6 +53,10 @@ target.
 For environment variables specific to a container (e.g. API keys), these are expected to be found in files named
 `system/<service>.env`. The individual `<service>.container` files define its expected file with the `EnvironmentFile=`
 declaration and document the expected variables, either through explicit use or a comment.
+
+Note, `environment/*.conf` files make their environment available to systemd and can be used in directives that end up
+in the `.service` file after generation. The variables defined in `<service>.env` files are only available within the
+container once it is running.
 
 All environment files ( `environment/*.conf` and `system/*.env`) are ignored by Git.
 

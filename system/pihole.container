@@ -13,7 +13,7 @@ ExecStartPre=mkdir -p %E/%N/dnsmasq.d
 
 # Environment=FTLCONF_dns_upstreams=
 # Environment=FTLCONF_webserver_api_password=
-EnvironmentFile=%N.env
+EnvironmentFile=./%N.env
 
 HostName=%N
 

@@ -15,7 +15,7 @@ HostName=%N
 
 # Environment=CLOUDFLARE_API_KEY=
 # Environment=CLOUDFLARE_EMAIL=
-EnvironmentFile=%N.env
+EnvironmentFile=./%N.env
 
 Image=docker.io/library/traefik:latest
 
