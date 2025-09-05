@@ -6,7 +6,7 @@ Documentation=https://github.com/billykwooten/openweather-exporter
 # Environment=OW_CITY=
 # Environment=OW_APIKEY=
 EnvironmentFile=./%N.env
+HostName=%N
 Image=docker.io/billykwooten/openweather-exporter:latest
 Network=homelab.network
-Pod=prometheus.pod
 Volume=/etc/localtime:/etc/localtime:ro

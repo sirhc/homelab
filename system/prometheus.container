@@ -9,6 +9,8 @@ ExecStartPre=mkdir -p %E/%N
 
 Exec=--config.file=/etc/prometheus/prometheus.yml --storage.tsdb.path=/prometheus --web.listen-address=:9090
 
+HostName=%N
+
 Image=docker.io/prom/prometheus:latest
 
 Label=traefik.enable=true
@@ -16,8 +18,6 @@ Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
 Label=traefik.http.services.%N.loadbalancer.server.port=9090
 
 Network=homelab.network
-
-Pod=prometheus.pod
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/etc/prometheus:Z

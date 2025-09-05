@@ -1,7 +1,0 @@
-[Unit]
-Description=Prometheus Stack
-After=network-online.target
-
-[Pod]
-PodName=prometheus
-Network=homelab.network
