@@ -1,7 +1,7 @@
 config_dir      := env('XDG_CONFIG_HOME', x"~/.config")
 container_dir   := config_dir / 'containers/systemd'
 environment_dir := config_dir / 'environment.d'
-user_dir        := config_dir / 'systemd/user/service.d'
+user_dir        := config_dir / 'systemd/user'
 
 systemctl  := 'systemctl --user'
 journalctl := 'journalctl --user'
@@ -11,8 +11,8 @@ _all:
 @list-services:
   grep '^Description=' system/*.container | sed -e 's,system/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
 
-# Symlink service files, environment files, and drop-in files to ~/.config
-install: install-services install-environment install-dropins
+# Symlink service files, environment files, and user files to ~/.config
+install: install-services install-environment install-user
 
 install-services:
   mkdir -p '{{ container_dir }}'
@@ -22,12 +22,12 @@ install-environment:
   mkdir -p '{{ environment_dir }}'
   stow --target='{{ environment_dir }}' --stow --verbose environment
 
-install-dropins:
+install-user:
   mkdir -p '{{ user_dir }}'
   stow --target='{{ user_dir }}' --stow --verbose user
 
-# Remove symlinks for service files, environment files, and drop-in files
-uninstall: uninstall-services uninstall-environment uninstall-dropins
+# Remove symlinks for service files, environment files, and user files
+uninstall: uninstall-services uninstall-environment uninstall-user
 
 uninstall-services:
   stow --target='{{ container_dir }}' --delete --verbose system
@@ -35,7 +35,7 @@ uninstall-services:
 uninstall-environment:
   stow --target='{{ environment_dir }}' --delete --verbose environment
 
-uninstall-dropins:
+uninstall-user:
   stow --target='{{ user_dir }}' --delete --verbose user
 
 reload:
@@ -59,8 +59,8 @@ restart service:
 status service:
   {{ systemctl }} status {{ service }}
 
-logs service:
-  {{ journalctl }} --unit {{ service }}
+logs service *extra:
+  {{ journalctl }} --unit {{ service }} {{ extra }}
 
 cat service:
   {{ systemctl }} cat {{ service }}
