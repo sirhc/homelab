@@ -2,6 +2,9 @@
 Description=Homepage
 Documentation=https://gethomepage.dev/configs/
 
+After=podman.socket
+Requires=podman.socket
+
 [Service]
 ExecStartPre=mkdir -p %E/%N
 ExecStartPre=mkdir -p %L/%N

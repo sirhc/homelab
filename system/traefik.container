@@ -2,6 +2,9 @@
 Description=Traefik
 Documentation=https://doc.traefik.io/traefik/
 
+After=podman.socket
+Requires=podman.socket
+
 [Service]
 ExecStartPre=mkdir -p %E/%N
 ExecStartPre=mkdir -p %E/%N/certs
