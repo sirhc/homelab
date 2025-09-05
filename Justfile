@@ -79,6 +79,12 @@ shell service shell='/bin/sh':
 debug:
   podman run -it --rm --network homelab fedora bash
 
+# Remove dangling symlinks
+clean:
+  symlinks -d '{{ container_dir }}'
+  symlinks -d '{{ environment_dir }}'
+  symlinks -d '{{ user_dir }}'
+
 # Create certificates for testing services locally (e.g., localhost)
 mkcert domain:
   mkdir -p ~/.config/traefik/certs
