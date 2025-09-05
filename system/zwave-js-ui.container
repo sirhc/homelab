@@ -4,6 +4,7 @@ Documentation=https://zwave-js.github.io/zwave-js-ui/
 
 [Service]
 ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
 
 [Container]
 
@@ -24,3 +25,4 @@ Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/usr/src/app/store:Z
+Volume=%L/%N:/usr/src/app/store/logs:Z
