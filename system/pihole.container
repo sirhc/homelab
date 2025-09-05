@@ -24,7 +24,6 @@ Network=homelab.network
 
 PublishPort=53:53/tcp
 PublishPort=53:53/udp
-PublishPort=67:67/udp
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/etc/pihole:Z
