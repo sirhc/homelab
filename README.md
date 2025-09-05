@@ -30,10 +30,27 @@ Docker, being a daemon running as root, mucked around with the firewall when exp
 rootless (and is more polite), opening ports on the firewall is an exercise left for the reader.
 
 ```
+# Allow Pi-hole
 ❯ sudo firewall-cmd --add-port=53/tcp --permanent
 ❯ sudo firewall-cmd --add-port=53/udp --permanent
+
+# Allow Traefik
 ❯ sudo firewall-cmd --add-port=80/tcp --permanent
 ❯ sudo firewall-cmd --add-port=443/tcp --permanent
+
+# Allow Jellyfin
+❯ sudo firewall-cmd --add-port=8096/tcp --permanent
+
+# Plex uses a bunch of ports (no idea if they're all necessary)
+❯ sudo firewall-cmd --add-port=1900/udp --permanent
+❯ sudo firewall-cmd --add-port=3005/tcp --permanent
+❯ sudo firewall-cmd --add-port=8324/tcp --permanent
+❯ sudo firewall-cmd --add-port=32400/tcp --permanent
+❯ sudo firewall-cmd --add-port=32410/udp --permanent
+❯ sudo firewall-cmd --add-port=32412/udp --permanent
+❯ sudo firewall-cmd --add-port=32413/udp --permanent
+❯ sudo firewall-cmd --add-port=32414/udp --permanent
+❯ sudo firewall-cmd --add-port=32469/tcp --permanent
 ```
 
 Now the Quadlets can be set up.
