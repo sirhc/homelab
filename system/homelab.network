@@ -1,3 +1,4 @@
 [Network]
 NetworkName=homelab
 Driver=bridge
+IPv6=true
