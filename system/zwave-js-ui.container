@@ -23,4 +23,4 @@ Label=traefik.http.services.%N.loadbalancer.server.port=8091
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=zwave-js-ui.volume:/usr/src/app/store
+Volume=%E/%N:/usr/src/app/store:Z
