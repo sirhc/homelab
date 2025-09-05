@@ -90,6 +90,11 @@ mkcert domain:
   mkdir -p ~/.config/traefik/certs
   cd ~/.config/traefik/certs && mkcert '{{ domain }}' '*.{{ domain }}'
 
+# Initialize iSponsorBlockTV
+initialize-isponsorblocktv:
+  mkdir -p '{{ config_dir }}/isponsorblocktv'
+  podman run -it --rm --volume '{{ config_dir }}/isponsorblocktv':/app/data:Z ghcr.io/dmunozv04/isponsorblocktv --setup-cli
+
 # Install the Jellyfin app on a Samsung TV
 install-jellyfin ip:
   podman run --rm --ulimit nofile=1024:65536 ghcr.io/georift/install-jellyfin-tizen {{ ip }}

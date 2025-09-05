@@ -115,6 +115,15 @@ To configure local TLS certificates for use with testing Traefik:
 ❯ just mkcert localhost
 ```
 
+To initialize iSponsorBlockTV, start the service at least once to create the volume. Note the device code by opening the
+YouTube app on the TV and navigating to `Settings > Link with TV code`. Then run,
+
+```
+❯ just initialize-isponsorblocktv
+```
+
+<https://github.com/dmunozv04/iSponsorBlockTV/wiki/Installation>
+
 To install the Jellyfin app on a Samsung TV:
 
 ```

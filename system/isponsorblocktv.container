@@ -2,6 +2,9 @@
 Description=iSponsorBlockTV
 Documentation=https://github.com/dmunozv04/iSponsorBlockTV
 
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
 [Container]
 
 HostName=%N
@@ -14,4 +17,4 @@ Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=isponsorblocktv.volume:/app/data:Z
+Volume=%E/%N:/app/data:Z
