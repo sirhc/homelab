@@ -8,9 +8,6 @@ ExecStartPre=mkdir -p %E/%N/dnsmasq.d
 
 [Container]
 
-; DNS=208.67.222.222
-; DNS=208.67.220.220
-
 # Environment=FTLCONF_dns_upstreams=
 # Environment=FTLCONF_webserver_api_password=
 EnvironmentFile=./%N.env
@@ -25,9 +22,9 @@ Label=traefik.http.services.%N.loadbalancer.server.port=80
 
 Network=homelab.network
 
-; PublishPort=53:53/tcp
-; PublishPort=53:53/udp
-; PublishPort=67:67/udp
+PublishPort=53:53/tcp
+PublishPort=53:53/udp
+PublishPort=67:67/udp
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/etc/pihole:Z
