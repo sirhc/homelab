@@ -92,7 +92,7 @@ mkcert domain:
 
 # Install the Jellyfin app on a Samsung TV
 install-jellyfin ip:
-  docker run --rm --ulimit nofile=1024:65536 ghcr.io/georift/install-jellyfin-tizen {{ ip }}
+  podman run --rm --ulimit nofile=1024:65536 ghcr.io/georift/install-jellyfin-tizen {{ ip }}
 
 # Stop any containers that mount the /media volume (e.g., for NAS maintenance)
 stop-media:

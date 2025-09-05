@@ -121,4 +121,4 @@ To install the Jellyfin app on a Samsung TV:
 ❯ just install-jellyfin <ip-of-tv>
 ```
 
-See <https://github.com/Georift/install-jellyfin-tizen>.
+<https://github.com/Georift/install-jellyfin-tizen>
