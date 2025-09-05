@@ -28,6 +28,8 @@ Label=traefik.http.routers.%N.service=api@internal
 
 Network=homelab.network
 
+Notify=true
+
 PublishPort=80:80
 PublishPort=443:443
 
