@@ -19,14 +19,29 @@ version control or for development purposes. These need to be manually copied to
 
 ## Setup
 
+Since this is rootless Podman, the following commands are needed in order to bind to ports under 1024.
+
 ```
-# These commands are necessary to allow the rootless containers to bind to ports under 1024.
 ❯ sudo sysctl net.ipv4.ip_unprivileged_port_start=53
 ❯ echo net.ipv4.ip_unprivileged_port_start=53 | sudo tee /etc/sysctl.d/user_priv_ports.conf
+```
 
+Docker, being a daemon running as root, mucked around with the firewall when exposing ports. Since Podman is running
+rootless (and is more polite), opening ports on the firewall is an exercise left for the reader.
+
+```
+❯ sudo firewall-cmd --add-port=53/tcp --permanent
+❯ sudo firewall-cmd --add-port=53/udp --permanent
+❯ sudo firewall-cmd --add-port=80/tcp --permanent
+❯ sudo firewall-cmd --add-port=443/tcp --permanent
+```
+
+Now the Quadlets can be set up.
+
+```
 ❯ sudo useradd homelab
 ❯ sudo loginctl enable-linger homelab
-❯ sudo -i -u homelab
+❯ sudo machinectl shell homelab@
 ❯ git clone https://github.com/sirhc/homelab.git
 ❯ cd homelab
 ❯ just install
