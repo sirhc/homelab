@@ -9,7 +9,6 @@ HostName=%N
 Image=docker.io/traefik/whoami:latest
 
 Label=traefik.enable=true
-Label=traefik.http.routers.%N.entrypoints=http
 Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
 
 Network=homelab.network
