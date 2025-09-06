@@ -18,7 +18,7 @@ EnvironmentFile=./%N.env
 
 HostName=%N
 
-Image=docker.io/plexinc/pms-docker:latest
+Image=docker.io/plexinc/pms-docker:plexpass
 
 Label=traefik.enable=true
 Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
