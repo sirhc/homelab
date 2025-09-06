@@ -4,6 +4,7 @@ Documentation=https://sabnzbd.org/wiki/
 
 [Service]
 ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
 
 [Container]
 
@@ -20,3 +21,4 @@ Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=/media:/data:rw
 Volume=%E/%N:/config:Z
+Volume=%L/%N:/config/logs:Z
