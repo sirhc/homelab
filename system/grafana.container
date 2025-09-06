@@ -9,6 +9,7 @@ Wants=loki.service
 # Environment=GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
 # Environment=GF_AUTH_DISABLE_LOGIN_FORM=true
 # Environment=GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+EnvironmentFile=./%N.env
 
 HostName=%N
 
