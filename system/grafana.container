@@ -28,4 +28,4 @@ Label=traefik.http.services.%N.loadbalancer.server.port=3000
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=grafana.volume:/var/lib/grafana
+Volume=grafana.volume:/var/lib/grafana:Z
