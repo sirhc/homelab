@@ -13,15 +13,20 @@ AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
 # Environment=SESSION_SECRET=
 EnvironmentFile=./%N.env
 
+GroupAdd=keep-groups
+
 HostName=%N
 
 Image=docker.io/zwavejs/zwave-js-ui:latest
 
 Label=traefik.enable=true
-Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.routers.%N.rule=Host'(`zwave.${DOMAIN}`)'
 Label=traefik.http.services.%N.loadbalancer.server.port=8091
 
 Network=homelab.network
+
+# Allow access to /dev/zwave.
+SecurityLabelDisable=true
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/usr/src/app/store:Z

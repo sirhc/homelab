@@ -109,6 +109,13 @@ I use [Restic](https://restic.net/) to back up to my [Synology NAS](https://www.
 
 ## Miscellanea
 
+The zwave-js-ui container may not be able to read the `/dev/zwave` device. I solved this by allowing more access to the
+devices:
+
+```
+❯ sudo chmod o+rw /dev/ttyUSB?
+```
+
 To configure local TLS certificates for use with testing Traefik:
 
 ```
