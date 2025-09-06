@@ -4,6 +4,7 @@ Documentation=https://prowlarr.com/
 
 [Service]
 ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
 
 [Container]
 
@@ -19,3 +20,4 @@ Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/config:Z
+Volume=%L/%N:/config/logs:Z
