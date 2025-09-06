@@ -18,4 +18,4 @@ Label=traefik.http.services.%N.loadbalancer.server.port=9000
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=%D/%N:/app/data
+Volume=%D/%N:/app/data:Z
