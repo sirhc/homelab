@@ -56,6 +56,9 @@ stop-all:
 restart service:
   {{ systemctl }} restart {{ service }}
 
+restart-all:
+  ls -1 '{{ container_dir }}'/*.container | xargs -I % basename % .container | xargs -I % {{ systemctl }} restart %.service
+
 status service:
   {{ systemctl }} status {{ service }}
 
