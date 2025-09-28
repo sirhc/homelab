@@ -95,6 +95,14 @@ initialize-isponsorblocktv:
   mkdir -p '{{ config_dir }}/isponsorblocktv'
   podman run -it --rm --volume '{{ config_dir }}/isponsorblocktv':/app/data:Z ghcr.io/dmunozv04/isponsorblocktv --setup-cli
 
+# Enable automatic updates of containers
+enable-auto-update:
+  {{ systemctl }} enable podman-auto-update
+
+# Disable automatic updates of containers
+disable-auto-update:
+  {{ systemctl }} disable podman-auto-update
+
 # Install the Jellyfin app on a Samsung TV
 install-jellyfin ip:
   podman run --rm --ulimit nofile=1024:65536 ghcr.io/georift/install-jellyfin-tizen {{ ip }}

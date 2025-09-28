@@ -107,6 +107,15 @@ and restoring the data from all of my containers so far (knocking on wood).
 I use [Restic](https://restic.net/) to back up to my [Synology NAS](https://www.synology.com/) and
 [Backblaze B2](https://www.backblaze.com/cloud-storage).
 
+## Auto Update
+
+To automatically update the containers, the `homelab.conf` file includes the line `AutoUpdate=registry`. This applies to
+all of the containers run by the user. To enable automatic updates, the `podman-auto-update` timer needs to be enabled.
+
+```
+❯ just enable-auto-update
+```
+
 ## Miscellanea
 
 The zwave-js-ui container may not be able to read the `/dev/zwave` device. I solved this by allowing more access to the
