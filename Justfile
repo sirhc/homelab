@@ -97,11 +97,13 @@ initialize-isponsorblocktv:
 
 # Enable automatic updates of containers
 enable-auto-update:
-  {{ systemctl }} enable podman-auto-update
+  {{ systemctl }} enable podman-auto-update.service
+  {{ systemctl }} enable podman-auto-update.timer
 
 # Disable automatic updates of containers
 disable-auto-update:
-  {{ systemctl }} disable podman-auto-update
+  {{ systemctl }} disable podman-auto-update.service
+  {{ systemctl }} disable podman-auto-update.timer
 
 # Install the Jellyfin app on a Samsung TV
 install-jellyfin ip:
