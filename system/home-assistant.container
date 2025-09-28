@@ -11,6 +11,8 @@ ExecStartPre=mkdir -p %E/%N
 # AddDevice=<zwave-device-id>:/dev/zwave
 # AddDevice=<zigbee-device-id>:/dev/zigbee
 
+GroupAdd=keep-groups
+
 HostName=%N
 
 Image=ghcr.io/home-assistant/home-assistant:latest
@@ -20,6 +22,9 @@ Label=traefik.http.routers.%N.rule=Host'(`home.${DOMAIN}`)'
 Label=traefik.http.services.%N.loadbalancer.server.port=8123
 
 Network=homelab.network
+
+# Allow access to /dev/zigbee and /dev/zwave.
+SecurityLabelDisable=true
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/config:Z
