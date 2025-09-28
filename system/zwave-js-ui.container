@@ -8,7 +8,8 @@ ExecStartPre=mkdir -p %L/%N
 
 [Container]
 
-AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
+# Use zwave-js-ui.container.d/devices.conf to add local devices. For example,
+# AddDevice=<zwave-device-id>:/dev/zwave
 
 # Environment=SESSION_SECRET=
 EnvironmentFile=./%N.env

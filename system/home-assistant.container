@@ -7,8 +7,9 @@ ExecStartPre=mkdir -p %E/%N
 
 [Container]
 
-AddDevice=${ZWAVE_DEVICE_ID}:/dev/zwave
-AddDevice=${ZIGBEE_DEVICE_ID}:/dev/zigbee
+# Use home-assistant.container.d/devices.conf to add local devices. For example,
+# AddDevice=<zwave-device-id>:/dev/zwave
+# AddDevice=<zigbee-device-id>:/dev/zigbee
 
 HostName=%N
 
