@@ -11,9 +11,6 @@ HostName=%N
 
 Image=ghcr.io/dmunozv04/isponsorblocktv
 
-Label=traefik.enable=true
-Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
-
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
