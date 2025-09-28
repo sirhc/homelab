@@ -33,7 +33,7 @@ Notify=true
 PublishPort=80:80
 PublishPort=443:443
 
-# Needed to read /var/run/docker.sock.
+# Needed to read Podman socket (mounted as /var/run/docker.sock).
 SecurityLabelType=container_runtime_t
 
 Volume=/etc/localtime:/etc/localtime:ro
