@@ -12,7 +12,7 @@ ExecStartPre=mkdir -p %L/%N
 
 AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
 
-; Environment=JELLYFIN_PublishedServerUrl=http://example.com
+# Environment=JELLYFIN_PublishedServerUrl=http://example.com
 
 GroupAdd=105
 
