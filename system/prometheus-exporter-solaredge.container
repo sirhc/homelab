@@ -3,7 +3,7 @@ Description=Prometheus Exporter SolarEdge
 Documentation=https://github.com/chrisjohnson00/solaredge-prometheus-exporter
 
 [Container]
-# Environment=SOLAREDGE_API_KEY=
+# Environment=API_KEY=
 EnvironmentFile=./%N.env
 HostName=%N
 Image=docker.io/chrisjohnson00/solaredge-prometheus-exporter:latest
