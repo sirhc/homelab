@@ -1,2 +1,3 @@
 environment/*.conf
+system/*.container.d/
 system/*.env
