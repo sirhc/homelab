@@ -27,6 +27,8 @@ Label=traefik.http.services.%N.loadbalancer.server.port=8096
 Network=homelab.network
 
 PublishPort=8096:8096
+PublishPort=8920:8920
+PublishPort=7359:7359/udp
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=/media:/media:ro
