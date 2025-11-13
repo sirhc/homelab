@@ -1,0 +1,31 @@
+[Unit]
+Description=Grafana
+Documentation=https://grafana.com/docs/grafana/latest/
+Wants=loki.service
+
+[Container]
+
+# Environment=GF_AUTH_ANONYMOUS_ENABLED=true
+# Environment=GF_AUTH_ANONYMOUS_ORG_ROLE=Admin
+# Environment=GF_AUTH_DISABLE_LOGIN_FORM=true
+# Environment=GF_INSTALL_PLUGINS=yesoreyeram-infinity-datasource
+EnvironmentFile=./%N.env
+
+HostName=%N
+
+Image=docker.io/grafana/grafana:latest
+
+Label=homepage.group=Monitoring
+Label=homepage.name=Grafana
+Label=homepage.icon=grafana.png
+Label=homepage.href=http://%N.${DOMAIN}/
+Label=homepage.description="Graph All The Things!"
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=3000
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=grafana.volume:/var/lib/grafana:Z

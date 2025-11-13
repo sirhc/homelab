@@ -1,0 +1,14 @@
+[Unit]
+Description=Who Am I
+Documentation=https://github.com/traefik/whoami
+
+[Container]
+
+HostName=%N
+
+Image=docker.io/traefik/whoami:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+
+Network=homelab.network

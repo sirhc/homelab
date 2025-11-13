@@ -1,0 +1,17 @@
+[Unit]
+Description=iSponsorBlockTV
+Documentation=https://github.com/dmunozv04/iSponsorBlockTV
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+
+[Container]
+
+HostName=%N
+
+Image=ghcr.io/dmunozv04/isponsorblocktv
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%E/%N:/app/data:Z

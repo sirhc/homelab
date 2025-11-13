@@ -1,0 +1,44 @@
+[Unit]
+Description=Traefik
+Documentation=https://doc.traefik.io/traefik/
+
+After=podman.socket
+Requires=podman.socket
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %E/%N/certs
+ExecStartPre=mkdir -p %E/%N/rules
+ExecStartPre=touch %E/%N/acme.json
+ExecStartPre=chmod 0600 %E/%N/acme.json
+
+[Container]
+
+HostName=%N
+
+# Environment=CLOUDFLARE_API_KEY=
+# Environment=CLOUDFLARE_EMAIL=
+EnvironmentFile=./%N.env
+
+Image=docker.io/library/traefik:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.routers.%N.service=api@internal
+
+Network=homelab.network
+
+Notify=true
+
+PublishPort=80:80
+PublishPort=443:443
+
+# Needed to read Podman socket (mounted as /var/run/docker.sock).
+SecurityLabelType=container_runtime_t
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%E/%N/acme.json:/etc/traefik/acme.json:Z
+Volume=%E/%N/traefik.yaml:/etc/traefik/traefik.yaml:ro,Z
+Volume=%E/%N/certs:/etc/traefik/certs:ro,Z
+Volume=%E/%N/rules:/etc/traefik/rules:ro,Z
+Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z

@@ -1,4 +1,3 @@
-*.pem
-.env
-compose.override.yaml
-compose.override/
+environment/*.conf
+system/*.container.d/
+system/*.env

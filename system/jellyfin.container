@@ -1,0 +1,38 @@
+[Unit]
+Description=Jellyfin
+Documentation=https://jellyfin.org/docs/
+
+[Service]
+ExecStartPre=mkdir -p %C/%N/cache
+ExecStartPre=mkdir -p %C/%N/transcodes
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
+
+[Container]
+
+AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
+
+# Environment=JELLYFIN_PublishedServerUrl=http://example.com
+
+GroupAdd=105
+
+HostName=%N
+
+Image=ghcr.io/jellyfin/jellyfin
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8096
+
+Network=homelab.network
+
+PublishPort=8096:8096
+PublishPort=8920:8920
+PublishPort=7359:7359/udp
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media:/media:ro
+Volume=%C/%N/cache:/cache:Z
+Volume=%C/%N/transcodes:/config/transcodes/:Z
+Volume=%E/%N:/config:Z
+Volume=%L/%N:/config/log/:Z

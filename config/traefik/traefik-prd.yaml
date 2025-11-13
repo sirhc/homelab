@@ -1,0 +1,44 @@
+---
+api:
+  dashboard: true
+  insecure: true
+
+certificatesresolvers:
+  letsencrypt:
+    acme:
+      # caserver: https://acme-staging-v02.api.letsencrypt.org/directory
+      dnschallenge:
+        provider: cloudflare
+        resolvers: 1.1.1.1:53,1.0.0.1:53
+      email: {{ email }}
+      storage: /etc/traefik/acme.json
+
+entrypoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entrypoint:
+          scheme: https
+          to: websecure
+  websecure:
+    address: ':443'
+    http:
+      tls:
+        certresolver: letsencrypt
+        domains:
+          - main: {{ domain }}
+            sans: *.{{ domain }}
+
+global:
+  checknewversion: false
+  sendanonymoususage: false
+
+log:
+  level: info
+
+providers:
+  docker:
+    exposedbydefault: false
+  file:
+    directory: /etc/traefik/rules

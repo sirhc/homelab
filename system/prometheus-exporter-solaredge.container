@@ -1,0 +1,11 @@
+[Unit]
+Description=Prometheus Exporter SolarEdge
+Documentation=https://github.com/chrisjohnson00/solaredge-prometheus-exporter
+
+[Container]
+# Environment=API_KEY=
+EnvironmentFile=./%N.env
+HostName=%N
+Image=docker.io/chrisjohnson00/solaredge-prometheus-exporter:latest
+Network=homelab.network
+Volume=/etc/localtime:/etc/localtime:ro

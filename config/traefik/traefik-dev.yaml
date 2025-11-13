@@ -1,0 +1,30 @@
+---
+api:
+  dashboard: true
+  insecure: true
+
+entrypoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entrypoint:
+          scheme: https
+          to: websecure
+  websecure:
+    address: ':443'
+    http:
+      tls: {}
+
+global:
+  checknewversion: false
+  sendanonymoususage: false
+
+log:
+  level: info
+
+providers:
+  docker:
+    exposedbydefault: false
+  file:
+    directory: /etc/traefik/rules

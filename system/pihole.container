@@ -1,0 +1,33 @@
+[Unit]
+Description=Pi-hole
+Documentation=https://docs.pi-hole.net/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %E/%N/dnsmasq.d
+
+[Container]
+
+# Environment=FTLCONF_dns_upstreams=
+# Environment=FTLCONF_webserver_api_password=
+EnvironmentFile=./%N.env
+
+HostName=%N
+
+Image=docker.io/pihole/pihole:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`dns.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=80
+
+Network=homelab.network
+
+# Use a drop-in file (e.g., pihole.container.d/publish-ports.conf) to configure the ports on specific addresses. This
+# way, Pi-hole won't interfere with the Podman internal networking. Otherwise, using the container name as the host name
+# within the Podman network will not work. For example,
+# PublishPort=<host-ip>:53:53/tcp
+# PublishPort=<host-ip>:53:53/udp
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%E/%N:/etc/pihole:Z
+Volume=%E/%N/dnsmasq.d:/etc/dnsmasq.d:Z

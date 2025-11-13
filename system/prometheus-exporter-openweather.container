@@ -1,0 +1,12 @@
+[Unit]
+Description=Prometheus Exporter OpenWeather
+Documentation=https://github.com/billykwooten/openweather-exporter
+
+[Container]
+# Environment=OW_CITY=
+# Environment=OW_APIKEY=
+EnvironmentFile=./%N.env
+HostName=%N
+Image=docker.io/billykwooten/openweather-exporter:latest
+Network=homelab.network
+Volume=/etc/localtime:/etc/localtime:ro

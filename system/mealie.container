@@ -1,0 +1,21 @@
+[Unit]
+Description=Mealie
+Documentation=https://docs.mealie.io/
+
+[Service]
+ExecStartPre=mkdir -p %D/%N
+
+[Container]
+
+HostName=%N
+
+Image=ghcr.io/mealie-recipes/mealie:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=9000
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%D/%N:/app/data:Z

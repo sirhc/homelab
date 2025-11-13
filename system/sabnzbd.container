@@ -1,0 +1,24 @@
+[Unit]
+Description=SABnzbd
+Documentation=https://sabnzbd.org/wiki/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
+
+[Container]
+
+HostName=%N
+
+Image=lscr.io/linuxserver/sabnzbd:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8080
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media:/data:rw
+Volume=%E/%N:/config:Z
+Volume=%L/%N:/config/logs:Z

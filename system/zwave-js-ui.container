@@ -1,0 +1,34 @@
+[Unit]
+Description=Z-Wave JS UI
+Documentation=https://zwave-js.github.io/zwave-js-ui/
+
+[Service]
+ExecStartPre=mkdir -p %E/%N
+ExecStartPre=mkdir -p %L/%N
+
+[Container]
+
+# Use zwave-js-ui.container.d/devices.conf to add local devices. For example,
+# AddDevice=<zwave-device-id>:/dev/zwave
+
+# Environment=SESSION_SECRET=
+EnvironmentFile=./%N.env
+
+GroupAdd=keep-groups
+
+HostName=%N
+
+Image=docker.io/zwavejs/zwave-js-ui:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`zwave.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=8091
+
+Network=homelab.network
+
+# Allow access to /dev/zwave.
+SecurityLabelDisable=true
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=%E/%N:/usr/src/app/store:Z
+Volume=%L/%N:/usr/src/app/store/logs:Z
