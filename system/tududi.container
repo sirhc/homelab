@@ -1,0 +1,25 @@
+[Unit]
+Description=tududi
+Documentation=https://docs.tududi.com/
+
+[Container]
+
+# Environment=TUDUDI_USER_EMAIL=...
+# Environment=TUDUDI_USER_PASSWORD=...
+# Environment=TUDUDI_SESSION_SECRET=...
+# Environment=TUDUDI_ALLOWED_ORIGINS=...
+EnvironmentFile=./%N.env
+
+HostName=%N
+
+Image=docker.io/chrisvel/tududi:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`todo.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=3002
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=tududi-db.volume:/app/backend/db:Z
+Volume=tududi-uploads.volume:/app/backend/uploads:Z
