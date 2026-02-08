@@ -9,3 +9,6 @@ HostName=%N
 Image=docker.io/chrisjohnson00/solaredge-prometheus-exporter:latest
 Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
+
+[Install]
+WantedBy=default.target

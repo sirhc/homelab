@@ -40,3 +40,6 @@ Volume=/etc/localtime:/etc/localtime:ro
 Volume=/media:/media
 Volume=%C/%N:/transcode:Z
 Volume=%E/%N:/config:Z
+
+[Install]
+WantedBy=default.target

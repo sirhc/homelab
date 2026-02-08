@@ -42,3 +42,6 @@ Volume=%E/%N/traefik.yaml:/etc/traefik/traefik.yaml:ro,Z
 Volume=%E/%N/certs:/etc/traefik/certs:ro,Z
 Volume=%E/%N/rules:/etc/traefik/rules:ro,Z
 Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
+
+[Install]
+WantedBy=default.target

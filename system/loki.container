@@ -16,3 +16,6 @@ Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=loki.volume:/loki:Z
+
+[Install]
+WantedBy=default.target

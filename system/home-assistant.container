@@ -28,3 +28,6 @@ SecurityLabelDisable=true
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/config:Z
+
+[Install]
+WantedBy=default.target

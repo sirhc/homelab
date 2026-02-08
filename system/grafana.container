@@ -29,3 +29,6 @@ Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=grafana.volume:/var/lib/grafana:Z
+
+[Install]
+WantedBy=default.target

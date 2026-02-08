@@ -10,3 +10,6 @@ HostName=%N
 Image=docker.io/billykwooten/openweather-exporter:latest
 Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
+
+[Install]
+WantedBy=default.target

@@ -31,3 +31,6 @@ Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/etc/pihole:Z
 Volume=%E/%N/dnsmasq.d:/etc/dnsmasq.d:Z
+
+[Install]
+WantedBy=default.target

@@ -10,3 +10,6 @@ Volume=/etc/localtime:/etc/localtime:ro
 
 # Add this to prometheus-exporter-nws.container.d/exec.conf
 # Exec=nws_exporter <nws-station>
+
+[Install]
+WantedBy=default.target

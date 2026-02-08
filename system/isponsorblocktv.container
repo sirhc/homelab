@@ -15,3 +15,6 @@ Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/app/data:Z
+
+[Install]
+WantedBy=default.target

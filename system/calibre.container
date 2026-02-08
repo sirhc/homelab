@@ -22,3 +22,6 @@ Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=/media/Books:/books
 Volume=%E/%N:/config:Z
+
+[Install]
+WantedBy=default.target

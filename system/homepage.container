@@ -32,3 +32,6 @@ Volume=/media:/mnt/media:ro
 Volume=%E/%N:/app/config:Z
 Volume=%L/%N:/app/config/logs:Z
 Volume=%t/podman/podman.sock:/var/run/docker.sock:ro,z
+
+[Install]
+WantedBy=default.target

@@ -23,3 +23,6 @@ Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=tududi-db.volume:/app/backend/db:Z
 Volume=tududi-uploads.volume:/app/backend/uploads:Z
+
+[Install]
+WantedBy=default.target

@@ -36,3 +36,6 @@ Volume=%C/%N/cache:/cache:Z
 Volume=%C/%N/transcodes:/config/transcodes/:Z
 Volume=%E/%N:/config:Z
 Volume=%L/%N:/config/log/:Z
+
+[Install]
+WantedBy=default.target

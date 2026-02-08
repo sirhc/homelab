@@ -22,3 +22,6 @@ Network=homelab.network
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/etc/prometheus:Z
 Volume=prometheus.volume:/prometheus
+
+[Install]
+WantedBy=default.target

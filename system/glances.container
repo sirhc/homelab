@@ -30,3 +30,6 @@ Volume=%E/%N:/glances/conf:Z
 # Volume=%t/podman/podman.sock:%t/podman/podman.sock:ro,z
 
 # At the moment, there's no mechanism for `podman run --pid=host`.
+
+[Install]
+WantedBy=default.target

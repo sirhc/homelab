@@ -21,3 +21,6 @@ PublishPort=51690:51690
 
 Volume=/etc/localtime:/etc/localtime:ro
 Volume=%E/%N:/homebridge:Z
+
+[Install]
+WantedBy=default.target

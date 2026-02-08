@@ -12,3 +12,6 @@ Label=traefik.enable=true
 Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
 
 Network=homelab.network
+
+[Install]
+WantedBy=default.target

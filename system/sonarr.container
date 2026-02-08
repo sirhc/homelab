@@ -22,3 +22,6 @@ Volume=/etc/localtime:/etc/localtime:ro
 Volume=/media:/data:rw
 Volume=%E/%N:/config:Z
 Volume=%L/%N:/config/logs:Z
+
+[Install]
+WantedBy=default.target
