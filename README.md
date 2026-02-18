@@ -6,7 +6,8 @@ I run my development and homelab environments on Fedora, so all of my assumption
 [Podman Quadlets](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) to implement the services.
 
 ```
-❯ sudo dnf install podman just stow
+❯ sudo dnf install podman just stow ansible-core
+❯ ansible-galaxy collection install -r ansible/requirements.yml
 ```
 
 ## Configuration
@@ -17,52 +18,59 @@ the appropriate location within the container. There are configuration files for
 version control or for development purposes. These need to be manually copied to the expected location in
 `~/.config/<service>`.
 
-## Setup
+## Deployment
 
-Since this is rootless Podman, the following commands are needed in order to bind to ports under 1024.
+Deployment is managed with two Ansible playbooks, run from the laptop against any target in
+`ansible/inventory/hosts.yml`. The Justfile wraps the common invocations.
 
-```
-❯ sudo sysctl net.ipv4.ip_unprivileged_port_start=53
-❯ echo net.ipv4.ip_unprivileged_port_start=53 | sudo tee /etc/sysctl.d/user_priv_ports.conf
-```
+### First-time setup
 
-Docker, being a daemon running as root, mucked around with the firewall when exposing ports. Since Podman is running
-rootless (and is more polite), opening ports on the firewall is an exercise left for the reader.
+**1. Prepare secrets**
 
-```
-# Allow Pi-hole
-❯ sudo firewall-cmd --add-port=53/tcp --permanent
-❯ sudo firewall-cmd --add-port=53/udp --permanent
-
-# Allow Traefik
-❯ sudo firewall-cmd --add-port=80/tcp --permanent
-❯ sudo firewall-cmd --add-port=443/tcp --permanent
-
-# Allow Jellyfin
-❯ sudo firewall-cmd --add-port=8096/tcp --permanent
-
-# Plex uses a bunch of ports (no idea if they're all necessary)
-❯ sudo firewall-cmd --add-port=1900/udp --permanent
-❯ sudo firewall-cmd --add-port=3005/tcp --permanent
-❯ sudo firewall-cmd --add-port=8324/tcp --permanent
-❯ sudo firewall-cmd --add-port=32400/tcp --permanent
-❯ sudo firewall-cmd --add-port=32410/udp --permanent
-❯ sudo firewall-cmd --add-port=32412/udp --permanent
-❯ sudo firewall-cmd --add-port=32413/udp --permanent
-❯ sudo firewall-cmd --add-port=32414/udp --permanent
-❯ sudo firewall-cmd --add-port=32469/tcp --permanent
-```
-
-Now the Quadlets can be set up.
+Copy real values into `ansible/group_vars/all/vault.yml`, then encrypt it:
 
 ```
-❯ sudo useradd homelab
-❯ sudo loginctl enable-linger homelab
-❯ sudo machinectl shell homelab@
-❯ git clone https://github.com/sirhc/homelab.git
-❯ cd homelab
-❯ just install
-❯ just start-all  # or, just start <service>
+❯ ansible-vault encrypt ansible/group_vars/all/vault.yml
+❯ echo 'yourpassword' > ~/.ansible/vault-pass && chmod 600 ~/.ansible/vault-pass
+```
+
+Edit later with `ansible-vault edit ansible/group_vars/all/vault.yml`.
+
+**2. Configure the host OS** (creates `homelab` user, enables linger, sets sysctl, opens firewall ports,
+installs the Polkit rule that lets Ansible connect as the `homelab` user via `machinectl`):
+
+```
+❯ just configure-host          # all hosts
+❯ just configure-host laptop   # single host
+```
+
+**3. Deploy quadlets**
+
+```
+❯ just deploy          # all hosts
+❯ just deploy laptop   # single host
+```
+
+Or run both steps in one shot:
+
+```
+❯ just provision          # configure-host + deploy, all hosts
+❯ just provision laptop   # single host
+```
+
+### Day-to-day re-deployment
+
+After changing a `.container` file or updating secrets, only the quadlets playbook needs to run:
+
+```
+❯ just deploy
+```
+
+### Dry-run / check mode
+
+```
+❯ just check-configure-host
+❯ just check-deploy
 ```
 
 ## Environment Variables
