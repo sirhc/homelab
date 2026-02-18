@@ -1,0 +1,6 @@
+---
+- name: Deploy homelab network definition
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../system/homelab.network"
+    dest: "{{ quadlet_dir }}/homelab.network"
+    mode: "0644"

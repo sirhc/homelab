@@ -1,0 +1,24 @@
+---
+# Defaults for quadlets role.
+# Overridden by group_vars/all/main.yml and group_vars/{dev,prd}/main.yml.
+
+homelab_user:  homelab
+homelab_group: homelab
+
+xdg_config_home: "/home/{{ homelab_user }}/.config"
+xdg_cache_home:  "/home/{{ homelab_user }}/.cache"
+xdg_data_home:   "/home/{{ homelab_user }}/.local/share"
+xdg_log_home:    "/home/{{ homelab_user }}/.local/state"
+
+quadlet_dir:      "{{ xdg_config_home }}/containers/systemd"
+environment_dir:  "{{ xdg_config_home }}/environment.d"
+user_systemd_dir: "{{ xdg_config_home }}/systemd/user"
+
+enabled_services: []
+vault_service_env: {}
+
+service_volumes:
+  grafana:    [grafana.volume]
+  loki:       [loki.volume]
+  prometheus: [prometheus.volume]
+  tududi:     [tududi-db.volume, tududi-uploads.volume]

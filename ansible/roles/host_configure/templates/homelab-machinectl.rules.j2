@@ -1,0 +1,10 @@
+// Allow wheel group members to open a machinectl shell as the homelab user
+// without a password prompt. This covers both Ansible's machinectl connection
+// plugin and interactive admin use.
+polkit.addRule(function(action, subject) {
+    if (action.id == "org.freedesktop.machine1.shell" &&
+        action.lookup("user") == "{{ homelab_user }}" &&
+        subject.isInGroup("wheel")) {
+        return polkit.Result.YES;
+    }
+});

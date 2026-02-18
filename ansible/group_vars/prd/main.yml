@@ -1,0 +1,32 @@
+---
+domain:         homelab.example.com   # real domain
+email:          user@example.com      # ACME email for Let's Encrypt
+traefik_config: traefik-prd.yaml
+traefik_rules:  []                    # prd uses ACME; no local-tls rule needed
+
+enabled_services:
+  - calibre
+  - glances
+  - grafana
+  - home-assistant
+  - homebridge
+  - homepage
+  - isponsorblocktv
+  - jellyfin
+  - lidarr
+  - loki
+  - mealie
+  - pihole
+  - plex
+  - prometheus
+  - prometheus-exporter-nws
+  - prometheus-exporter-openweather
+  - prometheus-exporter-solaredge
+  - prowlarr
+  - radarr
+  - sabnzbd
+  - sonarr
+  - traefik
+  - tududi
+  - whoami
+  - zwave-js-ui

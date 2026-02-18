@@ -1,0 +1,8 @@
+---
+- name: Deploy service env files from vault
+  ansible.builtin.copy:
+    content: "{{ vault_service_env[item] }}"
+    dest: "{{ quadlet_dir }}/{{ item }}.env"
+    mode: "0600"
+  loop: "{{ enabled_services | select('in', vault_service_env.keys()) | list }}"
+  no_log: true

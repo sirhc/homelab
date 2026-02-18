@@ -1,0 +1,11 @@
+---
+- import_tasks: xdg_dirs.yml
+- import_tasks: environment.yml
+- import_tasks: network.yml
+- import_tasks: volumes.yml
+- import_tasks: dropins.yml
+- import_tasks: quadlet_files.yml
+- import_tasks: env_files.yml
+- import_tasks: configs.yml
+- import_tasks: pihole_dropin.yml
+- import_tasks: services.yml

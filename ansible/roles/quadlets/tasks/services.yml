@@ -1,0 +1,11 @@
+---
+- name: Flush handlers to trigger daemon-reload before starting services
+  ansible.builtin.meta: flush_handlers
+
+- name: Enable and start quadlet services
+  ansible.builtin.systemd:
+    name: "{{ item }}"
+    scope: user
+    state: started
+    enabled: true
+  loop: "{{ enabled_services }}"

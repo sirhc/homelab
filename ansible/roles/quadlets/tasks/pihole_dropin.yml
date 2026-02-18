@@ -1,0 +1,15 @@
+---
+- name: Create pihole container drop-in directory
+  ansible.builtin.file:
+    path: "{{ quadlet_dir }}/pihole.container.d"
+    state: directory
+    mode: "0755"
+  when: "'pihole' in enabled_services"
+
+- name: Deploy pihole publish-ports drop-in
+  ansible.builtin.template:
+    src: pihole-publish-ports.conf.j2
+    dest: "{{ quadlet_dir }}/pihole.container.d/publish-ports.conf"
+    mode: "0644"
+  when: "'pihole' in enabled_services"
+  notify: Reload systemd user daemon
