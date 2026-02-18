@@ -1,0 +1,14 @@
+---
+- name: Create XDG base directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    state: directory
+    mode: "0755"
+  loop:
+    - "{{ xdg_config_home }}"
+    - "{{ xdg_cache_home }}"
+    - "{{ xdg_data_home }}"
+    - "{{ xdg_log_home }}"
+    - "{{ quadlet_dir }}"
+    - "{{ environment_dir }}"
+    - "{{ user_systemd_dir }}"

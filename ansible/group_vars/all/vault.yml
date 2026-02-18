@@ -1,0 +1,25 @@
+---
+# Encrypt this file with: ansible-vault encrypt ansible/group_vars/all/vault.yml
+# Edit after encryption:  ansible-vault edit ansible/group_vars/all/vault.yml
+#
+# Each value is the literal content written to <service>.env in the quadlet dir.
+# Use KEY=value pairs, one per line (standard env file format).
+
+vault_service_env:
+  traefik: |
+    CLOUDFLARE_API_KEY=
+    CLOUDFLARE_EMAIL=
+  pihole: |
+    FTLCONF_dns_upstreams=208.67.222.222;208.67.220.220
+    FTLCONF_webserver_api_password=
+  plex: |
+    PLEX_ADVERTISE_IP=
+    PLEX_ALLOWED_NETWORKS=
+    PLEX_CLAIM=
+  prometheus-exporter-openweather: |
+    OW_APIKEY=
+    OW_CITY=
+  prometheus-exporter-solaredge: |
+    SOLAREDGE_API_KEY=
+  zwave-js-ui: |
+    SESSION_SECRET=

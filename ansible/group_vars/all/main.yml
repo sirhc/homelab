@@ -1,0 +1,25 @@
+---
+homelab_user:  homelab
+homelab_group: homelab
+
+xdg_config_home: "/home/{{ homelab_user }}/.config"
+xdg_cache_home:  "/home/{{ homelab_user }}/.cache"
+xdg_data_home:   "/home/{{ homelab_user }}/.local/share"
+xdg_log_home:    "/home/{{ homelab_user }}/.local/state"
+
+quadlet_dir:      "{{ xdg_config_home }}/containers/systemd"
+environment_dir:  "{{ xdg_config_home }}/environment.d"
+user_systemd_dir: "{{ xdg_config_home }}/systemd/user"
+
+common_firewall_ports:
+  - { port: 80,  proto: tcp }
+  - { port: 443, proto: tcp }
+
+enabled_services: []
+
+# Which named volumes each service requires
+service_volumes:
+  grafana:    [grafana.volume]
+  loki:       [loki.volume]
+  prometheus: [prometheus.volume]
+  tududi:     [tududi-db.volume, tududi-uploads.volume]

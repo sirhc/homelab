@@ -1,0 +1,54 @@
+---
+- name: Create Prometheus config directory
+  ansible.builtin.file:
+    path: "{{ xdg_config_home }}/prometheus"
+    state: directory
+    mode: "0755"
+  when: "'prometheus' in enabled_services"
+
+- name: Deploy Prometheus scrape config
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../config/prometheus/prometheus.yml"
+    dest: "{{ xdg_config_home }}/prometheus/prometheus.yml"
+    mode: "0644"
+  when: "'prometheus' in enabled_services"
+
+- name: Create Traefik config directory
+  ansible.builtin.file:
+    path: "{{ xdg_config_home }}/traefik"
+    state: directory
+    mode: "0755"
+  when: "'traefik' in enabled_services"
+
+- name: Create Traefik rules directory
+  ansible.builtin.file:
+    path: "{{ xdg_config_home }}/traefik/rules"
+    state: directory
+    mode: "0755"
+  when: "'traefik' in enabled_services"
+
+- name: Deploy Traefik dev config (copy)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../config/traefik/traefik-dev.yaml"
+    dest: "{{ xdg_config_home }}/traefik/traefik.yaml"
+    mode: "0644"
+  when:
+    - "'traefik' in enabled_services"
+    - traefik_config == 'traefik-dev.yaml'
+
+- name: Deploy Traefik prd config (template)
+  ansible.builtin.template:
+    src: "{{ playbook_dir }}/../config/traefik/traefik-prd.yaml"
+    dest: "{{ xdg_config_home }}/traefik/traefik.yaml"
+    mode: "0644"
+  when:
+    - "'traefik' in enabled_services"
+    - traefik_config == 'traefik-prd.yaml'
+
+- name: Deploy Traefik routing rules
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../config/traefik/rules/{{ item }}"
+    dest: "{{ xdg_config_home }}/traefik/rules/{{ item }}"
+    mode: "0644"
+  loop: "{{ traefik_rules }}"
+  when: "'traefik' in enabled_services"

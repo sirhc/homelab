@@ -4,12 +4,19 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. The build/deploy tool is **Just** and service file installation uses **GNU stow** to symlink into `~/.config`.
+Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. The build/deploy tool is **Just**; deployment uses **Ansible** (two playbooks: `configure-host.yml` and `install-quadlets.yml`). GNU stow is retained for local dev iteration.
 
 ## Common Commands
 
 ```bash
-just install              # Symlink all service/env/user files to ~/.config
+just configure-host       # Run configure-host.yml (all hosts)
+just configure-host <h>   # Run configure-host.yml (single host)
+just deploy               # Run install-quadlets.yml (all hosts)
+just deploy <host>        # Run install-quadlets.yml (single host)
+just provision            # configure-host + deploy (all hosts)
+just check-configure-host # Dry-run configure-host.yml
+just check-deploy         # Dry-run install-quadlets.yml
+just install              # Symlink all service/env/user files to ~/.config (legacy stow)
 just reload               # systemctl --user daemon-reload
 just start <service>      # Start a single service
 just start-all            # Start all installed services
@@ -32,7 +39,7 @@ just debug                # Launch a fedora bash container on the homelab networ
 - **`system/`** - Podman Quadlet definitions: `.container` files (service definitions), `.volume` files, `.network` file, `.env` files (secrets, gitignored), and `container.d/` drop-in for shared defaults
 - **`environment/`** - Global environment variables (e.g., `DOMAIN`), symlinked to `~/.config/environment.d/`
 - **`user/`** - User-level systemd service drop-ins (e.g., `Restart=on-failure`), symlinked to `~/.config/systemd/user/`
-- **`config/`** - Version-controlled service configs (Prometheus scrape config, Traefik routing rules) that get manually copied to `~/.config/<service>/`
+- **`config/`** - Version-controlled service configs (Prometheus scrape config, Traefik routing rules) deployed by Ansible to `~/.config/<service>/`
 
 ### How Services Work
 

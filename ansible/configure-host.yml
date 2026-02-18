@@ -1,0 +1,8 @@
+---
+- name: Configure host OS for homelab
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - host_configure

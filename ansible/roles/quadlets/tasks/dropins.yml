@@ -1,0 +1,24 @@
+---
+- name: Create container.d drop-in directory
+  ansible.builtin.file:
+    path: "{{ quadlet_dir }}/container.d"
+    state: directory
+    mode: "0755"
+
+- name: Deploy shared container drop-in (AutoUpdate=registry)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../system/container.d/homelab.conf"
+    dest: "{{ quadlet_dir }}/container.d/homelab.conf"
+    mode: "0644"
+
+- name: Create user service drop-in directory
+  ansible.builtin.file:
+    path: "{{ user_systemd_dir }}/service.d"
+    state: directory
+    mode: "0755"
+
+- name: Deploy shared service drop-in (Restart=on-failure)
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../user/service.d/homelab.conf"
+    dest: "{{ user_systemd_dir }}/service.d/homelab.conf"
+    mode: "0644"

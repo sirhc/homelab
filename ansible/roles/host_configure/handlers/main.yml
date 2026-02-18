@@ -1,0 +1,5 @@
+---
+- name: Restart polkit
+  ansible.builtin.service:
+    name: polkit
+    state: restarted

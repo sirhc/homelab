@@ -1,0 +1,31 @@
+---
+domain:         localhost
+traefik_config: traefik-dev.yaml
+traefik_rules:  [local-tls.yaml]
+
+enabled_services:
+  - calibre
+  - glances
+  - grafana
+  - home-assistant
+  - homebridge
+  - homepage
+  - isponsorblocktv
+  - jellyfin
+  - lidarr
+  - loki
+  - mealie
+  - pihole
+  - plex
+  - prometheus
+  - prometheus-exporter-nws
+  - prometheus-exporter-openweather
+  - prometheus-exporter-solaredge
+  - prowlarr
+  - radarr
+  - sabnzbd
+  - sonarr
+  - traefik
+  - tududi
+  - whoami
+  - zwave-js-ui

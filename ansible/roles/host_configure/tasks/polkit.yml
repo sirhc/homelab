@@ -1,0 +1,9 @@
+---
+- name: Install Polkit rule for machinectl shell access
+  ansible.builtin.template:
+    src: homelab-machinectl.rules.j2
+    dest: /etc/polkit-1/rules.d/60-homelab-machinectl.rules
+    owner: root
+    group: root
+    mode: "0644"
+  notify: Restart polkit

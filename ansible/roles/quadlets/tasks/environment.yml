@@ -1,0 +1,7 @@
+---
+- name: Deploy homelab environment config
+  ansible.builtin.template:
+    src: homelab-env.conf.j2
+    dest: "{{ environment_dir }}/homelab.conf"
+    mode: "0644"
+  notify: Reload systemd user daemon

@@ -1,0 +1,14 @@
+---
+- name: Create homelab group
+  ansible.builtin.group:
+    name: "{{ homelab_group }}"
+    state: present
+
+- name: Create homelab user
+  ansible.builtin.user:
+    name: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    shell: /bin/bash
+    create_home: true
+    password: "!"
+    state: present

@@ -1,0 +1,8 @@
+---
+- name: Deploy quadlet container files
+  ansible.builtin.copy:
+    src: "{{ playbook_dir }}/../system/{{ item }}.container"
+    dest: "{{ quadlet_dir }}/{{ item }}.container"
+    mode: "0644"
+  loop: "{{ enabled_services }}"
+  notify: Reload systemd user daemon
