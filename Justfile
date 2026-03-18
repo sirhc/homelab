@@ -11,6 +11,10 @@ _all:
 @list-services:
   grep '^Description=' system/*.container | sed -e 's,system/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
 
+# Update all packages on all hosts
+update host='':
+  ansible-playbook update.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+
 # Configure host OS (homelab user, linger, sysctl, firewall, polkit)
 configure-host host='':
   ansible-playbook configure-host.yml{{ if host != '' { ' --limit ' + host } else { '' } }}

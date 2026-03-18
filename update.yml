@@ -1,0 +1,12 @@
+---
+- name: Update all hosts
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  tasks:
+    - name: Upgrade all packages
+      ansible.builtin.dnf:
+        name: "*"
+        state: latest
+        update_cache: true

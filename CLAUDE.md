@@ -11,6 +11,8 @@ Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Serv
 ## Common Commands
 
 ```bash
+just update               # Run update.yml (all hosts)
+just update <host>        # Run update.yml (single host)
 just configure-host       # Run configure-host.yml (all hosts)
 just configure-host <h>   # Run configure-host.yml (single host)
 just deploy               # Run install-quadlets.yml (all hosts)
