@@ -4,7 +4,7 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. The build/deploy tool is **Just**; deployment uses **Ansible** (two playbooks: `configure-host.yml` and `install-quadlets.yml`). GNU stow is retained for local dev iteration.
+Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. The build/deploy tool is **Just**; deployment uses **Ansible** (two playbooks: `configure-host.yml` and `install-quadlets.yml`).
 
 ## Common Commands
 
@@ -16,7 +16,6 @@ just deploy <host>        # Run install-quadlets.yml (single host)
 just provision            # configure-host + deploy (all hosts)
 just check-configure-host # Dry-run configure-host.yml
 just check-deploy         # Dry-run install-quadlets.yml
-just install              # Symlink all service/env/user files to ~/.config (legacy stow)
 just reload               # systemctl --user daemon-reload
 just start <service>      # Start a single service
 just start-all            # Start all installed services
@@ -28,7 +27,6 @@ just status <service>     # Check service status
 just shell <service>      # Open shell in running container
 just verify <service>     # Validate systemd unit file syntax
 just list-services        # List all services with descriptions
-just clean                # Remove dangling symlinks
 just debug                # Launch a fedora bash container on the homelab network
 ```
 
@@ -46,7 +44,7 @@ just debug                # Launch a fedora bash container on the homelab networ
 
 ### How Services Work
 
-Each service is a `.container` file in `system/` following the [Podman Quadlet spec](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html). When installed via `stow`, these are symlinked to `~/.config/containers/systemd/` where Podman's systemd generator converts them into `.service` units.
+Each service is a `.container` file in `system/` following the [Podman Quadlet spec](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html). Ansible deploys these to `~/.config/containers/systemd/` where Podman's systemd generator converts them into `.service` units.
 
 Key patterns in container files:
 - **Systemd specifiers**: `%E` (config dir), `%L` (logs dir), `%C` (cache dir), `%D` (state dir), `%t` (runtime dir), `%N` (unit name)

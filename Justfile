@@ -32,33 +32,6 @@ check-configure-host host='':
 check-deploy host='':
   ansible-playbook install-quadlets.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-# Symlink service files, environment files, and user files to ~/.config
-install: install-services install-environment install-user
-
-install-services:
-  mkdir -p '{{ container_dir }}'
-  stow --target='{{ container_dir }}' --stow --verbose system
-
-install-environment:
-  mkdir -p '{{ environment_dir }}'
-  stow --target='{{ environment_dir }}' --stow --verbose environment
-
-install-user:
-  mkdir -p '{{ user_dir }}'
-  stow --target='{{ user_dir }}' --stow --verbose user
-
-# Remove symlinks for service files, environment files, and user files
-uninstall: uninstall-services uninstall-environment uninstall-user
-
-uninstall-services:
-  stow --target='{{ container_dir }}' --delete --verbose system
-
-uninstall-environment:
-  stow --target='{{ environment_dir }}' --delete --verbose environment
-
-uninstall-user:
-  stow --target='{{ user_dir }}' --delete --verbose user
-
 reload:
   {{ systemctl }} daemon-reload
 
@@ -103,11 +76,6 @@ shell service shell='/bin/sh':
 debug:
   podman run -it --rm --network homelab fedora bash
 
-# Remove dangling symlinks
-clean:
-  symlinks -d '{{ container_dir }}'
-  symlinks -d '{{ environment_dir }}'
-  symlinks -d '{{ user_dir }}'
 
 # Create certificates for testing services locally (e.g., localhost)
 mkcert domain:

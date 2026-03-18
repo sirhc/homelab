@@ -6,8 +6,8 @@ I run my development and homelab environments on Fedora, so all of my assumption
 [Podman Quadlets](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) to implement the services.
 
 ```
-❯ sudo dnf install podman just stow ansible-core
-❯ ansible-galaxy collection install -r ansible/requirements.yml
+❯ sudo dnf install podman just ansible-core
+❯ ansible-galaxy collection install -r requirements.yml
 ```
 
 ## Configuration
@@ -21,20 +21,20 @@ version control or for development purposes. These need to be manually copied to
 ## Deployment
 
 Deployment is managed with two Ansible playbooks, run from the laptop against any target in
-`ansible/inventory/hosts.yml`. The Justfile wraps the common invocations.
+`inventory/hosts.yml`. The Justfile wraps the common invocations.
 
 ### First-time setup
 
 **1. Prepare secrets**
 
-Copy real values into `ansible/group_vars/all/vault.yml`, then encrypt it:
+Copy real values into `group_vars/all/vault.yml`, then encrypt it:
 
 ```
-❯ ansible-vault encrypt ansible/group_vars/all/vault.yml
+❯ ansible-vault encrypt group_vars/all/vault.yml
 ❯ echo 'yourpassword' > ~/.ansible/vault-pass && chmod 600 ~/.ansible/vault-pass
 ```
 
-Edit later with `ansible-vault edit ansible/group_vars/all/vault.yml`.
+Edit later with `ansible-vault edit group_vars/all/vault.yml`.
 
 **2. Configure the host OS** (creates `homelab` user, enables linger, sets sysctl, opens firewall ports,
 installs the Polkit rule that lets Ansible connect as the `homelab` user via `machinectl`):
@@ -87,8 +87,7 @@ ZIGBEE_DEVICE_ID=/dev/null
 ZWAVE_DEVICE_ID=/dev/null
 ```
 
-Files in the `environment` directory are symlinked to `~/.config/environment.d` by the `install-environment` Justfile
-target.
+Files in the `environment` directory are deployed to `~/.config/environment.d` by Ansible.
 
 For environment variables specific to a container (e.g. API keys), these are expected to be found in files named
 `system/<service>.env`. The individual `<service>.container` files define its expected file with the `EnvironmentFile=`
