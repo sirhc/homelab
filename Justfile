@@ -13,11 +13,11 @@ _all:
 
 # Configure host OS (homelab user, linger, sysctl, firewall, polkit)
 configure-host host='':
-  ansible-playbook ansible/configure-host.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook configure-host.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 # Deploy quadlet files, env secrets, and configs
 deploy host='':
-  ansible-playbook ansible/install-quadlets.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook install-quadlets.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 # Configure host then deploy quadlets (full provisioning)
 provision host='':
@@ -26,11 +26,11 @@ provision host='':
 
 # Dry-run configure-host
 check-configure-host host='':
-  ansible-playbook ansible/configure-host.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook configure-host.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 # Dry-run deploy
 check-deploy host='':
-  ansible-playbook ansible/install-quadlets.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook install-quadlets.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 # Symlink service files, environment files, and user files to ~/.config
 install: install-services install-environment install-user

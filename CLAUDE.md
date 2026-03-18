@@ -40,6 +40,9 @@ just debug                # Launch a fedora bash container on the homelab networ
 - **`environment/`** - Global environment variables (e.g., `DOMAIN`), symlinked to `~/.config/environment.d/`
 - **`user/`** - User-level systemd service drop-ins (e.g., `Restart=on-failure`), symlinked to `~/.config/systemd/user/`
 - **`config/`** - Version-controlled service configs (Prometheus scrape config, Traefik routing rules) deployed by Ansible to `~/.config/<service>/`
+- **`inventory/`** - Ansible inventory (`hosts.yml`)
+- **`group_vars/`** - Ansible group variables (including vault-encrypted secrets)
+- **`roles/`** - Ansible roles (`host_configure`, `quadlets`)
 
 ### How Services Work
 
