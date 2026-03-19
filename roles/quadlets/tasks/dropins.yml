@@ -7,7 +7,7 @@
 
 - name: Deploy shared container drop-in (AutoUpdate=registry)
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../system/container.d/homelab.conf"
+    src: "system/container.d/homelab.conf"
     dest: "{{ quadlet_dir }}/container.d/homelab.conf"
     mode: "0644"
 
@@ -19,6 +19,6 @@
 
 - name: Deploy shared service drop-in (Restart=on-failure)
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../user/service.d/homelab.conf"
+    src: "user/service.d/homelab.conf"
     dest: "{{ user_systemd_dir }}/service.d/homelab.conf"
     mode: "0644"

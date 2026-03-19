@@ -12,7 +12,7 @@
 
 - name: Deploy volume definitions
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../system/{{ item }}"
+    src: "system/{{ item }}"
     dest: "{{ quadlet_dir }}/{{ item }}"
     mode: "0644"
   loop: "{{ required_volume_files }}"

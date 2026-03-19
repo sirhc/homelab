@@ -8,7 +8,7 @@
 
 - name: Deploy Prometheus scrape config
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../config/prometheus/prometheus.yml"
+    src: "config/prometheus/prometheus.yml"
     dest: "{{ xdg_config_home }}/prometheus/prometheus.yml"
     mode: "0644"
   when: "'prometheus' in enabled_services"
@@ -29,7 +29,7 @@
 
 - name: Deploy Traefik dev config (copy)
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../config/traefik/traefik-dev.yaml"
+    src: "config/traefik/traefik-dev.yaml"
     dest: "{{ xdg_config_home }}/traefik/traefik.yaml"
     mode: "0644"
   when:
@@ -38,7 +38,7 @@
 
 - name: Deploy Traefik prd config (template)
   ansible.builtin.template:
-    src: "{{ playbook_dir }}/../config/traefik/traefik-prd.yaml"
+    src: "config/traefik/traefik-prd.yaml"
     dest: "{{ xdg_config_home }}/traefik/traefik.yaml"
     mode: "0644"
   when:
@@ -47,7 +47,7 @@
 
 - name: Deploy Traefik routing rules
   ansible.builtin.copy:
-    src: "{{ playbook_dir }}/../config/traefik/rules/{{ item }}"
+    src: "config/traefik/rules/{{ item }}"
     dest: "{{ xdg_config_home }}/traefik/rules/{{ item }}"
     mode: "0644"
   loop: "{{ traefik_rules }}"
