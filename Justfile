@@ -15,26 +15,13 @@ _all:
 update host='':
   ansible-playbook update.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-# Configure host OS (homelab user, linger, sysctl, firewall, polkit)
-configure-host host='':
-  ansible-playbook configure-host.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
-
-# Deploy quadlet files, env secrets, and configs
-deploy host='':
-  ansible-playbook install-quadlets.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
-
-# Configure host then deploy quadlets (full provisioning)
+# Run full provisioning (common role + quadlets)
 provision host='':
-  just configure-host {{ host }}
-  just deploy {{ host }}
+  ansible-playbook site.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-# Dry-run configure-host
-check-configure-host host='':
-  ansible-playbook configure-host.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
-
-# Dry-run deploy
-check-deploy host='':
-  ansible-playbook install-quadlets.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
+# Dry-run full provisioning
+check host='':
+  ansible-playbook site.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 reload:
   {{ systemctl }} daemon-reload

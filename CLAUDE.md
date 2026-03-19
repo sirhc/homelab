@@ -13,13 +13,10 @@ Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Serv
 ```bash
 just update               # Run update.yml (all hosts)
 just update <host>        # Run update.yml (single host)
-just configure-host       # Run configure-host.yml (all hosts)
-just configure-host <h>   # Run configure-host.yml (single host)
-just deploy               # Run install-quadlets.yml (all hosts)
-just deploy <host>        # Run install-quadlets.yml (single host)
-just provision            # configure-host + deploy (all hosts)
-just check-configure-host # Dry-run configure-host.yml
-just check-deploy         # Dry-run install-quadlets.yml
+just provision            # Run site.yml (all hosts)
+just provision <host>     # Run site.yml (single host)
+just check                # Dry-run site.yml (all hosts)
+just check <host>         # Dry-run site.yml (single host)
 just reload               # systemctl --user daemon-reload
 just start <service>      # Start a single service
 just start-all            # Start all installed services
@@ -44,7 +41,7 @@ just debug                # Launch a fedora bash container on the homelab networ
 - **`config/`** - Version-controlled service configs (Prometheus scrape config, Traefik routing rules) deployed by Ansible to `~/.config/<service>/`
 - **`inventory/`** - Ansible inventory (`hosts.yml`)
 - **`group_vars/`** - Ansible group variables (including vault-encrypted secrets)
-- **`roles/`** - Ansible roles (`host_configure`, `quadlets`)
+- **`roles/`** - Ansible roles (`common` for host OS setup, `quadlets` for Podman services)
 
 ### How Services Work
 

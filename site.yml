@@ -1,4 +1,18 @@
 ---
-- import_playbook: update.yml
-- import_playbook: configure-host.yml
-- import_playbook: install-quadlets.yml
+- name: Configure host OS
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - common
+
+- name: Install Podman Quadlets
+  hosts: all
+  become: false
+  vars:
+    ansible_connection: community.general.machinectl
+    ansible_machinectl_user: "{{ homelab_user }}"
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - quadlets
