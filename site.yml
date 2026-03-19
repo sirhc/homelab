@@ -1,3 +1,4 @@
 ---
+- import_playbook: update.yml
 - import_playbook: configure-host.yml
 - import_playbook: install-quadlets.yml

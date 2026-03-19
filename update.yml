@@ -10,3 +10,9 @@
         name: "*"
         state: latest
         update_cache: true
+      register: dnf_result
+
+    - name: Report updated packages
+      ansible.builtin.debug:
+        msg: "{{ dnf_result.results }}"
+      when: dnf_result.changed
