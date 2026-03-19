@@ -11,9 +11,9 @@ _all:
 @list-services:
   grep '^Description=' roles/quadlets/files/system/*.container | sed -e 's,roles/quadlets/files/system/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
 
-# Update all packages on all hosts
+# Run system baseline (package updates, restic user)
 update host='':
-  ansible-playbook update.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook baseline.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 # Run full provisioning (common role + quadlets)
 provision host='':
