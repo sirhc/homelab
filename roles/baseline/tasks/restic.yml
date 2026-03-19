@@ -12,3 +12,64 @@
     create_home: true
     password: "!"
     state: present
+
+- name: Create restic bin directory
+  ansible.builtin.file:
+    path: "/home/{{ restic_user }}/bin"
+    state: directory
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0755"
+
+- name: Get latest restic release info
+  ansible.builtin.uri:
+    url: https://api.github.com/repos/restic/restic/releases/latest
+    return_content: true
+  register: restic_release_info
+
+- name: Set restic version fact
+  ansible.builtin.set_fact:
+    restic_version: "{{ restic_release_info.json.tag_name | regex_replace('^v', '') }}"
+
+- name: Check if restic binary already installed
+  ansible.builtin.stat:
+    path: "/home/{{ restic_user }}/bin/restic_{{ restic_version }}_linux_amd64"
+  register: restic_binary
+
+- name: Download restic binary archive
+  ansible.builtin.get_url:
+    url: "https://github.com/restic/restic/releases/download/v{{ restic_version }}/restic_{{ restic_version }}_linux_amd64.bz2"
+    dest: "/tmp/restic_{{ restic_version }}_linux_amd64.bz2"
+    mode: "0644"
+  when: not restic_binary.stat.exists
+
+- name: Decompress restic binary
+  ansible.builtin.shell:
+    cmd: "bunzip2 -c /tmp/restic_{{ restic_version }}_linux_amd64.bz2 > /home/{{ restic_user }}/bin/restic_{{ restic_version }}_linux_amd64"
+  when: not restic_binary.stat.exists
+
+- name: Remove downloaded archive
+  ansible.builtin.file:
+    path: "/tmp/restic_{{ restic_version }}_linux_amd64.bz2"
+    state: absent
+  when: not restic_binary.stat.exists
+
+- name: Set restic binary ownership and permissions
+  ansible.builtin.file:
+    path: "/home/{{ restic_user }}/bin/restic_{{ restic_version }}_linux_amd64"
+    owner: root
+    group: "{{ restic_group }}"
+    mode: "0750"
+
+- name: Set restic binary capabilities
+  community.general.capabilities:
+    path: "/home/{{ restic_user }}/bin/restic_{{ restic_version }}_linux_amd64"
+    capability: cap_dac_read_search=ep
+    state: present
+
+- name: Symlink restic binary
+  ansible.builtin.file:
+    src: "/home/{{ restic_user }}/bin/restic_{{ restic_version }}_linux_amd64"
+    dest: "/home/{{ restic_user }}/bin/restic"
+    state: link
+    force: true
