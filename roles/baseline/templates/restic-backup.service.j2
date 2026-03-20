@@ -1,0 +1,14 @@
+[Unit]
+Description=Restic backup
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+User={{ restic_user }}
+WorkingDirectory=/home/{{ restic_user }}
+Environment=PATH=/home/{{ restic_user }}/bin:/usr/bin:/bin
+EnvironmentFile=/home/{{ restic_user }}/.env
+ExecStart=/home/{{ restic_user }}/backup.sh
+StandardOutput=journal
+StandardError=journal

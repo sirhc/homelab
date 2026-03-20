@@ -1,0 +1,11 @@
+Host restic-nas
+  ControlMaster auto
+  ControlPath ~/.ssh/%r@%h:%p
+  ControlPersist 4h
+  ForwardAgent no
+  ForwardX11 no
+  ForwardX11Trusted no
+  Hostname {{ restic_nas_host }}
+  ServerAliveInterval 300
+  StrictHostKeyChecking no
+  User restic

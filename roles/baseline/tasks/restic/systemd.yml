@@ -1,0 +1,29 @@
+---
+- name: Deploy restic backup script
+  ansible.builtin.template:
+    src: restic-backup.sh.j2
+    dest: "/home/{{ restic_user }}/backup.sh"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0750"
+
+- name: Deploy restic-backup.service
+  ansible.builtin.template:
+    src: restic-backup.service.j2
+    dest: /etc/systemd/system/restic-backup.service
+    mode: "0644"
+  register: restic_service_unit
+
+- name: Deploy restic-backup.timer
+  ansible.builtin.template:
+    src: restic-backup.timer.j2
+    dest: /etc/systemd/system/restic-backup.timer
+    mode: "0644"
+  register: restic_timer_unit
+
+- name: Enable and start restic backup timer
+  ansible.builtin.systemd:
+    name: restic-backup.timer
+    daemon_reload: "{{ restic_service_unit.changed or restic_timer_unit.changed }}"
+    enabled: true
+    state: started

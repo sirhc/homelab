@@ -17,6 +17,18 @@ common_firewall_ports:
 
 enabled_services: []
 
+restic_nas_host: media.tail950f.ts.net
+
+restic_targets:
+  nas:
+    password:   "{{ vault_restic_password_nas }}"
+    repository: "{{ vault_restic_repository_nas }}"
+  b2:
+    password:   "{{ vault_restic_password_b2 }}"
+    repository: "{{ vault_restic_repository_b2 }}"
+
+restic_backup_paths: []
+
 # Which named volumes each service requires
 service_volumes:
   grafana:    [grafana.volume]

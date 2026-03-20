@@ -1,0 +1,22 @@
+---
+- name: Create restic group
+  ansible.builtin.group:
+    name: "{{ restic_group }}"
+    state: present
+
+- name: Create restic user
+  ansible.builtin.user:
+    name: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    shell: /bin/bash
+    create_home: true
+    password: "!"
+    state: present
+
+- name: Create restic bin directory
+  ansible.builtin.file:
+    path: "/home/{{ restic_user }}/bin"
+    state: directory
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0755"
