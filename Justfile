@@ -35,6 +35,15 @@ start-all:
 stop service:
   {{ systemctl }} stop {{ service }}
 
+# Stop, disable, and remove a service's quadlet files
+remove service:
+  -{{ systemctl }} stop {{ service }}.service
+  -{{ systemctl }} disable {{ service }}.service
+  rm -f '{{ container_dir }}/{{ service }}.container'
+  rm -f '{{ container_dir }}/{{ service }}.env'
+  rm -rf '{{ container_dir }}/{{ service }}.container.d'
+  {{ systemctl }} daemon-reload
+
 stop-all:
   ls -1 '{{ container_dir }}'/*.container | xargs -I % basename % .container | xargs -I % {{ systemctl }} stop %.service
 
