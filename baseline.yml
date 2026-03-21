@@ -6,3 +6,4 @@
     ansible_user: "{{ admin_user }}"
   roles:
     - baseline
+    - restic
