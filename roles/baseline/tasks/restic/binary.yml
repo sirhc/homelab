@@ -2,12 +2,14 @@
 - name: Get latest restic release info
   ansible.builtin.uri:
     url: https://api.github.com/repos/restic/restic/releases/latest
+    headers:
+      Accept: application/vnd.github+json
     return_content: true
   register: restic_release_info
 
 - name: Set restic version fact
   ansible.builtin.set_fact:
-    restic_version: "{{ restic_release_info.json.tag_name | regex_replace('^v', '') }}"
+    restic_version: "{{ (restic_release_info.content | from_json).tag_name | regex_replace('^v', '') }}"
 
 - name: Check if restic binary already installed
   ansible.builtin.stat:
