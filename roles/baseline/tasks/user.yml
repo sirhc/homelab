@@ -1,0 +1,16 @@
+---
+- name: Ensure admin user exists and is in wheel group
+  ansible.builtin.user:
+    name: "{{ admin_user }}"
+    groups: wheel
+    append: true
+    state: present
+
+- name: Allow wheel group to sudo without a password
+  ansible.builtin.copy:
+    content: "%wheel ALL=(ALL:ALL) NOPASSWD: ALL\n"
+    dest: /etc/sudoers.d/wheel-nopasswd
+    owner: root
+    group: root
+    mode: "0440"
+    validate: visudo -cf %s

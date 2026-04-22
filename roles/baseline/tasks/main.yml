@@ -1,2 +1,3 @@
 ---
+- import_tasks: user.yml
 - import_tasks: auto_updates.yml
