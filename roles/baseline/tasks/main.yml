@@ -1,2 +1,2 @@
 ---
-- import_tasks: packages.yml
+- import_tasks: auto_updates.yml
