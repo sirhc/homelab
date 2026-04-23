@@ -11,10 +11,12 @@ Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Serv
 ## Common Commands
 
 ```bash
-just update               # Run baseline.yml (all hosts)
-just update <host>        # Run baseline.yml (single host)
-just provision            # Run site.yml (all hosts)
-just provision <host>     # Run site.yml (single host)
+just update               # Run system.yml (all hosts)
+just update <host>        # Run system.yml (single host)
+just deploy               # Run homelab.yml (all hosts)
+just deploy <host>        # Run homelab.yml (single host)
+just provision            # Run site.yml — system + homelab (all hosts)
+just provision <host>     # Run site.yml — system + homelab (single host)
 just check                # Dry-run site.yml (all hosts)
 just check <host>         # Dry-run site.yml (single host)
 just reload               # systemctl --user daemon-reload

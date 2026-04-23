@@ -11,11 +11,15 @@ _all:
 @list-services:
   grep '^Description=' roles/quadlets/files/system/*.container | sed -e 's,roles/quadlets/files/system/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
 
-# Run system baseline (package updates, restic user)
+# Run system config (package updates, restic, etc.)
 update host='':
-  ansible-playbook baseline.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+  ansible-playbook system.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-# Run full provisioning (common role + quadlets)
+# Run homelab provisioning (host OS setup + quadlets)
+deploy host='':
+  ansible-playbook homelab.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
+
+# Run full provisioning (system + homelab)
 provision host='':
   ansible-playbook site.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 

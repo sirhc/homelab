@@ -5,5 +5,5 @@
   vars:
     ansible_user: "{{ admin_user }}"
   roles:
-    - baseline
+    - system
     - restic
