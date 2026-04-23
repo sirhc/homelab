@@ -5,6 +5,17 @@
 # Each value is the literal content written to <service>.env in the quadlet dir.
 # Use KEY=value pairs, one per line (standard env file format).
 
+vault_restic_ssh_private_key: ""
+
+vault_restic_password_nas:    ""
+vault_restic_repository_nas:  ""
+
+vault_restic_password_b2:     ""
+vault_restic_repository_b2:   ""
+
+vault_b2_account_id:          ""
+vault_b2_account_key:         ""
+
 vault_service_env:
   traefik: |
     CLOUDFLARE_API_KEY=

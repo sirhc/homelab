@@ -1,0 +1,4 @@
+---
+restic_backup_paths:
+  - path: /etc
+  - path: /home/cgrau

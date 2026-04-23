@@ -1,29 +1,50 @@
 ---
-- name: Deploy restic backup script
-  ansible.builtin.template:
-    src: restic-backup.sh.j2
-    dest: "/home/{{ restic_user }}/backup.sh"
+- name: Install restic and resticprofile
+  ansible.builtin.dnf:
+    name:
+      - restic
+      - resticprofile
+    state: present
+
+- name: Create resticprofile config directory
+  ansible.builtin.file:
+    path: "/home/{{ restic_user }}/.config/resticprofile"
+    state: directory
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
-    mode: "0750"
+    mode: "0700"
 
-- name: Deploy restic-backup.service
+- name: Deploy resticprofile configuration
   ansible.builtin.template:
-    src: restic-backup.service.j2
-    dest: /etc/systemd/system/restic-backup.service
+    src: restic-profiles.toml.j2
+    dest: "/home/{{ restic_user }}/.config/resticprofile/profiles.toml"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+  no_log: true
+
+- name: Deploy restic-backup@.service
+  ansible.builtin.template:
+    src: restic-backup@.service.j2
+    dest: /etc/systemd/system/restic-backup@.service
     mode: "0644"
   register: restic_service_unit
 
-- name: Deploy restic-backup.timer
+- name: Deploy restic-backup@.timer
   ansible.builtin.template:
-    src: restic-backup.timer.j2
-    dest: /etc/systemd/system/restic-backup.timer
+    src: restic-backup@.timer.j2
+    dest: /etc/systemd/system/restic-backup@.timer
     mode: "0644"
   register: restic_timer_unit
 
-- name: Enable and start restic backup timer
+- name: Reload systemd daemon
   ansible.builtin.systemd:
-    name: restic-backup.timer
-    daemon_reload: "{{ restic_service_unit.changed or restic_timer_unit.changed }}"
+    daemon_reload: true
+  when: restic_service_unit.changed or restic_timer_unit.changed
+
+- name: Enable and start restic backup timers
+  ansible.builtin.systemd:
+    name: "restic-backup@{{ item }}.timer"
     enabled: true
     state: started
+  loop: "{{ restic_targets.keys() | list }}"

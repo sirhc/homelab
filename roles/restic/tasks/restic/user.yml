@@ -12,11 +12,3 @@
     create_home: true
     password: "!"
     state: present
-
-- name: Create restic bin directory
-  ansible.builtin.file:
-    path: "/home/{{ restic_user }}/bin"
-    state: directory
-    owner: "{{ restic_user }}"
-    group: "{{ restic_group }}"
-    mode: "0755"
