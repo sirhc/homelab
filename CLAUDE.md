@@ -39,7 +39,7 @@ just debug                # Launch a fedora bash container on the homelab networ
 
 - **`inventory/`** - Ansible inventory (`hosts.yml`)
 - **`group_vars/`** - Ansible group variables (including vault-encrypted secrets)
-- **`roles/common/`** - Ansible role for host OS setup (user, linger, sysctl, firewall, polkit)
+- **`roles/quadlet_host/`** - Ansible role for host OS setup (user, linger, sysctl, firewall, polkit)
 - **`roles/quadlets/`** - Ansible role for Podman Quadlet service deployment
   - **`files/system/`** - Quadlet definitions: `.container`, `.volume`, `.network` files, `.env` secrets (gitignored), and `container.d/` drop-in
   - **`files/user/`** - User-level systemd service drop-ins (e.g., `Restart=on-failure`)

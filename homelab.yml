@@ -5,7 +5,7 @@
   vars:
     ansible_user: "{{ admin_user }}"
   roles:
-    - common
+    - quadlet_host
 
 - name: Install Podman Quadlets
   hosts: all
