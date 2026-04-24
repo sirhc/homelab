@@ -27,6 +27,10 @@ provision host='':
 check host='':
   ansible-playbook site.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
+# Deploy a single service for local testing
+test-service service host='laptop':
+  ansible-playbook homelab.yml --limit {{ host }} --extra-vars "enabled_services=[{{ service }}]"
+
 reload:
   {{ systemctl }} daemon-reload
 
