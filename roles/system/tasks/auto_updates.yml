@@ -11,6 +11,7 @@
     owner: root
     group: root
     mode: "0644"
+  notify: Restart dnf-automatic timer
 
 - name: Enable and start dnf-automatic timer
   ansible.builtin.systemd:

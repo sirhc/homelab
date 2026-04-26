@@ -4,6 +4,8 @@
     name: "{{ admin_user }}"
     groups: wheel
     append: true
+    shell: /bin/zsh
+    create_home: true
     state: present
 
 - name: Allow wheel group to sudo without a password

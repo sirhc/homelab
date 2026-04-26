@@ -1,5 +1,5 @@
 ---
-- import_tasks: restic/user.yml
-- import_tasks: restic/ssh.yml
-- import_tasks: restic/credentials.yml
-- import_tasks: restic/systemd.yml
+- import_tasks: user.yml
+- import_tasks: binary.yml
+- import_tasks: ssh.yml
+- import_tasks: config.yml

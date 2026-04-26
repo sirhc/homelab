@@ -4,16 +4,13 @@ email:          user@example.com      # ACME email for Let's Encrypt
 traefik_config: traefik-prd.yaml
 traefik_rules:  []                    # prd uses ACME; no local-tls rule needed
 
-restic_backup_paths:
-  - path: /etc
-  - path: /home/cgrau
-    excludes:
-      - /home/cgrau/Pictures
-      - /home/cgrau/Videos
-  - path: /home/cgrau/Pictures
-  - path: /home/cgrau/Videos
-  - path: /home/homelab
-  - path: /home/restic
+restic_repo_nas: !vault |
+  $ANSIBLE_VAULT;1.1;AES256
+  34326566653734356665613135663063346433633166313363636531643439663532616165353466
+  6437373763633465626535383932393932393635393834300a626539383630656439633864303966
+  38366539333135393437613034306232383432636362663630303339666635363964303339616237
+  3834353331623736610a333465326662373635333336666230333436616535306666316631333963
+  61376461316462323532623630393735643661613632636535373035323031616339
 
 enabled_services:
   - calibre

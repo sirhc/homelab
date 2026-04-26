@@ -7,19 +7,28 @@
     group: "{{ restic_group }}"
     mode: "0700"
 
+- name: Deploy restic SSH config
+  ansible.builtin.template:
+    src: ssh.conf.j2
+    dest: "/home/{{ restic_user }}/.ssh/config"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+
 - name: Deploy restic SSH private key
   ansible.builtin.copy:
-    content: "{{ vault_restic_ssh_private_key }}"
+    content: "{{ ssh_private_key }}"
     dest: "/home/{{ restic_user }}/.ssh/id_rsa"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0600"
   no_log: true
 
-- name: Deploy restic SSH config
-  ansible.builtin.template:
-    src: restic-ssh.conf.j2
-    dest: "/home/{{ restic_user }}/.ssh/config"
+- name: Deploy restic SSH public key
+  ansible.builtin.copy:
+    content: "{{ ssh_public_key }}"
+    dest: "/home/{{ restic_user }}/.ssh/id_rsa.pub"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0600"
+  no_log: true

@@ -1,0 +1,50 @@
+# vim: ft=toml
+
+version = "1"
+
+[global]
+  restic-binary = "/home/{{ restic_user }}/bin/restic"
+  password-file = "~/.config/resticprofile/repo.key"
+
+  [global.backup]
+    exclude-caches = true
+    exclude-file = "/home/{{ restic_user }}/.config/resticprofile/excludes"
+    exclude-if-present = [".nobackup"]
+    one-file-system = true
+    schedule-lock-wait = "2h"
+    schedule-permission = "system"
+    source = ["/etc", "/home/cgrau", "/home/homelab", "/home/restic"]
+
+  [global.check]
+    read-data = true
+
+  [global.forget]
+    after-backup = true
+    keep-daily = 7
+    keep-hourly = 12
+    keep-monthly = 24
+    keep-weekly = 8
+    prune = false
+
+[groups]
+  all = ["nas", "b2"]
+
+[nas]
+  inherit = "global"
+  lock = "/tmp/resticprofile-nas.lock"
+  repository = "{{ restic_repo_nas }}"
+
+  [nas.backup]
+    schedule = "0/4:15"
+
+[b2]
+  inherit = "global"
+  lock = "/tmp/resticprofile-b2.lock"
+  repository = "{{ restic_repo_b2 }}"
+
+  [b2.env]
+    B2_ACCOUNT_ID = "{{ b2_account_id }}"
+    B2_ACCOUNT_KEY = "{{ b2_account_key }}"
+
+  [b2.backup]
+    schedule = "0/4:45"

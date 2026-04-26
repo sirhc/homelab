@@ -1,0 +1,6 @@
+---
+- name: Install system packages
+  ansible.builtin.dnf:
+    name:
+      - zsh
+    state: present

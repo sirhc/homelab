@@ -1,0 +1,6 @@
+---
+domain:         localhost
+traefik_config: traefik-dev.yaml
+traefik_rules:  [local-tls.yaml]
+
+enabled_services: []
