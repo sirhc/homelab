@@ -12,7 +12,7 @@ version = "1"
     exclude-if-present = [".nobackup"]
     one-file-system = true
     schedule-lock-wait = "2h"
-    schedule-permission = "system"
+    schedule-permission = "user_logged_on"
     source = ["/etc", "/home/cgrau", "/home/homelab", "/home/restic"]
 
   [global.check]

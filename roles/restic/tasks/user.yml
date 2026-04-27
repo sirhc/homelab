@@ -12,6 +12,16 @@
     create_home: true
     password: "!"
     state: present
+  register: restic_user_info
+
+- name: Set restic UID fact
+  ansible.builtin.set_fact:
+    restic_uid: "{{ restic_user_info.uid }}"
+
+- name: Enable linger for restic user
+  ansible.builtin.command:
+    cmd: loginctl enable-linger {{ restic_user }}
+    creates: /var/lib/systemd/linger/{{ restic_user }}
 
 - name: Create restic bin directory
   ansible.builtin.file:
