@@ -1,0 +1,12 @@
+---
+- name: Enable and start postfix
+  ansible.builtin.systemd:
+    name: postfix
+    enabled: true
+    state: started
+
+- name: Enable and start postgrey
+  ansible.builtin.systemd:
+    name: postgrey
+    enabled: true
+    state: started

@@ -1,0 +1,24 @@
+---
+- name: Generate TLS private key
+  ansible.builtin.command:
+    cmd: openssl genrsa -out /etc/pki/tls/private/postfix.key 2048
+    creates: /etc/pki/tls/private/postfix.key
+  notify: Reload postfix
+
+- name: Set TLS key permissions
+  ansible.builtin.file:
+    path: /etc/pki/tls/private/postfix.key
+    owner: root
+    group: root
+    mode: "0600"
+
+- name: Generate self-signed TLS certificate
+  ansible.builtin.command:
+    cmd: >-
+      openssl req -new -x509
+      -key /etc/pki/tls/private/postfix.key
+      -out /etc/pki/tls/certs/postfix.pem
+      -days 3650
+      -subj "/CN={{ ansible_fqdn }}"
+    creates: /etc/pki/tls/certs/postfix.pem
+  notify: Reload postfix

@@ -1,0 +1,20 @@
+---
+- name: Reload postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: reloaded
+
+- name: Rebuild virtual map
+  ansible.builtin.command:
+    cmd: postmap /etc/postfix/virtual
+  notify: Reload postfix
+
+- name: Rebuild helo_access map
+  ansible.builtin.command:
+    cmd: postmap /etc/postfix/helo_access
+  notify: Reload postfix
+
+- name: Restart postgrey
+  ansible.builtin.systemd:
+    name: postgrey
+    state: restarted

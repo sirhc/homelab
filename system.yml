@@ -7,3 +7,11 @@
   roles:
     - system
     - restic
+
+- name: Mail server
+  hosts: outpost
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - mail
