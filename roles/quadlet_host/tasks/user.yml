@@ -12,3 +12,8 @@
     create_home: true
     password: "!"
     state: present
+  register: homelab_user_info
+
+- name: Set homelab UID fact
+  ansible.builtin.set_fact:
+    homelab_uid: "{{ homelab_user_info.uid }}"

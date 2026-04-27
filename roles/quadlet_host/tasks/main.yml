@@ -5,3 +5,4 @@
 - import_tasks: sysctl.yml
 - import_tasks: firewall.yml
 - import_tasks: polkit.yml
+- import_tasks: podman.yml
