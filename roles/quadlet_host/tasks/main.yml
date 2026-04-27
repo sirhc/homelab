@@ -1,4 +1,5 @@
 ---
+- import_tasks: packages.yml
 - import_tasks: user.yml
 - import_tasks: linger.yml
 - import_tasks: sysctl.yml

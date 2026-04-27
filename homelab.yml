@@ -9,10 +9,8 @@
 
 - name: Install Podman Quadlets
   hosts: all
-  become: false
+  become: true
   vars:
-    ansible_connection: community.general.machinectl
-    ansible_machinectl_user: "{{ homelab_user }}"
     ansible_user: "{{ admin_user }}"
   roles:
     - quadlets
