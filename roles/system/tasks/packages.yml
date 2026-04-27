@@ -2,5 +2,12 @@
 - name: Install system packages
   ansible.builtin.dnf:
     name:
+      - firewalld
       - zsh
     state: present
+
+- name: Enable and start firewalld
+  ansible.builtin.systemd:
+    name: firewalld
+    enabled: true
+    state: started

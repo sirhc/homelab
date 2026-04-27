@@ -48,9 +48,9 @@
 #     - postgrey_whitelist_recipients
 #   notify: Restart postgrey
 
-# - name: Open SMTP port
-#   ansible.posix.firewalld:
-#     port: 25/tcp
-#     permanent: true
-#     state: enabled
-#     immediate: true
+- name: Open SMTP port
+  ansible.posix.firewalld:
+    port: 25/tcp
+    permanent: true
+    state: enabled
+    immediate: true
