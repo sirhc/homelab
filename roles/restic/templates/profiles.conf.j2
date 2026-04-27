@@ -4,7 +4,7 @@ version = "1"
 
 [global]
   restic-binary = "/home/{{ restic_user }}/bin/restic"
-  password-file = "~/.config/resticprofile/repo.key"
+  password-file = "/home/{{ restic_user }}/.config/resticprofile/repo.key"
 
   [global.backup]
     exclude-caches = true
