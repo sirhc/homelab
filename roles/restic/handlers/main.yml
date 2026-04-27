@@ -1,8 +1,10 @@
 ---
-- name: Schedule resticprofile backups
-  ansible.builtin.command:
-    cmd: "resticprofile --config /home/{{ restic_user }}/.config/resticprofile/profiles.conf schedule --all"
+- name: Reload user systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+  become: true
   become_user: "{{ restic_user }}"
   environment:
-    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ restic_uid }}/bus"
     XDG_RUNTIME_DIR: "/run/user/{{ restic_uid }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ restic_uid }}/bus"

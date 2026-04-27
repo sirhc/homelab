@@ -24,7 +24,6 @@
     group: "{{ restic_group }}"
     mode: "0600"
   no_log: true
-  notify: Schedule resticprofile backups
 
 - name: Deploy resticprofile repository key
   ansible.builtin.copy:

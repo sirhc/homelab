@@ -1,3 +1,12 @@
 ---
 restic_user:  restic
 restic_group: restic
+resticprofile_binary: /usr/bin/resticprofile
+
+restic_schedule_offset: 0
+
+restic_schedules:
+  - name: nas
+    minute: "15"
+  - name: b2
+    minute: "45"

@@ -4,6 +4,7 @@ email:          user@example.com      # ACME email for Let's Encrypt
 traefik_config: traefik-prd.yaml
 traefik_rules:  []                    # prd uses ACME; no local-tls rule needed
 
+restic_schedule_offset: 1
 restic_repo_nas: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   34326566653734356665613135663063346433633166313363636531643439663532616165353466
