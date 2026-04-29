@@ -8,7 +8,7 @@
   ansible.builtin.user:
     name: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
-    shell: /bin/bash
+    shell: /bin/zsh
     create_home: true
     password: "!"
     state: present
