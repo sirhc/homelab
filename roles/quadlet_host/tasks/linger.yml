@@ -1,0 +1,5 @@
+---
+- name: Enable linger for homelab user
+  ansible.builtin.command:
+    cmd: loginctl enable-linger {{ homelab_user }}
+    creates: /var/lib/systemd/linger/{{ homelab_user }}

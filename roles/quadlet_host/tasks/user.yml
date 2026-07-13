@@ -1,0 +1,21 @@
+---
+- name: Create homelab group
+  ansible.builtin.group:
+    name: "{{ homelab_group }}"
+    state: present
+
+- name: Create homelab user
+  ansible.builtin.user:
+    name: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    shell: /bin/zsh
+    create_home: true
+    password: "!"
+    state: present
+  register: homelab_user_info
+
+# TODO: Make sure homelab is in the dialout group.
+
+- name: Set homelab UID fact
+  ansible.builtin.set_fact:
+    homelab_uid: "{{ homelab_user_info.uid }}"

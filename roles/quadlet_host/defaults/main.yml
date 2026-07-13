@@ -1,0 +1,12 @@
+---
+# Defaults for host_configure role.
+# Override in group_vars or inventory as needed.
+
+homelab_user:  homelab
+homelab_group: homelab
+
+common_firewall_ports:
+  - { port: 80,  proto: tcp }
+  - { port: 443, proto: tcp }
+
+extra_firewall_ports: []

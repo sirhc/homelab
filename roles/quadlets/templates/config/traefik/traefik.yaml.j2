@@ -1,0 +1,50 @@
+---
+api:
+  dashboard: true
+  insecure: true
+
+{% if traefik_env == 'prd' %}
+certificatesresolvers:
+  letsencrypt:
+    acme:
+      # caserver: https://acme-staging-v02.api.letsencrypt.org/directory
+      dnschallenge:
+        provider: cloudflare
+        resolvers: 1.1.1.1:53,1.0.0.1:53
+      email: {{ traefik_email }}
+      storage: /etc/traefik/acme.json
+
+{% endif %}
+entrypoints:
+  web:
+    address: ':80'
+    http:
+      redirections:
+        entrypoint:
+          scheme: https
+          to: websecure
+  websecure:
+    address: ':443'
+    http:
+{% if traefik_env == 'prd' %}
+      tls:
+        certresolver: letsencrypt
+        domains:
+          - main: {{ domain }}
+            sans: '*.{{ domain }}'
+{% else %}
+      tls: {}
+{% endif %}
+
+global:
+  checknewversion: false
+  sendanonymoususage: false
+
+log:
+  level: info
+
+providers:
+  docker:
+    exposedbydefault: false
+  file:
+    directory: /etc/traefik/rules

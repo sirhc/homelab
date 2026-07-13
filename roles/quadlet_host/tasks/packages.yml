@@ -1,0 +1,7 @@
+---
+- name: Install homelab packages
+  ansible.builtin.dnf:
+    name:
+      - podman
+      - systemd-container
+    state: present

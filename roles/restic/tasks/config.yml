@@ -1,0 +1,43 @@
+---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - bzip2
+      - libcap
+      - restic
+      - resticprofile
+    state: present
+
+- name: Create resticprofile config directory
+  ansible.builtin.file:
+    path: "/home/{{ restic_user }}/.config/resticprofile"
+    state: directory
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0700"
+
+- name: Deploy resticprofile configuration
+  ansible.builtin.template:
+    src: profiles.conf.j2
+    dest: "/home/{{ restic_user }}/.config/resticprofile/profiles.conf"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+  no_log: true
+
+- name: Deploy resticprofile repository key
+  ansible.builtin.copy:
+    content: "{{ restic_repo_key }}"
+    dest: "/home/{{ restic_user }}/.config/resticprofile/repo.key"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0600"
+  no_log: true
+
+- name: Deploy resticprofile excludes file
+  ansible.builtin.copy:
+    src: excludes
+    dest: "/home/{{ restic_user }}/.config/resticprofile/excludes"
+    owner: "{{ restic_user }}"
+    group: "{{ restic_group }}"
+    mode: "0644"

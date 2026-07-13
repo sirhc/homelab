@@ -1,0 +1,76 @@
+---
+- name: Create XDG base directories
+  ansible.builtin.file:
+    path: "{{ item }}"
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    state: directory
+  loop:
+    - "{{ homelab_xdg_config_home }}"
+    - "{{ homelab_xdg_cache_home }}"
+    - "{{ homelab_xdg_data_home }}"
+    - "{{ homelab_xdg_log_home }}"
+    - "{{ homelab_quadlet_dir }}"
+    - "{{ homelab_environment_dir }}"
+    - "{{ homelab_user_dir }}"
+
+# ~homelab/.config/environment.d/
+
+- name: Deploy homelab environment config
+  ansible.builtin.template:
+    src: homelab-env.conf.j2
+    dest: "{{ homelab_environment_dir }}/homelab.conf"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  notify: Reload systemd user daemon
+
+# ~homelab/.config/containers/systemd/
+
+- name: Deploy homelab network definition
+  ansible.builtin.copy:
+    src: "shared/homelab.network"
+    dest: "{{ homelab_quadlet_dir }}/homelab.network"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  notify: Reload systemd user daemon
+
+# ~homelab/.config/containers/systemd/container.d/
+
+- name: Create container.d drop-in directory
+  ansible.builtin.file:
+    path: "{{ homelab_quadlet_dir }}/container.d"
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    state: directory
+
+- name: Deploy shared container drop-in
+  ansible.builtin.copy:
+    src: "shared/container.d/homelab.conf"
+    dest: "{{ homelab_quadlet_dir }}/container.d/homelab.conf"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  notify: Reload systemd user daemon
+
+# ~homelab/.config/systemd/user/
+
+- name: Create user service drop-in directory
+  ansible.builtin.file:
+    path: "{{ homelab_user_dir }}/service.d"
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    state: directory
+
+- name: Deploy shared service drop-in
+  ansible.builtin.copy:
+    src: "shared/service.d/homelab.conf"
+    dest: "{{ homelab_user_dir }}/service.d/homelab.conf"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  notify: Reload systemd user daemon

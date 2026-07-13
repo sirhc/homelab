@@ -1,0 +1,12 @@
+---
+# Each service directory holds its own .container and any .volume files, so the
+# whole directory is copied verbatim into the quadlet dir.
+- name: Deploy quadlet unit and volume files
+  ansible.builtin.copy:
+    src: "services/{{ item }}/"
+    dest: "{{ homelab_quadlet_dir }}/"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ enabled_services }}"
+  notify: Reload systemd user daemon

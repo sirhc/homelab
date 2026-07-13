@@ -1,3 +1,5 @@
-environment/*.conf
-system/*.container.d/
-system/*.env
+# Rendered environment files hold live secrets and must never be committed.
+# The tracked sources are Jinja templates (roles/quadlets/templates/env/**/*.env.j2)
+# that reference vault-encrypted vars. A literal *.env in this tree is always
+# either a local scratch file or a mistake.
+*.env

@@ -9,34 +9,23 @@ journalctl := 'journalctl --user'
 _all:
 
 @list-services:
-  grep '^Description=' system/*.container | sed -e 's,system/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
+  grep '^Description=' roles/quadlets/files/services/*/*.container | sed -e 's,roles/quadlets/files/services/[^/]*/,,' -e 's/.container/.service/' -e 's/:Description=/,/' | mlr --c2p --hi label 'Service,Description'
 
-# Symlink service files, environment files, and user files to ~/.config
-install: install-services install-environment install-user
+# Run system config (package updates, restic, etc.)
+update host='':
+  ansible-playbook system.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-install-services:
-  mkdir -p '{{ container_dir }}'
-  stow --target='{{ container_dir }}' --stow --verbose system
+# Run homelab provisioning (host OS setup + quadlets)
+deploy host='':
+  ansible-playbook homelab.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-install-environment:
-  mkdir -p '{{ environment_dir }}'
-  stow --target='{{ environment_dir }}' --stow --verbose environment
+# Run full provisioning (system + homelab)
+provision host='':
+  ansible-playbook site.yml{{ if host != '' { ' --limit ' + host } else { '' } }}
 
-install-user:
-  mkdir -p '{{ user_dir }}'
-  stow --target='{{ user_dir }}' --stow --verbose user
-
-# Remove symlinks for service files, environment files, and user files
-uninstall: uninstall-services uninstall-environment uninstall-user
-
-uninstall-services:
-  stow --target='{{ container_dir }}' --delete --verbose system
-
-uninstall-environment:
-  stow --target='{{ environment_dir }}' --delete --verbose environment
-
-uninstall-user:
-  stow --target='{{ user_dir }}' --delete --verbose user
+# Dry-run full provisioning
+check host='':
+  ansible-playbook site.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
 reload:
   {{ systemctl }} daemon-reload
@@ -49,6 +38,15 @@ start-all:
 
 stop service:
   {{ systemctl }} stop {{ service }}
+
+# Stop, disable, and remove a service's quadlet files
+remove service:
+  -{{ systemctl }} stop {{ service }}.service
+  -{{ systemctl }} disable {{ service }}.service
+  rm -f '{{ container_dir }}/{{ service }}.container'
+  rm -f '{{ container_dir }}/{{ service }}.env'
+  rm -rf '{{ container_dir }}/{{ service }}.container.d'
+  {{ systemctl }} daemon-reload
 
 stop-all:
   ls -1 '{{ container_dir }}'/*.container | xargs -I % basename % .container | xargs -I % {{ systemctl }} stop %.service
@@ -82,11 +80,6 @@ shell service shell='/bin/sh':
 debug:
   podman run -it --rm --network homelab fedora bash
 
-# Remove dangling symlinks
-clean:
-  symlinks -d '{{ container_dir }}'
-  symlinks -d '{{ environment_dir }}'
-  symlinks -d '{{ user_dir }}'
 
 # Create certificates for testing services locally (e.g., localhost)
 mkcert domain:

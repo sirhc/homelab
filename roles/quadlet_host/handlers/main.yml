@@ -1,0 +1,15 @@
+---
+- name: Restart polkit
+  ansible.builtin.service:
+    name: polkit
+    state: restarted
+
+- name: Reload user systemd daemon
+  ansible.builtin.systemd:
+    daemon_reload: true
+    scope: user
+  become: true
+  become_user: "{{ homelab_user }}"
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ homelab_uid }}/bus"
+    XDG_RUNTIME_DIR: "/run/user/{{ homelab_uid }}"

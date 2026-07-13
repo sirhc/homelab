@@ -1,0 +1,6 @@
+---
+- import_tasks: user.yml
+- import_tasks: binary.yml
+- import_tasks: ssh.yml
+- import_tasks: config.yml
+- import_tasks: schedule.yml

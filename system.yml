@@ -1,0 +1,25 @@
+---
+- name: System baseline
+  hosts: all
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - system
+    - restic
+
+- name: Mail server
+  hosts: outpost
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - mail
+
+- name: Git server
+  hosts: media
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - git

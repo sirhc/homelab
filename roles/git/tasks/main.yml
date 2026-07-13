@@ -1,0 +1,31 @@
+---
+- name: Create git user
+  ansible.builtin.user:
+    name: git
+    shell: /usr/bin/git-shell
+    create_home: true
+    password: "!"
+    state: present
+
+- name: Create git SSH directory
+  ansible.builtin.file:
+    path: /home/git/.ssh
+    state: directory
+    owner: git
+    group: git
+    mode: "0700"
+
+- name: Deploy git authorized keys
+  ansible.builtin.authorized_key:
+    user: git
+    key: "{{ item }}"
+    state: present
+  loop: "{{ git_authorized_keys }}"
+
+- name: Create git repos directory
+  ansible.builtin.file:
+    path: /home/git/repos
+    state: directory
+    owner: git
+    group: git
+    mode: "0755"

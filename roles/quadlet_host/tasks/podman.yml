@@ -1,0 +1,17 @@
+---
+- name: Create podman service drop-in directory
+  ansible.builtin.file:
+    path: "/home/{{ homelab_user }}/.config/systemd/user/podman.service.d"
+    state: directory
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    mode: "0755"
+
+- name: Set podman API log level to warn
+  ansible.builtin.copy:
+    src: podman-service-override.conf
+    dest: "/home/{{ homelab_user }}/.config/systemd/user/podman.service.d/override.conf"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+    mode: "0644"
+  notify: Reload user systemd daemon

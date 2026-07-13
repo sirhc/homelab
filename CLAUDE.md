@@ -4,52 +4,93 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project Overview
 
-Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. The build/deploy tool is **Just** and service file installation uses **GNU stow** to symlink into `~/.config`.
+This repository is the **single source of truth** for all homelab devices and configuration. Everything needed to manage, configure, and deploy any device should live here.
+
+Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. All deployment and configuration is managed through **Ansible**; **Just** wraps the common invocations.
+
+Nothing is placed on a host by hand. If a file needs to exist on a target, Ansible puts it there.
+
+## Prerequisites
+
+```bash
+sudo dnf install podman just ansible-core
+ansible-galaxy collection install -r requirements.yml
+echo 'yourpassword' > ~/.ansible/vault_pass && chmod 600 ~/.ansible/vault_pass
+```
+
+The vault password file path is `~/.ansible/vault_pass` (configured in `ansible.cfg`).
 
 ## Common Commands
 
 ```bash
-just install              # Symlink all service/env/user files to ~/.config
-just reload               # systemctl --user daemon-reload
-just start <service>      # Start a single service
-just start-all            # Start all installed services
-just stop <service>       # Stop a single service
-just restart <service>    # Restart a single service
-just logs <service>       # View journalctl logs for a service
-just logs <service> -f    # Follow logs
-just status <service>     # Check service status
-just shell <service>      # Open shell in running container
-just verify <service>     # Validate systemd unit file syntax
+just update <host>        # Run system.yml   (host omitted = all hosts)
+just deploy <host>        # Run homelab.yml
+just provision <host>     # Run site.yml — system + homelab
+just check <host>         # Dry-run site.yml
 just list-services        # List all services with descriptions
-just clean                # Remove dangling symlinks
-just debug                # Launch a fedora bash container on the homelab network
 ```
+
+The remaining recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-media`, `debug`, `mkcert`, `enable-auto-update`) operate on the **local** machine's user services via `systemctl --user`, so they are run on the host itself, not from the laptop. `just --list` is authoritative.
 
 ## Architecture
 
-### Directory Layout
+### Playbooks
 
-- **`system/`** - Podman Quadlet definitions: `.container` files (service definitions), `.volume` files, `.network` file, `.env` files (secrets, gitignored), and `container.d/` drop-in for shared defaults
-- **`environment/`** - Global environment variables (e.g., `DOMAIN`), symlinked to `~/.config/environment.d/`
-- **`user/`** - User-level systemd service drop-ins (e.g., `Restart=on-failure`), symlinked to `~/.config/systemd/user/`
-- **`config/`** - Version-controlled service configs (Prometheus scrape config, Traefik routing rules) that get manually copied to `~/.config/<service>/`
+Three playbooks, all run from the laptop against `inventory/hosts.yml`:
 
-### How Services Work
+- **`system.yml`** — host OS baseline for all hosts (`system`, `restic`), plus `mail` on `outpost` and `git` on `media`.
+- **`homelab.yml`** — two plays, both as root:
+  1. `quadlet_host` — creates the `homelab` user, enables linger, sets sysctl, opens firewall ports, installs the Polkit rule.
+  2. `quadlets` — deploys the quadlet files and starts services. Runs as root and steps down with `become_user: homelab`, talking to the user's session bus via `DBUS_SESSION_BUS_ADDRESS` / `XDG_RUNTIME_DIR`. (An earlier design connected as the `homelab` user over `machinectl`; that is gone.)
+- **`site.yml`** — imports both, in order.
 
-Each service is a `.container` file in `system/` following the [Podman Quadlet spec](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html). When installed via `stow`, these are symlinked to `~/.config/containers/systemd/` where Podman's systemd generator converts them into `.service` units.
+### Roles
 
-Key patterns in container files:
-- **Systemd specifiers**: `%E` (config dir), `%L` (logs dir), `%C` (cache dir), `%D` (state dir), `%t` (runtime dir), `%N` (unit name)
-- **Traefik routing**: Services expose themselves via labels like `traefik.http.routers.<service>.rule=Host('service.${DOMAIN}')`
-- **Drop-in overrides**: Per-service overrides go in `system/<service>.container.d/` directories
-- **Shared defaults**: `system/container.d/homelab.conf` applies `AutoUpdate=registry` to all containers
+- **`roles/system/`** — host OS baseline: third-party repos, packages, dnf-automatic, admin user.
+- **`roles/restic/`** — backups: `restic` user, restic binary with `cap_dac_read_search=+ep`, resticprofile config and scheduling.
+- **`roles/mail/`** — Postfix relay (outpost only).
+- **`roles/git/`** — `git-shell` user and bare-repo directory (media only). Authorized keys come from `git_authorized_keys`.
+- **`roles/quadlet_host/`** — host prerequisites for rootless Podman: user, linger, sysctl, firewall, polkit.
+- **`roles/quadlets/`** — deploys quadlet files, env files, configs, and starts services.
+
+### Service Deployment
+
+Each service owns a directory: `roles/quadlets/files/services/<service>/`. **The directory name, the `.container` filename, and the systemd unit name must all match** — the role copies the directory's contents verbatim into `~homelab/.config/containers/systemd/`, and `%N` inside the unit resolves to that name. Two services whose files share a basename will silently overwrite each other.
+
+A service directory holds its `.container` file and any `.volume` files. Podman's systemd generator turns them into `.service` units at daemon-reload.
+
+Which services run on a host is set by `enabled_services` in `host_vars/<host>.yml`. The `quadlets` role only touches services in that list.
+
+Key patterns:
+- **Systemd specifiers**: `%E` (config dir), `%L` (logs), `%C` (cache), `%D` (state), `%t` (runtime dir), `%N` (unit name)
+- **Traefik routing**: services expose themselves via labels, e.g. ``traefik.http.routers.%N.rule=Host(`service.${DOMAIN}`)``
+- **Shared defaults**: `files/shared/container.d/homelab.conf` applies `AutoUpdate=registry` to every container; `files/shared/service.d/homelab.conf` sets `Restart=on-failure`
+- **Per-unit drop-ins** are *generated* by Ansible, not committed. See `tasks/pihole_dropin.yml`, which writes each Pi-hole's `PublishPort` lines from a template.
+
+Quadlet units are generated, so they cannot be `systemctl enable`d — Ansible only starts them. Boot-time start comes from `[Install] WantedBy=default.target` in the unit plus linger on the `homelab` user.
+
+### Variables and Secrets
+
+- **`group_vars/all/main.yml`** — global vars and all vault-encrypted secrets as inline `!vault` blocks (Cloudflare, Pi-hole, zwave, SolarEdge, OpenWeather, restic, B2, SSH).
+- **`host_vars/<host>.yml`** — per-host: `enabled_services`, firewall ports, Pi-hole IPs, `traefik_env`, host-specific vault values.
+- **`roles/quadlets/defaults/main.yml`** — paths (`homelab_*`) and non-secret service config.
+- Add a secret with `ansible-vault encrypt_string --stdin-name '<var>'` and paste the block into `group_vars/all/main.yml`.
+
+**Never commit a plaintext secret.** Public SSH keys are not secrets and do not need vaulting.
 
 ### Environment Variables
 
 Two scopes:
-1. **Global** (`environment/*.conf`): Available to systemd directives and containers. Symlinked to `~/.config/environment.d/`.
-2. **Per-service** (`system/<service>.env`): Only available inside the running container via `EnvironmentFile=`. These are gitignored and hold secrets/API keys.
+
+1. **Global** — `templates/homelab-env.conf.j2`, rendered to `~homelab/.config/environment.d/homelab.conf`. Available to systemd directives (so usable in `.container` files, e.g. `${DOMAIN}`) and to containers.
+2. **Per-service** — `templates/env/<service>/<service>.env.j2`, rendered to `~homelab/.config/containers/systemd/<service>.env` and pulled in by `EnvironmentFile=./%N.env`. Only visible inside the running container.
+
+Per-service env files hold live secrets, so the **templates** are committed and reference vault vars; the **rendered** `.env` files never are. `.gitignore` blocks `*.env` repo-wide to enforce this.
+
+> Historical note: these files were once committed as plaintext `.env` files, protected by a `.gitignore` pattern (`system/*.env`) that — because it contains a mid-pattern slash — was anchored to the repo root and never actually matched them. Real credentials were pushed to a public branch. Hence the blanket `*.env` rule and the `.env.j2` naming.
 
 ### Networking
 
-All services share a bridge network (`homelab.network`, IPv6 enabled). Traefik handles reverse proxying on ports 80/443 with host-based routing. A few services publish additional ports directly (Pi-hole on 53, Plex on multiple ports).
+All services share a bridge network (`files/shared/homelab.network`, IPv6 enabled). Traefik reverse-proxies ports 80/443 with host-based routing; its static config is templated from `templates/config/traefik/traefik.yaml.j2` and switches on `traefik_env` (`prd` enables the Let's Encrypt DNS-01 resolver via Cloudflare).
+
+Two Pi-hole instances run side by side — `pihole-local` and `pihole-tailnet` — routed as `dns.` and `dnsts.` respectively. Each binds `:53` to a *specific* host address via its generated drop-in; binding `0.0.0.0` would hijack the Podman network's internal DNS and break container-name resolution.

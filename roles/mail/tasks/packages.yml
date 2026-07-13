@@ -1,0 +1,8 @@
+---
+- name: Install mail packages
+  ansible.builtin.dnf:
+    name:
+      - postfix
+      - postgrey
+      - procmail
+    state: present

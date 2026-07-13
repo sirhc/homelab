@@ -1,0 +1,16 @@
+---
+- name: Open common firewall ports
+  ansible.posix.firewalld:
+    port: "{{ item.port }}/{{ item.proto }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ common_firewall_ports }}"
+
+- name: Open host-specific firewall ports
+  ansible.posix.firewalld:
+    port: "{{ item.port }}/{{ item.proto }}"
+    permanent: true
+    state: enabled
+    immediate: true
+  loop: "{{ extra_firewall_ports }}"

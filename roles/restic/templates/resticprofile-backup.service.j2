@@ -1,0 +1,8 @@
+[Unit]
+Description=resticprofile backup for {{ item.name }}
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=oneshot
+ExecStart={{ resticprofile_binary }} --config /home/{{ restic_user }}/.config/resticprofile/profiles.conf --name {{ item.name }} backup
