@@ -27,6 +27,14 @@ provision host='':
 check host='':
   ansible-playbook site.yml --check{{ if host != '' { ' --limit ' + host } else { '' } }}
 
+# Lint playbooks and roles
+lint:
+  ansible-lint
+
+# Install the git pre-commit hook that runs `just lint`
+install-hooks:
+  git config core.hooksPath .githooks
+
 reload:
   {{ systemctl }} daemon-reload
 

@@ -1,8 +1,21 @@
 ---
-- import_tasks: packages.yml
-- import_tasks: user.yml
-- import_tasks: linger.yml
-- import_tasks: sysctl.yml
-- import_tasks: firewall.yml
-- import_tasks: polkit.yml
-- import_tasks: podman.yml
+- name: Install packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Create homelab user
+  ansible.builtin.import_tasks: user.yml
+
+- name: Enable linger
+  ansible.builtin.import_tasks: linger.yml
+
+- name: Set sysctl values
+  ansible.builtin.import_tasks: sysctl.yml
+
+- name: Open firewall ports
+  ansible.builtin.import_tasks: firewall.yml
+
+- name: Install Polkit rule
+  ansible.builtin.import_tasks: polkit.yml
+
+- name: Configure Podman
+  ansible.builtin.import_tasks: podman.yml

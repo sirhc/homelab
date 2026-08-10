@@ -1,5 +1,5 @@
 ---
-restic_user:  restic
+restic_user: restic
 restic_group: restic
 resticprofile_binary: /usr/bin/resticprofile
 

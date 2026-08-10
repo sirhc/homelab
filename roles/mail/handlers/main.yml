@@ -1,20 +1,25 @@
 ---
-- name: Reload postfix
-  ansible.builtin.systemd:
-    name: postfix
-    state: reloaded
-
+# Handlers run in definition order, and a handler notified by another handler
+# only fires if it is defined *later*. "Reload postfix" must therefore stay at
+# the bottom, after the postmap handlers that notify it.
 - name: Rebuild virtual map
   ansible.builtin.command:
     cmd: postmap /etc/postfix/virtual
+  changed_when: true
   notify: Reload postfix
 
 - name: Rebuild helo_access map
   ansible.builtin.command:
     cmd: postmap /etc/postfix/helo_access
+  changed_when: true
   notify: Reload postfix
 
 - name: Restart postgrey
   ansible.builtin.systemd:
     name: postgrey
     state: restarted
+
+- name: Reload postfix
+  ansible.builtin.systemd:
+    name: postfix
+    state: reloaded

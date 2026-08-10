@@ -1,0 +1,11 @@
+---
+exclude_paths:
+  - .cache/
+  - roles/quadlets/files/
+  - tmp/
+
+skip_list:
+  # homelab_user, homelab_group, admin_user, common_firewall_ports, etc. are
+  # deliberately shared across quadlet_host/quadlets/system rather than
+  # role-local, so a role-name prefix would be misleading.
+  - var-naming[no-role-prefix]

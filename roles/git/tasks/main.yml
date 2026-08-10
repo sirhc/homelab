@@ -15,10 +15,14 @@
     group: git
     mode: "0700"
 
+# An explicit path keeps this working under --check on a host where the git
+# user does not exist yet; the task above already creates and owns ~git/.ssh.
 - name: Deploy git authorized keys
-  ansible.builtin.authorized_key:
+  ansible.posix.authorized_key:
     user: git
     key: "{{ item }}"
+    path: /home/git/.ssh/authorized_keys
+    manage_dir: false
     state: present
   loop: "{{ git_authorized_keys }}"
 

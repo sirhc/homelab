@@ -1,9 +1,12 @@
 ---
+# Read-only discovery: must run even under --check, otherwise the uri module
+# skips, restic_release_info has no .json, and the set_fact below blows up.
 - name: Get latest restic release
   ansible.builtin.uri:
     url: https://api.github.com/repos/restic/restic/releases/latest
     return_content: true
   register: restic_release_info
+  check_mode: false
 
 - name: Set restic version facts
   ansible.builtin.set_fact:
@@ -16,6 +19,7 @@
   register: restic_installed
   failed_when: false
   changed_when: false
+  check_mode: false
 
 - name: Download and install restic
   when: restic_latest_version not in (restic_installed.stdout | default(''))
@@ -29,6 +33,7 @@
     - name: Decompress and install restic binary
       ansible.builtin.shell:
         cmd: "bunzip2 -c /tmp/restic_{{ restic_latest_version }}_linux_{{ restic_arch }}.bz2 > /home/{{ restic_user }}/bin/restic"
+      changed_when: true
 
     - name: Set restic binary ownership and permissions
       ansible.builtin.file:

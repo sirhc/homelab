@@ -3,6 +3,7 @@
   ansible.builtin.systemd:
     daemon_reload: true
     scope: user
+  become: true
   become_user: "{{ homelab_user }}"
   environment:
     DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ homelab_uid }}/bus"
@@ -15,6 +16,7 @@
     name: traefik.service
     scope: user
     state: restarted
+  become: true
   become_user: "{{ homelab_user }}"
   environment:
     DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ homelab_uid }}/bus"

@@ -13,9 +13,10 @@ Nothing is placed on a host by hand. If a file needs to exist on a target, Ansib
 ## Prerequisites
 
 ```bash
-sudo dnf install podman just ansible-core
+sudo dnf install podman just ansible-core ansible-lint
 ansible-galaxy collection install -r requirements.yml
 echo 'yourpassword' > ~/.ansible/vault_pass && chmod 600 ~/.ansible/vault_pass
+just install-hooks   # enables the ansible-lint pre-commit hook
 ```
 
 The vault password file path is `~/.ansible/vault_pass` (configured in `ansible.cfg`).
@@ -27,8 +28,11 @@ just update <host>        # Run system.yml   (host omitted = all hosts)
 just deploy <host>        # Run homelab.yml
 just provision <host>     # Run site.yml — system + homelab
 just check <host>         # Dry-run site.yml
+just lint                 # Run ansible-lint
 just list-services        # List all services with descriptions
 ```
+
+Linting is configured by two files. `.ansible-lint` sets exclusions and the rule skip list; `.yamllint` pins the YAML style. The `.yamllint` file exists so a developer's personal `~/.config/yamllint/config` can't override repo style — without it `ansible-lint` disables `--fix` and rejects `{ port: 80, proto: tcp }`.
 
 The remaining recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-media`, `debug`, `mkcert`, `enable-auto-update`) operate on the **local** machine's user services via `systemctl --user`, so they are run on the host itself, not from the laptop. `just --list` is authoritative.
 
@@ -36,10 +40,12 @@ The remaining recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `ins
 
 ### Playbooks
 
-Three playbooks, all run from the laptop against `inventory/hosts.yml`:
+Three playbooks, all run from the laptop against `inventory/hosts.yml`.
 
-- **`system.yml`** — host OS baseline for all hosts (`system`, `restic`), plus `mail` on `outpost` and `git` on `media`.
-- **`homelab.yml`** — two plays, both as root:
+Inventory groups name a **capability, not a location**: `workstations` (`laptop`), `quadlet_hosts` (`media`), `git_servers` (`media`), `mail_servers` (`outpost`). Hosts belong to several groups, and connection vars are declared once under `all.hosts`. Plays target groups — never a bare hostname — so a new box is an inventory edit. (An earlier inventory used `local`/`remote`/`workstation`; `local` confusingly held only `media`, a remote SSH host.)
+
+- **`system.yml`** — host OS baseline for `all` (`system`, `restic`), plus `mail` on `mail_servers` and `git` on `git_servers`.
+- **`homelab.yml`** — two plays against `quadlet_hosts`, both as root:
   1. `quadlet_host` — creates the `homelab` user, enables linger, sets sysctl, opens firewall ports, installs the Polkit rule.
   2. `quadlets` — deploys the quadlet files and starts services. Runs as root and steps down with `become_user: homelab`, talking to the user's session bus via `DBUS_SESSION_BUS_ADDRESS` / `XDG_RUNTIME_DIR`. (An earlier design connected as the `homelab` user over `machinectl`; that is gone.)
 - **`site.yml`** — imports both, in order.
@@ -65,6 +71,7 @@ Key patterns:
 - **Systemd specifiers**: `%E` (config dir), `%L` (logs), `%C` (cache), `%D` (state), `%t` (runtime dir), `%N` (unit name)
 - **Traefik routing**: services expose themselves via labels, e.g. ``traefik.http.routers.%N.rule=Host(`service.${DOMAIN}`)``
 - **Shared defaults**: `files/shared/container.d/homelab.conf` applies `AutoUpdate=registry` to every container; `files/shared/service.d/homelab.conf` sets `Restart=on-failure`
+- **Pruning**: `tasks/prune.yml` removes quadlet files the repo no longer defines, so a rename or deletion doesn't leave an old unit running. It always *reports* stale entries but only deletes when `quadlet_prune: true` (default off). Scope is the quadlet dir only — service data in `~homelab/.config/<service>` and Podman volumes are never touched.
 - **Per-unit drop-ins** are *generated* by Ansible, not committed. See `tasks/pihole_dropin.yml`, which writes each Pi-hole's `PublishPort` lines from a template.
 
 Quadlet units are generated, so they cannot be `systemctl enable`d — Ansible only starts them. Boot-time start comes from `[Install] WantedBy=default.target` in the unit plus linger on the `homelab` user.

@@ -9,7 +9,7 @@
     - restic
 
 - name: Mail server
-  hosts: outpost
+  hosts: mail_servers
   become: true
   vars:
     ansible_user: "{{ admin_user }}"
@@ -17,7 +17,7 @@
     - mail
 
 - name: Git server
-  hosts: media
+  hosts: git_servers
   become: true
   vars:
     ansible_user: "{{ admin_user }}"

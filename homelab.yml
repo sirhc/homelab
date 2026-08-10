@@ -1,6 +1,6 @@
 ---
 - name: Configure host OS
-  hosts: local
+  hosts: quadlet_hosts
   become: true
   vars:
     ansible_user: "{{ admin_user }}"
@@ -8,7 +8,7 @@
     - quadlet_host
 
 - name: Install Podman Quadlets
-  hosts: local
+  hosts: quadlet_hosts
   become: true
   vars:
     ansible_user: "{{ admin_user }}"

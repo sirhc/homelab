@@ -1,3 +1,6 @@
 ---
-- import_playbook: system.yml
-- import_playbook: homelab.yml
+- name: Host OS baseline
+  ansible.builtin.import_playbook: system.yml
+
+- name: Homelab provisioning
+  ansible.builtin.import_playbook: homelab.yml

@@ -1,0 +1,10 @@
+#!/bin/sh
+# Runs ansible-lint before allowing a commit. Enable with `just install-hooks`.
+set -e
+
+if ! command -v ansible-lint >/dev/null 2>&1; then
+  echo "pre-commit: ansible-lint not found (sudo dnf install ansible-lint), skipping lint" >&2
+  exit 0
+fi
+
+ansible-lint

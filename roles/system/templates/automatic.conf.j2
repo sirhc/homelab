@@ -1,0 +1,11 @@
+{% if dnf_automatic_exclude %}
+[base]
+exclude = {{ dnf_automatic_exclude | join(', ') }}
+
+{% endif %}
+[commands]
+apply_updates = True
+
+[emitters]
+emit_via = stdio, motd
+emit_no_updates = True

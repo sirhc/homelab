@@ -13,6 +13,7 @@
     name: "{{ item }}.service"
     scope: user
     state: started
+  become: true
   become_user: "{{ homelab_user }}"
   environment:
     DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ homelab_uid }}/bus"

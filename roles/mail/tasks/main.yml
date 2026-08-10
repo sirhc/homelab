@@ -1,5 +1,12 @@
 ---
-- import_tasks: packages.yml
-- import_tasks: tls.yml
-- import_tasks: config.yml
-- import_tasks: service.yml
+- name: Install mail packages
+  ansible.builtin.import_tasks: packages.yml
+
+- name: Configure TLS
+  ansible.builtin.import_tasks: tls.yml
+
+- name: Configure Postfix
+  ansible.builtin.import_tasks: config.yml
+
+- name: Start mail services
+  ansible.builtin.import_tasks: service.yml

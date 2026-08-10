@@ -10,7 +10,7 @@ domain: !vault |
   3639
 
 common_firewall_ports:
-  - { port: 80,  proto: tcp }
+  - { port: 80, proto: tcp }
   - { port: 443, proto: tcp }
 
 # Not a secret; the matching cloudflare_api_key is vaulted.

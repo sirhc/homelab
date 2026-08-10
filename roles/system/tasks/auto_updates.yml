@@ -5,8 +5,8 @@
     state: present
 
 - name: Deploy dnf-automatic configuration
-  ansible.builtin.copy:
-    src: automatic.conf
+  ansible.builtin.template:
+    src: automatic.conf.j2
     dest: /etc/dnf/automatic.conf
     owner: root
     group: root

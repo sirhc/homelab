@@ -1,0 +1,20 @@
+---
+# Repo-local yamllint config. Without this, ansible-lint picks up
+# ~/.config/yamllint/config, which is incompatible with its requirements —
+# that disables `ansible-lint --fix` and forbids spaces inside flow mappings.
+extends: default
+
+rules:
+  # ansible-lint requires these exact values.
+  comments:
+    min-spaces-from-content: 1
+  comments-indentation: false
+  octal-values:
+    forbid-implicit-octal: true
+    forbid-explicit-octal: true
+
+  # Allow `{ port: 80, proto: tcp }` so the firewall port tables stay aligned.
+  braces: { max-spaces-inside: 1 }
+  line-length: disable
+  truthy:
+    allowed-values: ["true", "false"]
