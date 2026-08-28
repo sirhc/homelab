@@ -5,9 +5,6 @@
 - name: Create homelab user
   ansible.builtin.import_tasks: user.yml
 
-- name: Enable linger
-  ansible.builtin.import_tasks: linger.yml
-
 - name: Set sysctl values
   ansible.builtin.import_tasks: sysctl.yml
 

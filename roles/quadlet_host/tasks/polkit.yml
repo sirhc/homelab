@@ -1,7 +1,7 @@
 ---
 - name: Install Polkit rule for machinectl shell access
   ansible.builtin.copy:
-    src: 60-machinectl-fast-user-auth.rules
+    src: 60-homelab-machinectl.rules
     dest: /etc/polkit-1/rules.d/60-homelab-machinectl.rules
     owner: root
     group: root

@@ -1,7 +1,7 @@
 ---
 - name: Create podman service drop-in directory
   ansible.builtin.file:
-    path: "/home/{{ homelab_user }}/.config/systemd/user/podman.service.d"
+    path: "{{ homelab_home }}/.config/systemd/user/podman.service.d"
     state: directory
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
