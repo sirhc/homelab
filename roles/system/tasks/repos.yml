@@ -1,20 +1,20 @@
 ---
+- name: Enable personal COPR repo
+  community.general.copr:
+    name: cgrau/personal
+    state: enabled
+
 - name: Enable RPM Fusion free repository
   ansible.builtin.dnf:
-    name: "https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    name: https://mirrors.rpmfusion.org/free/fedora/rpmfusion-free-release-{{ ansible_facts["distribution_major_version"] }}.noarch.rpm
     state: present
     disable_gpg_check: true
 
 - name: Enable RPM Fusion nonfree repository
   ansible.builtin.dnf:
-    name: "https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_distribution_major_version }}.noarch.rpm"
+    name: https://mirrors.rpmfusion.org/nonfree/fedora/rpmfusion-nonfree-release-{{ ansible_facts["distribution_major_version"] }}.noarch.rpm
     state: present
     disable_gpg_check: true
-
-- name: Enable personal COPR repo
-  community.general.copr:
-    name: cgrau/personal
-    state: enabled
 
 - name: Deploy third-party repo files
   ansible.builtin.copy:

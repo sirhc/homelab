@@ -1,12 +1,9 @@
 ---
+- name: Create admin user
+  ansible.builtin.import_tasks: user.yml
+
 - name: Configure third-party repos
   ansible.builtin.import_tasks: repos.yml
 
 - name: Install packages
   ansible.builtin.import_tasks: packages.yml
-
-- name: Configure dnf-automatic
-  ansible.builtin.import_tasks: auto_updates.yml
-
-- name: Create admin user
-  ansible.builtin.import_tasks: user.yml
