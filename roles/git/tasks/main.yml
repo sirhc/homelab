@@ -6,29 +6,40 @@
     create_home: true
     password: "!"
     state: present
+  register: git_user_info
+
+- name: Set git user facts
+  ansible.builtin.set_fact:
+    git_home: "{{ git_user_info.home }}"
 
 - name: Create git SSH directory
   ansible.builtin.file:
-    path: /home/git/.ssh
+    path: "{{ git_home }}/.ssh"
     state: directory
     owner: git
     group: git
     mode: "0700"
 
-# An explicit path keeps this working under --check on a host where the git
-# user does not exist yet; the task above already creates and owns ~git/.ssh.
-- name: Deploy git authorized keys
+- name: Deploy authorized keys
   ansible.posix.authorized_key:
     user: git
     key: "{{ item }}"
-    path: /home/git/.ssh/authorized_keys
+    path: "{{ git_home }}/.ssh/authorized_keys"
     manage_dir: false
     state: present
   loop: "{{ git_authorized_keys }}"
 
-- name: Create git repos directory
+- name: Deploy gitconfig
+  ansible.builtin.copy:
+    src: gitconfig
+    dest: "{{ git_home }}/.gitconfig"
+    owner: git
+    group: git
+    mode: "0644"
+
+- name: Create repos directory
   ansible.builtin.file:
-    path: /home/git/repos
+    path: "{{ git_home }}/repos"
     state: directory
     owner: git
     group: git
