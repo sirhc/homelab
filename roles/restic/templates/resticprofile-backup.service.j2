@@ -5,4 +5,4 @@ Wants=network-online.target
 
 [Service]
 Type=oneshot
-ExecStart={{ resticprofile_binary }} --config /home/{{ restic_user }}/.config/resticprofile/profiles.conf --name {{ item.name }} backup
+ExecStart={{ resticprofile_binary }} --config {{ restic_home }}/.config/resticprofile/profiles.conf --name {{ item.name }} backup

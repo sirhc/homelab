@@ -11,11 +11,11 @@
 - name: Set restic version facts
   ansible.builtin.set_fact:
     restic_latest_version: "{{ restic_release_info.json.tag_name | regex_replace('^v', '') }}"
-    restic_arch: "{{ 'amd64' if ansible_architecture == 'x86_64' else 'arm64' }}"
+    restic_arch: "{{ 'amd64' if ansible_facts['architecture'] == 'x86_64' else 'arm64' }}"
 
 - name: Check installed restic version
   ansible.builtin.command:
-    cmd: "/home/{{ restic_user }}/bin/restic version"
+    cmd: "{{ restic_home }}/bin/restic version"
   register: restic_installed
   failed_when: false
   changed_when: false
@@ -32,12 +32,12 @@
 
     - name: Decompress and install restic binary
       ansible.builtin.shell:
-        cmd: "bunzip2 -c /tmp/restic_{{ restic_latest_version }}_linux_{{ restic_arch }}.bz2 > /home/{{ restic_user }}/bin/restic"
+        cmd: "bunzip2 -c /tmp/restic_{{ restic_latest_version }}_linux_{{ restic_arch }}.bz2 > {{ restic_home }}/bin/restic"
       changed_when: true
 
     - name: Set restic binary ownership and permissions
       ansible.builtin.file:
-        path: "/home/{{ restic_user }}/bin/restic"
+        path: "{{ restic_home }}/bin/restic"
         owner: "{{ restic_user }}"
         group: "{{ restic_group }}"
         mode: "0755"
@@ -49,6 +49,6 @@
 
 - name: Set restic capabilities
   community.general.capabilities:
-    path: "/home/{{ restic_user }}/bin/restic"
-    capability: cap_dac_read_search=+ep
+    path: "{{ restic_home }}/bin/restic"
+    capability: "cap_dac_read_search=+ep"
     state: present

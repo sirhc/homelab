@@ -1,4 +1,4 @@
-Host {{ restic_nas_host }}
+Host {{ restic_host }}
   ControlMaster auto
   ControlPath ~/.ssh/%r@%h:%p
   ControlPersist 4h
@@ -7,4 +7,4 @@ Host {{ restic_nas_host }}
   ForwardX11Trusted no
   ServerAliveInterval 300
   StrictHostKeyChecking no
-  User restic
+  User {{ restic_user }}

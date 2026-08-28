@@ -14,8 +14,9 @@
     state: present
   register: restic_user_info
 
-- name: Set restic UID fact
+- name: Set restic fact
   ansible.builtin.set_fact:
+    restic_home: "{{ restic_user_info.home }}"
     restic_uid: "{{ restic_user_info.uid }}"
 
 - name: Enable linger for restic user
@@ -25,7 +26,7 @@
 
 - name: Create restic bin directory
   ansible.builtin.file:
-    path: "/home/{{ restic_user }}/bin"
+    path: "{{ restic_home }}/bin"
     state: directory
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"

@@ -10,7 +10,7 @@
 
 - name: Create resticprofile config directory
   ansible.builtin.file:
-    path: "/home/{{ restic_user }}/.config/resticprofile"
+    path: "{{ restic_home }}/.config/resticprofile"
     state: directory
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
@@ -19,7 +19,7 @@
 - name: Deploy resticprofile configuration
   ansible.builtin.template:
     src: profiles.conf.j2
-    dest: "/home/{{ restic_user }}/.config/resticprofile/profiles.conf"
+    dest: "{{ restic_home }}/.config/resticprofile/profiles.conf"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0600"
@@ -28,7 +28,7 @@
 - name: Deploy resticprofile repository key
   ansible.builtin.copy:
     content: "{{ restic_repo_key }}"
-    dest: "/home/{{ restic_user }}/.config/resticprofile/repo.key"
+    dest: "{{ restic_home }}/.config/resticprofile/repo.key"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0600"
@@ -37,7 +37,7 @@
 - name: Deploy resticprofile excludes file
   ansible.builtin.copy:
     src: excludes
-    dest: "/home/{{ restic_user }}/.config/resticprofile/excludes"
+    dest: "{{ restic_home }}/.config/resticprofile/excludes"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0644"

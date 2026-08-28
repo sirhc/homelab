@@ -1,7 +1,7 @@
 ---
 - name: Create systemd user directory for restic
   ansible.builtin.file:
-    path: "/home/{{ restic_user }}/.config/systemd/user"
+    path: "{{ restic_home }}/.config/systemd/user"
     state: directory
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
@@ -10,7 +10,7 @@
 - name: Deploy resticprofile backup service units
   ansible.builtin.template:
     src: resticprofile-backup.service.j2
-    dest: "/home/{{ restic_user }}/.config/systemd/user/resticprofile-backup-{{ item.name }}.service"
+    dest: "{{ restic_home }}/.config/systemd/user/resticprofile-backup-{{ item.name }}.service"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0644"
@@ -20,7 +20,7 @@
 - name: Deploy resticprofile backup timer units
   ansible.builtin.template:
     src: resticprofile-backup.timer.j2
-    dest: "/home/{{ restic_user }}/.config/systemd/user/resticprofile-backup-{{ item.name }}.timer"
+    dest: "{{ restic_home }}/.config/systemd/user/resticprofile-backup-{{ item.name }}.timer"
     owner: "{{ restic_user }}"
     group: "{{ restic_group }}"
     mode: "0644"

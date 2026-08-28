@@ -3,12 +3,12 @@
 version = "1"
 
 [global]
-  restic-binary = "/home/{{ restic_user }}/bin/restic"
-  password-file = "/home/{{ restic_user }}/.config/resticprofile/repo.key"
+  restic-binary = "{{ restic_home }}/bin/restic"
+  password-file = "{{ restic_home }}/.config/resticprofile/repo.key"
 
   [global.backup]
     exclude-caches = true
-    exclude-file = "/home/{{ restic_user }}/.config/resticprofile/excludes"
+    exclude-file = "{{ restic_home }}/.config/resticprofile/excludes"
     exclude-if-present = [".nobackup"]
     one-file-system = true
     schedule-lock-wait = "2h"
