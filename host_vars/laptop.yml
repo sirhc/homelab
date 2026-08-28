@@ -1,4 +1,2 @@
 ---
 restic_schedule_offset: 0
-dnf_automatic_exclude:
-  - firefox
