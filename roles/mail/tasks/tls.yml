@@ -15,10 +15,12 @@
 - name: Generate self-signed TLS certificate
   ansible.builtin.command:
     cmd: >-
-      openssl req -new -x509
+      openssl req
+      -new
+      -x509
       -key /etc/pki/tls/private/postfix.key
       -out /etc/pki/tls/certs/postfix.pem
       -days 3650
-      -subj "/CN={{ ansible_fqdn }}"
+      -subj "/CN={{ ansible_facts['fqdn'] }}"
     creates: /etc/pki/tls/certs/postfix.pem
   notify: Reload postfix

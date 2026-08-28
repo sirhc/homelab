@@ -8,15 +8,6 @@
     mode: "0644"
   notify: Reload postfix
 
-# - name: Deploy master.cf
-#   ansible.builtin.copy:
-#     src: master.cf
-#     dest: /etc/postfix/master.cf
-#     owner: root
-#     group: root
-#     mode: "0644"
-#   notify: Reload postfix
-
 - name: Deploy virtual alias map
   ansible.builtin.copy:
     src: virtual
@@ -34,19 +25,6 @@
     group: root
     mode: "0644"
   notify: Rebuild helo_access map
-
-# - name: Deploy postgrey whitelist files
-#   ansible.builtin.copy:
-#     src: "{{ item }}"
-#     dest: "/etc/postfix/{{ item }}"
-#     owner: root
-#     group: root
-#     mode: "0644"
-#   loop:
-#     - postgrey_whitelist_clients
-#     - postgrey_whitelist_clients.local
-#     - postgrey_whitelist_recipients
-#   notify: Restart postgrey
 
 - name: Open SMTP port
   ansible.posix.firewalld:
