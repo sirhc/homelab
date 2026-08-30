@@ -8,8 +8,7 @@ ExecStartPre=mkdir -p %E/%N
 
 [Container]
 
-AddDevice=/dev/dri/card0:/dev/dri/card0
-AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
+# GPU devices are set in plex.container.d/devices.conf (drop-in).
 
 # Environment=ADVERTISE_IP=
 # Environment=ALLOWED_NETWORKS=
