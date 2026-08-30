@@ -2,3 +2,12 @@
 NetworkName=homelab
 Driver=bridge
 IPv6=true
+
+# Upstream resolvers for aardvark-dns. Pinned because the host's /etc/resolv.conf
+# is the systemd-resolved stub (127.0.0.53 only); netavark discards loopback
+# resolvers and otherwise falls back to the bridge gateway, i.e. aardvark itself,
+# which makes every non-container lookup loop and return nothing.
+#   169.254.1.1     - pasta's DNS forwarder -> host systemd-resolved (split-horizon)
+#   100.100.100.100 - Tailscale MagicDNS (fallback)
+DNS=169.254.1.1
+DNS=100.100.100.100
