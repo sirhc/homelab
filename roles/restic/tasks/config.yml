@@ -1,4 +1,8 @@
 ---
+# The restic command used by this role is installed from upstream into {{
+# restic_home }}/bin by binary.yml (it needs cap_dac_read_search, so it cannot
+# be the packaged copy). The packaged version can be used by a regular user to
+# view snapshots or retrieve files.
 - name: Install packages
   ansible.builtin.dnf:
     name:

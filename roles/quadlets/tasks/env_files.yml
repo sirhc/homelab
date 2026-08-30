@@ -21,4 +21,5 @@
   loop_control:
     label: "{{ item.item }}"
   no_log: true
+  register: quadlet_env_files
   notify: Reload systemd user daemon

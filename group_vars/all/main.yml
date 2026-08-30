@@ -3,10 +3,6 @@ admin_user: cgrau
 
 domain: graubrau.com
 
-common_firewall_ports:
-  - { port: 80, proto: tcp }
-  - { port: 443, proto: tcp }
-
 cloudflare_email: chris.grau@gmail.com
 cloudflare_api_key: !vault |
   $ANSIBLE_VAULT;1.1;AES256
@@ -20,7 +16,7 @@ cloudflare_api_key: !vault |
 
 # Plex claim tokens expire ~4 minutes after issue, so there is nothing durable
 # to store. Set on the command line for a fresh install:
-#   just deploy media -e plex_claim=claim-xxxxxxxx
+#   ansible-playbook homelab.yml -e plex_claim=claim-xxxxxxxx
 plex_claim: ""
 
 pihole_password: !vault |

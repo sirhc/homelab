@@ -1,4 +1,7 @@
 ---
+# main.cf holds no secrets and is kept in plain text so it stays diffable.
+# virtual and helo_access carry real addresses / the server's public IP and
+# remain vault-encrypted; ansible.builtin.copy decrypts them transparently.
 - name: Deploy main.cf
   ansible.builtin.copy:
     src: main.cf

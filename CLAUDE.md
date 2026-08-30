@@ -37,7 +37,7 @@ Linting is configured by two files. `.ansible-lint` sets exclusions and the rule
 
 ### On the quadlet host
 
-`roles/quadlets/files/Justfile` is deployed by Ansible to `~homelab/Justfile`. Its recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-all`, `restart-all`, `updates`, `update`, `update-all`, `stop-media`, `debug`, `mkcert`, `initialize-isponsorblocktv`, `install-jellyfin`) act on the local `systemctl --user` services, so they run on the host as the `homelab` user, never from the laptop. Most need `fd`/`fzf` installed. `just --list` is authoritative. This Justfile is a deployed artifact — it is not run against this repo.
+`roles/quadlets/files/Justfile` is deployed by Ansible to `~homelab/Justfile`. Its recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-all`, `restart-all`, `updates`, `update`, `update-all`, `stop-media`, `debug`, `mkcert`, `initialize-isponsorblocktv`, `install-jellyfin`) act on the local `systemctl --user` services, so they run on the host as the `homelab` user, never from the laptop. `just`, `fd-find`, and `fzf` — which most recipes need — are installed on the quadlet host by `roles/quadlet_host`. `just --list` is authoritative. This Justfile is a deployed artifact — it is not run against this repo.
 
 ## Architecture
 
@@ -49,17 +49,17 @@ Inventory groups name a **capability, not a location**: `workstations` (`laptop`
 
 - **`system.yml`** — host OS baseline for `all` (`system`, `restic`), plus `mail` on `mail_servers` and `git` on `git_servers`.
 - **`homelab.yml`** — two plays against `quadlet_hosts`, both as root:
-  1. `quadlet_host` — creates the `homelab` user, enables linger, sets sysctl, opens firewall ports, installs the Polkit rule.
-  2. `quadlets` — deploys the quadlet files and starts services. Runs as root and steps down with `become_user: homelab`, talking to the user's session bus via `DBUS_SESSION_BUS_ADDRESS` / `XDG_RUNTIME_DIR`. (An earlier design connected as the `homelab` user over `machinectl`; that is gone.)
+  1. `quadlet_host` — creates the `homelab` user, enables linger, sets sysctl, opens firewall ports, installs the machinectl Polkit rule and the Justfile toolchain, tunes the Podman API log level.
+  2. `quadlets` — deploys the quadlet files and starts services. Runs as root and steps down with `become_user: homelab`, talking to the user's session bus via `DBUS_SESSION_BUS_ADDRESS` / `XDG_RUNTIME_DIR`. (Ansible no longer *connects* over `machinectl`, but the Polkit rule stays so `machinectl shell` works for interactive login to the `homelab` and `restic` accounts.)
 - **`site.yml`** — imports both, in order.
 
 ### Roles
 
-- **`roles/system/`** — host OS baseline: third-party repos, packages, dnf-automatic, admin user.
+- **`roles/system/`** — host OS baseline: third-party repos, packages, Tailscale (daemon enabled; `tailscale up` is manual), passwordless-sudo admin user. OS updates are left manual on purpose — no `dnf-automatic`.
 - **`roles/restic/`** — backups: `restic` user, restic binary with `cap_dac_read_search=+ep`, resticprofile config and scheduling.
 - **`roles/mail/`** — Postfix relay (outpost only).
 - **`roles/git/`** — `git-shell` user and bare-repo directory (media only). Authorized keys come from `git_authorized_keys`.
-- **`roles/quadlet_host/`** — host prerequisites for rootless Podman: user, linger, sysctl, firewall, polkit.
+- **`roles/quadlet_host/`** — host prerequisites for rootless Podman: user (in `dialout` for serial devices), linger, sysctl, firewall, machinectl Polkit rule, Podman service override, Justfile toolchain.
 - **`roles/quadlets/`** — deploys quadlet files, env files, configs, and starts services.
 
 ### Service Deployment
@@ -76,14 +76,15 @@ Key patterns:
 - **Shared defaults**: `files/shared/container.d/homelab.conf` applies `AutoUpdate=registry` to every container; `files/shared/service.d/homelab.conf` sets `Restart=on-failure`
 - **Image updates are manual**: the `AutoUpdate=registry` label only lets `podman auto-update` find the containers. `roles/quadlets/tasks/system.yml` masks the `podman-auto-update.timer`, so nothing updates on a schedule. Updates are run by hand via the Justfile (`updates`, `update`, `update-all`).
 - **Pruning**: `tasks/prune.yml` removes quadlet files the repo no longer defines, so a rename or deletion doesn't leave an old unit running. It always *reports* stale entries but only deletes when `quadlet_prune: true` (default off). Scope is the quadlet dir only — service data in `~homelab/.config/<service>` and Podman volumes are never touched.
-- **Per-unit drop-ins** are *generated* by Ansible, not committed. See `tasks/pihole_dropin.yml`, which writes each Pi-hole's `PublishPort` lines from a template.
+- **Per-unit drop-ins** are *generated* by Ansible from `templates/drop-in/<service>/*.j2` and land in `<service>.container.d/` on the host. `tasks/dropin_files.yml` does this generically — e.g. each Pi-hole's `PublishPort` lines, Plex's GPU devices, the NWS exporter's station argument.
+- **Changed units restart automatically**: `tasks/services.yml` tracks which services had a changed `.container`, `.env`, drop-in, or config file on the run and issues `state: restarted` for exactly those (a daemon-reload alone would regenerate the unit but leave the old container running). Changes to the *shared* network or `container.d`/`service.d` drop-ins are excluded — bounce those by hand.
 
 Quadlet units are generated, so they cannot be `systemctl enable`d — Ansible only starts them. Boot-time start comes from `[Install] WantedBy=default.target` in the unit plus linger on the `homelab` user.
 
 ### Variables and Secrets
 
 - **`group_vars/all/main.yml`** — global vars and all vault-encrypted secrets as inline `!vault` blocks (Cloudflare, Pi-hole, zwave, SolarEdge, OpenWeather, restic, B2, SSH).
-- **`host_vars/<host>.yml`** — per-host: `enabled_services`, firewall ports, Pi-hole IPs, `traefik_env`, host-specific vault values.
+- **`host_vars/<host>.yml`** — per-host: `enabled_services`, `extra_firewall_ports`, Pi-hole IPs, serial device ids, `restic_schedule_offset`, host-specific vault values (e.g. `traefik_email`).
 - **`roles/quadlets/defaults/main.yml`** — paths (`homelab_*`) and non-secret service config.
 - Add a secret with `ansible-vault encrypt_string --stdin-name '<var>'` and paste the block into `group_vars/all/main.yml`.
 
@@ -102,6 +103,6 @@ Per-service env files hold live secrets, so the **templates** are committed and 
 
 ### Networking
 
-All services share a bridge network (`files/shared/homelab.network`, IPv6 enabled). Traefik reverse-proxies ports 80/443 with host-based routing; its static config is templated from `templates/config/traefik/traefik.yaml.j2` and switches on `traefik_env` (`prd` enables the Let's Encrypt DNS-01 resolver via Cloudflare).
+All services share a bridge network (`files/shared/homelab.network`, IPv6 enabled). Traefik reverse-proxies ports 80/443 with host-based routing; its static config is templated from `templates/config/traefik/traefik.yaml.j2`. The `letsencrypt` resolver does a DNS-01 challenge through Cloudflare (`traefik.env` supplies `CLOUDFLARE_EMAIL`/`CLOUDFLARE_API_KEY`, `traefik_email` the ACME account) and `websecure` requests a wildcard `*.${domain}` cert.
 
 Two Pi-hole instances run side by side — `pihole-local` and `pihole-tailnet` — routed as `dns.` and `dnsts.` respectively. Each binds `:53` to a *specific* host address via its generated drop-in; binding `0.0.0.0` would hijack the Podman network's internal DNS and break container-name resolution.

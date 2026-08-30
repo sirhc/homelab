@@ -41,4 +41,7 @@ plex_allowed_networks:
 
 openweather_city: "San Marcos, CA"
 
+# NWS observation station for nws_exporter (https://api.weather.gov/stations).
+nws_station: D5683
+
 tududi_user_email: chris@grau.org

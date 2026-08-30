@@ -9,4 +9,5 @@
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
   loop: "{{ enabled_services }}"
+  register: quadlet_unit_files
   notify: Reload systemd user daemon

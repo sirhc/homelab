@@ -3,11 +3,20 @@
   ansible.builtin.dnf:
     name:
       - firewalld
+      - tailscale
       - zsh
     state: present
 
 - name: Enable and start firewalld
   ansible.builtin.systemd:
     name: firewalld
+    enabled: true
+    state: started
+
+# Auth is still a one-time manual `sudo tailscale up` per host; this only makes
+# sure the daemon is present and running.
+- name: Enable and start tailscaled
+  ansible.builtin.systemd:
+    name: tailscaled
     enabled: true
     state: started

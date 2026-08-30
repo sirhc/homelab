@@ -3,5 +3,11 @@
   ansible.builtin.dnf:
     name:
       - podman
+      # machinectl, for interactive `machinectl shell` login to the homelab
+      # and restic accounts (see the polkit rule in polkit.yml).
       - systemd-container
+      # Tooling used by the Ansible-deployed ~homelab/Justfile.
+      - fd-find
+      - fzf
+      - just
     state: present

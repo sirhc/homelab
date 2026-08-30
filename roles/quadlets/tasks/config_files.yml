@@ -9,7 +9,7 @@
   delegate_to: localhost
   become: false
 
-- name: Create per-service configuration directories
+- name: Create per-service static configuration directories
   ansible.builtin.file:
     path: "{{ homelab_xdg_config_home }}/{{ item.item }}"
     state: directory
@@ -30,6 +30,7 @@
   loop: "{{ config_dirs.results | selectattr('stat.exists') | list }}"
   loop_control:
     label: "{{ item.item }}"
+  register: quadlet_config_files
 
 # templates/config/<service>/*.j2 -> ~homelab/.config/<service>/*
 
@@ -49,18 +50,18 @@
   loop: "{{ config_template_dirs.results | selectattr('stat.exists') | selectattr('stat.isdir') | list }}"
   loop_control:
     label: "{{ item.item }}"
-  register: config_files
+  register: config_templates
   delegate_to: localhost
   become: false
 
-- name: Create per-service configuration directories
+- name: Create per-service templated configuration directories
   ansible.builtin.file:
     path: "{{ homelab_xdg_config_home }}/{{ item.path | relpath(role_path ~ '/templates/config') | dirname }}"
     state: directory
     mode: "0755"
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
-  loop: "{{ config_files.results | map(attribute='files') | flatten }}"
+  loop: "{{ config_templates.results | map(attribute='files') | flatten }}"
   loop_control:
     label: "{{ item.path | relpath(role_path ~ '/templates/config') }}"
 
@@ -71,6 +72,7 @@
     mode: "0644"
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
-  loop: "{{ config_files.results | map(attribute='files') | flatten }}"
+  loop: "{{ config_templates.results | map(attribute='files') | flatten }}"
   loop_control:
     label: "{{ item.path | relpath(role_path ~ '/templates/config') }}"
+  register: quadlet_config_templates

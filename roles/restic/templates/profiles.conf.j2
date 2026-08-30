@@ -1,5 +1,11 @@
 # vim: ft=toml
 
+# Scheduling is NOT handled here. The restic role deploys its own
+# resticprofile-backup-<name>.{service,timer} units (see roles/restic/templates
+# and tasks/schedule.yml), so resticprofile's own `schedule*` keys are
+# deliberately absent — setting them would create a second, competing set of
+# timers via `resticprofile schedule`.
+
 version = "1"
 
 [global]
@@ -11,10 +17,9 @@ version = "1"
     exclude-file = "{{ restic_home }}/.config/resticprofile/excludes"
     exclude-if-present = [".nobackup"]
     one-file-system = true
-    schedule-lock-wait = "2h"
-    schedule-permission = "user"
     source = ["/etc", "/home"]
 
+  # Consumed only by an on-demand `resticprofile --name <name> check`.
   [global.check]
     read-data = true
 
@@ -34,9 +39,6 @@ version = "1"
   lock = "/tmp/resticprofile-nas.lock"
   repository = "{{ restic_repo_nas }}"
 
-  [nas.backup]
-    schedule = "0/4:15"
-
 [b2]
   inherit = "global"
   lock = "/tmp/resticprofile-b2.lock"
@@ -45,6 +47,3 @@ version = "1"
   [b2.env]
     B2_ACCOUNT_ID = "{{ b2_account_id }}"
     B2_ACCOUNT_KEY = "{{ b2_account_key }}"
-
-  [b2.backup]
-    schedule = "0/4:45"

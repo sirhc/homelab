@@ -44,4 +44,5 @@
   loop: "{{ drop_in_files.results | map(attribute='files') | flatten }}"
   loop_control:
     label: "{{ item.path | relpath(role_path ~ '/templates/drop-in') }}"
+  register: quadlet_dropin_files
   notify: Reload systemd user daemon

@@ -10,7 +10,7 @@
 - name: Set podman API log level to warn
   ansible.builtin.copy:
     src: podman-service-override.conf
-    dest: "/home/{{ homelab_user }}/.config/systemd/user/podman.service.d/override.conf"
+    dest: "{{ homelab_home }}/.config/systemd/user/podman.service.d/override.conf"
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
     mode: "0644"

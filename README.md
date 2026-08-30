@@ -49,7 +49,7 @@ Three playbooks, all run from the laptop against `inventory/hosts.yml`.
 
 | Play | Hosts | Roles | What it does |
 | --- | --- | --- | --- |
-| System baseline | `all` | `system`, `restic` | Third-party repos, packages, dnf-automatic, admin user, restic backups |
+| System baseline | `all` | `system`, `restic` | Third-party repos, packages, Tailscale, admin user, restic backups |
 | Mail server | `mail_servers` | `mail` | Postfix relay with TLS and postgrey |
 | Git server | `git_servers` | `git` | `git-shell` user and bare-repo directory |
 
@@ -57,7 +57,7 @@ Three playbooks, all run from the laptop against `inventory/hosts.yml`.
 
 | Play | Roles | What it does |
 | --- | --- | --- |
-| Configure host OS | `quadlet_host` | Creates the `homelab` user, enables linger, sysctl, firewall ports, Polkit rule |
+| Configure host OS | `quadlet_host` | Creates the `homelab` user, enables linger, sysctl, firewall ports, machinectl Polkit rule, Justfile toolchain |
 | Install Podman Quadlets | `quadlets` | Deploys quadlet files, env files and configs, then starts the services |
 
 Both plays connect as root and step down to the `homelab` user with `become_user`, talking to that user's session bus
@@ -139,9 +139,13 @@ After changing a `.container` file, a config, or a secret:
 A service that needs a config directory gets one at `~/.config/<service>`, bind-mounted into the container.
 
 Static config files live in `roles/quadlets/files/config/<service>/` and are deployed by Ansible — no manual copying.
-Traefik is the exception: its static config is templated from `roles/quadlets/templates/config/traefik/traefik.yaml.j2`
-and switches on `traefik_env`, so the `prd` variant enables the Let's Encrypt DNS-01 resolver while `dev` just uses
-local certs.
+Traefik is the exception: its static config is templated from `roles/quadlets/templates/config/traefik/traefik.yaml.j2`.
+It requests a wildcard `*.${domain}` certificate from Let's Encrypt via a Cloudflare DNS-01 challenge; the Cloudflare
+credentials come from `traefik.env` and the ACME account address from the vaulted `traefik_email`.
+
+When a `.container`, `.env`, drop-in, or config file changes, `ansible-playbook homelab.yml` restarts the affected
+service on its own — no manual `just restart` needed. (Changes to the shared network or the shared `container.d` /
+`service.d` drop-ins are the exception: they touch every container, so bounce those by hand.)
 
 ## Environment Variables
 
@@ -178,20 +182,26 @@ restoring the data from all of my containers so far (knocking on wood).
 I use [Restic](https://restic.net/) to back up to my [Synology NAS](https://www.synology.com/) and
 [Backblaze B2](https://www.backblaze.com/cloud-storage).
 
-## Auto Update
+## Image Updates
 
-To automatically update the containers, the shared `container.d/homelab.conf` drop-in includes the line
-`AutoUpdate=registry`. This applies to all of the containers run by the user. To enable automatic updates, the
-`podman-auto-update` timer needs to be enabled — on the host, as the `homelab` user:
+The shared `container.d/homelab.conf` drop-in labels every container `AutoUpdate=registry`, but updates are **not**
+scheduled: `roles/quadlets/tasks/system.yml` masks `podman-auto-update.timer` so nothing changes on its own. Updates
+are pulled by hand from the Ansible-deployed `~homelab/Justfile`:
 
 ```
-❯ systemctl --user enable --now podman-auto-update.timer
+❯ just updates      # show which images have a newer digest
+❯ just update <svc> # update one service
+❯ just update-all   # update everything
 ```
+
+Host OS packages are updated by hand too — there is no `dnf-automatic`.
 
 ## Miscellanea
 
-The zwave-js-ui container may not be able to read the `/dev/zwave` device. I solved this by allowing more access to the
-devices:
+The `homelab` user is in the `dialout` group and the zwave-js-ui / home-assistant units get the serial devices via
+`AddDevice=` drop-ins plus `SecurityLabelDisable=true`, which is normally enough. If the container still can't open
+`/dev/zwave` after a controller reseat (the `/dev/ttyUSB*` node can come back with tighter perms), widen access as a
+stopgap:
 
 ```
 ❯ sudo chmod o+rw /dev/ttyUSB?
