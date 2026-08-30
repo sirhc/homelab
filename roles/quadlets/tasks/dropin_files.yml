@@ -1,10 +1,20 @@
 ---
+- name: Locate drop-in template directories
+  ansible.builtin.stat:
+    path: "{{ role_path }}/templates/drop-in/{{ item }}"
+  loop: "{{ enabled_services }}"
+  register: drop_in_dirs
+  delegate_to: localhost
+  become: false
+
 - name: Find drop-in files
   ansible.builtin.find:
-    paths: "{{ role_path }}/templates/drop-in/{{ item }}"
+    paths: "{{ item.stat.path }}"
     patterns: "*.j2"
     recurse: true
-  loop: "{{ enabled_services }}"
+  loop: "{{ drop_in_dirs.results | selectattr('stat.exists') | selectattr('stat.isdir') | list }}"
+  loop_control:
+    label: "{{ item.item }}"
   register: drop_in_files
   delegate_to: localhost
   become: false
@@ -18,7 +28,7 @@
     group: "{{ homelab_group }}"
   loop: >-
     {{ drop_in_files.results | selectattr('matched', 'gt', 0)
-       | map(attribute='item') | list }}
+       | map(attribute='item.item') | list }}
 
 - name: Deploy drop-in files
   vars:
