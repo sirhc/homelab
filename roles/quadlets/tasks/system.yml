@@ -1,4 +1,12 @@
 ---
+- name: Install service orchestration Justfile
+  ansible.builtin.copy:
+    src: Justfile
+    dest: "{{ homelab_home }}/Justfile"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+
 - name: Create XDG and Quadlet directories
   ansible.builtin.file:
     path: "{{ item }}"
