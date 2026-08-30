@@ -1,5 +1,5 @@
 ---
-- name: Create XDG base directories
+- name: Create XDG and Quadlet directories
   ansible.builtin.file:
     path: "{{ item }}"
     mode: "0755"
@@ -12,10 +12,12 @@
     - "{{ homelab_xdg_data_home }}"
     - "{{ homelab_xdg_log_home }}"
     - "{{ homelab_quadlet_dir }}"
+    - "{{ homelab_quadlet_dir }}/container.d"
     - "{{ homelab_environment_dir }}"
     - "{{ homelab_user_dir }}"
+    - "{{ homelab_user_dir }}/service.d"
 
-# ~homelab/.config/environment.d/
+# ~/.config/environment.d/
 
 - name: Deploy homelab environment config
   ansible.builtin.template:
@@ -26,7 +28,7 @@
     group: "{{ homelab_group }}"
   notify: Reload systemd user daemon
 
-# ~homelab/.config/containers/systemd/
+# ~/.config/containers/systemd/
 
 - name: Deploy homelab network definition
   ansible.builtin.copy:
@@ -37,16 +39,6 @@
     group: "{{ homelab_group }}"
   notify: Reload systemd user daemon
 
-# ~homelab/.config/containers/systemd/container.d/
-
-- name: Create container.d drop-in directory
-  ansible.builtin.file:
-    path: "{{ homelab_quadlet_dir }}/container.d"
-    mode: "0755"
-    owner: "{{ homelab_user }}"
-    group: "{{ homelab_group }}"
-    state: directory
-
 - name: Deploy shared container drop-in
   ansible.builtin.copy:
     src: "shared/container.d/homelab.conf"
@@ -56,15 +48,7 @@
     group: "{{ homelab_group }}"
   notify: Reload systemd user daemon
 
-# ~homelab/.config/systemd/user/
-
-- name: Create user service drop-in directory
-  ansible.builtin.file:
-    path: "{{ homelab_user_dir }}/service.d"
-    mode: "0755"
-    owner: "{{ homelab_user }}"
-    group: "{{ homelab_group }}"
-    state: directory
+# ~/.config/systemd/user/
 
 - name: Deploy shared service drop-in
   ansible.builtin.copy:

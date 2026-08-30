@@ -1,8 +1,8 @@
 ---
-# Env files hold live secrets, so they are rendered from templates that
+# Environment files hold live secrets, so they are rendered from templates that
 # reference vault vars. Filename must match the unit name: the .container files
 # refer to their env file as `EnvironmentFile=./%N.env`.
-- name: Check for service env templates
+- name: Check for service environment templates
   ansible.builtin.stat:
     path: "{{ role_path }}/templates/env/{{ item }}/{{ item }}.env.j2"
   loop: "{{ enabled_services }}"
@@ -10,7 +10,7 @@
   delegate_to: localhost
   become: false
 
-- name: Deploy service env files
+- name: Deploy service environment files
   ansible.builtin.template:
     src: "env/{{ item.item }}/{{ item.item }}.env.j2"
     dest: "{{ homelab_quadlet_dir }}/{{ item.item }}.env"

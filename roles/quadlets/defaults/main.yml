@@ -2,10 +2,10 @@
 homelab_user: homelab
 homelab_group: homelab
 
-homelab_xdg_config_home: "/home/{{ homelab_user }}/.config"
-homelab_xdg_cache_home: "/home/{{ homelab_user }}/.cache"
-homelab_xdg_data_home: "/home/{{ homelab_user }}/.local/share"
-homelab_xdg_log_home: "/home/{{ homelab_user }}/.local/state"
+homelab_xdg_config_home: "{{ homelab_home }}/.config"
+homelab_xdg_cache_home: "{{ homelab_home }}/.cache"
+homelab_xdg_data_home: "{{ homelab_home }}/.local/share"
+homelab_xdg_log_home: "{{ homelab_home }}/.local/state"
 
 homelab_quadlet_dir: "{{ homelab_xdg_config_home }}/containers/systemd"
 homelab_environment_dir: "{{ homelab_xdg_config_home }}/environment.d"
@@ -13,21 +13,18 @@ homelab_user_dir: "{{ homelab_xdg_config_home }}/systemd/user"
 
 enabled_services: []
 
-# Remove quadlet files no longer defined by the repo. Stale entries are always
-# reported; this controls whether they are actually deleted. Off by default so
-# a rename cannot silently stop a running service — turn it on once the host
-# and the repo agree.
+# Remove Quadlet files no longer defined by the repo. Stale entries are always
+# reported; this controls whether they are actually deleted. Off by default so a
+# rename cannot silently stop a running service — turn it on once the host and
+# the repo agree.
 quadlet_prune: false
 
-# Entries in the quadlet dir that are not derived from enabled_services and
-# must survive a prune.
+# Entries in the Quadlet directory that are not derived from enabled_services
+# and must survive a prune.
 quadlet_prune_keep:
   - homelab.network
   - container.d
-# Traefik
-traefik_env: prd
-traefik_rules: []
-# Pi-hole
+
 pihole_cnames: []
 pihole_upstreams:
   - 208.67.222.222
@@ -35,7 +32,6 @@ pihole_upstreams:
   - 2620:119:35::35
   - 2620:119:53::53
 
-# Plex
 plex_advertise_ip: "https://127.0.0.1:32400/"
 plex_allowed_networks:
   - 192.168.86.0/24
@@ -43,5 +39,4 @@ plex_allowed_networks:
   - 172.17.0.0/16
   - 172.18.0.0/16
 
-# Prometheus exporters
 openweather_city: "San Marcos, CA"

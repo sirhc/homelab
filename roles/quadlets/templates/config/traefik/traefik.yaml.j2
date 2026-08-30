@@ -3,7 +3,6 @@ api:
   dashboard: true
   insecure: true
 
-{% if traefik_env == 'prd' %}
 certificatesresolvers:
   letsencrypt:
     acme:
@@ -14,7 +13,6 @@ certificatesresolvers:
       email: {{ traefik_email }}
       storage: /etc/traefik/acme.json
 
-{% endif %}
 entrypoints:
   web:
     address: ':80'
@@ -26,25 +24,22 @@ entrypoints:
   websecure:
     address: ':443'
     http:
-{% if traefik_env == 'prd' %}
       tls:
         certresolver: letsencrypt
         domains:
           - main: {{ domain }}
             sans: '*.{{ domain }}'
-{% else %}
-      tls: {}
-{% endif %}
 
 global:
   checknewversion: false
   sendanonymoususage: false
 
 log:
-  level: info
+  level: warn
 
 providers:
   docker:
     exposedbydefault: false
+    watch: true
   file:
     directory: /etc/traefik/rules

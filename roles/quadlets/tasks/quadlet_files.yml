@@ -1,7 +1,7 @@
 ---
 # Each service directory holds its own .container and any .volume files, so the
-# whole directory is copied verbatim into the quadlet dir.
-- name: Deploy quadlet unit and volume files
+# whole directory is copied verbatim into the Quadlet directory.
+- name: Deploy Quadlet files
   ansible.builtin.copy:
     src: "services/{{ item }}/"
     dest: "{{ homelab_quadlet_dir }}/"

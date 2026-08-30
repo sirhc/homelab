@@ -4,26 +4,27 @@
     database: passwd
     key: "{{ homelab_user }}"
 
-- name: Set homelab UID fact
+- name: Set homelab user facts
   ansible.builtin.set_fact:
+    homelab_home: "{{ ansible_facts.getent_passwd[homelab_user][4] }}"
     homelab_uid: "{{ ansible_facts.getent_passwd[homelab_user][1] }}"
 
 - name: Configure environment.d and drop-ins
   ansible.builtin.import_tasks: system.yml
 
-- name: Deploy quadlet files
+- name: Deploy Quadlet files
   ansible.builtin.import_tasks: quadlet_files.yml
 
-- name: Deploy per-service env files
+- name: Deploy per-service environment files
   ansible.builtin.import_tasks: env_files.yml
 
-- name: Deploy service configs
-  ansible.builtin.import_tasks: configs.yml
+- name: Deploy per-service drop-in files
+  ansible.builtin.import_tasks: dropin_files.yml
 
-- name: Generate Pi-hole drop-ins
-  ansible.builtin.import_tasks: pihole_dropin.yml
+- name: Deploy per-service configuration files
+  ansible.builtin.import_tasks: config_files.yml
 
-- name: Prune quadlets the repo no longer defines
+- name: Prune Quadlets the repo no longer defines
   ansible.builtin.import_tasks: prune.yml
 
 - name: Start services

@@ -1,53 +1,43 @@
 ---
-# Remove quadlet files the repo no longer defines. Without this, renaming or
-# deleting a service leaves the old unit behind and it keeps running — which is
-# how `pihole` and `pihole-tailscale` survived being renamed to `pihole-local`
-# and `pihole-tailnet`.
+# Remove Quadlet files the repo no longer defines. Without this, renaming or
+# deleting a service leaves the old unit behind and it keeps running.
 #
-# Scope is deliberately narrow: only the quadlet directory, which holds nothing
-# but unit definitions. Service *data* lives in {{ homelab_xdg_config_home }}/<service>
-# and is never touched. Removing a stale `.volume` file likewise leaves the
-# underlying Podman volume intact.
+# Scope is deliberately narrow: only the Quadlet directory, which holds nothing
+# but unit definitions. Service *data* lives in {{ homelab_xdg_config_home
+# }}/<service> and is never touched. Removing a stale `.volume` file likewise
+# leaves the underlying Podman volume intact.
 #
 # Stale entries are always reported. They are only deleted when `quadlet_prune`
 # is true, so you can see what would go before arming it.
 
-- name: Build the list of expected quadlet entries
+- name: Build the list of expected Quadlet entries
   ansible.builtin.set_fact:
-    quadlet_expected: "{{ quadlet_expected | default(quadlet_prune_keep) + service_entries }}"
+    quadlet_expected: '{{ quadlet_expected | default(quadlet_prune_keep) + service_entries }}'
   vars:
-    service_entries: >-
-      {{ (lookup('ansible.builtin.fileglob',
-                 role_path ~ '/files/services/' ~ item ~ '/*',
-                 wantlist=True) | map('basename') | list)
-         + [item ~ '.env', item ~ '.container.d'] }}
-  loop: "{{ enabled_services }}"
+    service_entries: |-
+      {{ (lookup('ansible.builtin.fileglob', role_path ~ '/files/services/' ~ item ~ '/*', wantlist=True) | map('basename') | list) + [item ~ '.env', item ~ '.container.d'] }}
+  loop: '{{ enabled_services }}'
 
-- name: Find quadlet entries currently on the host
+- name: Find Quadlet entries currently on the host
   ansible.builtin.find:
     paths: "{{ homelab_quadlet_dir }}"
     file_type: any
     recurse: false
   register: quadlet_present
 
-- name: Determine stale quadlet entries
+- name: Determine stale Quadlet entries
   ansible.builtin.set_fact:
     quadlet_stale: >-
-      {{ quadlet_present.files
-         | map(attribute='path') | map('basename')
-         | difference(quadlet_expected | default(quadlet_prune_keep))
-         | sort }}
+      {{ quadlet_present.files | map(attribute='path') | map('basename') | difference(quadlet_expected | default(quadlet_prune_keep)) | sort }}
 
-- name: Report stale quadlet entries
+- name: Report stale Quadlet entries
   ansible.builtin.debug:
     msg: >-
-      {{ quadlet_stale | length }} stale entr{{ 'y' if quadlet_stale | length == 1 else 'ies' }}
-      in {{ homelab_quadlet_dir }}: {{ quadlet_stale | join(', ') }}.
-      {{ 'Removing them now.' if quadlet_prune | bool
-         else 'Set quadlet_prune=true to remove them.' }}
+      {{ quadlet_stale | length }} stale entr{{ 'y' if quadlet_stale | length == 1 else 'ies' }} in {{ homelab_quadlet_dir }}: {{ quadlet_stale | join(', ') }}.
+      {{ 'Removing them now.' if quadlet_prune | bool else 'Set quadlet_prune=true to remove them.' }}
   when: quadlet_stale | length > 0
 
-- name: Remove stale quadlets
+- name: Remove stale Quadlets
   when:
     - quadlet_prune | bool
     - quadlet_stale | length > 0
@@ -55,7 +45,7 @@
     # Deleting the unit file alone would leave the container running until the
     # next reboot, so stop it first. The unit may already be gone, hence the
     # tolerant failed_when.
-    - name: Stop services for stale quadlets
+    - name: Stop services for stale Quadlets
       ansible.builtin.systemd:
         name: "{{ item | regex_replace('\\.container$', '') }}.service"
         scope: user
@@ -69,7 +59,7 @@
       register: quadlet_stop
       failed_when: false
 
-    - name: Remove stale quadlet files
+    - name: Remove stale Quadlet files
       ansible.builtin.file:
         path: "{{ homelab_quadlet_dir }}/{{ item }}"
         state: absent

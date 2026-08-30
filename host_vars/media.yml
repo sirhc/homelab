@@ -12,7 +12,6 @@ extra_firewall_ports:
   - { port: 32414, proto: udp }
   - { port: 32469, proto: tcp }
 
-traefik_env: prd
 traefik_email: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   33333830303237343661623536393139303137396164666466313838653664393861363862633239
@@ -56,7 +55,7 @@ enabled_services:
 git_authorized_keys:
   - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA4ajZst20m3Bvzd4dP4sBoxKkY71AfQkp8E4wG7vWIC0R3snDmT/zLJcxg9d9B3PVIrcwF+LhgZeO/hblUdb3KlGIdZbSeJR0YOKy/2sjlSzIdVeN1rjXFnsx4VM7+Lc4sTswC2/zAvxQRq6hNrtrViGkiTNapKaOOI7msaM9IV9/X7F4d2gCJJwhEtUEK5nKDaH6NtscL1/egevfCUh2pQ0lSHYEhrXqqCFAek/fIbLHjgqEYvw9wYRq1CVrmlXEKiRG42edYd9bIC50QhbpAppzG4klOgNWI4gLpZfoft2t/2JTfQRW7Fx7W7aAJNbLTCIcJ9zet8QHBFEuem7e3Q== cgrau@home"
 
-pihole_local_ip: 192.168.86.48
+pihole_local_ip: 192.168.86.56
 pihole_tailnet_ip: 100.107.61.32
 pihole_cnames:
   - calibre
@@ -80,3 +79,6 @@ pihole_cnames:
   - todo
   - whoami
   - zwave
+
+zigbee_device_id: /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if01-port0
+zwave_device_id: /dev/serial/by-id/usb-Silicon_Labs_HubZ_Smart_Home_Controller_5150176C-if00-port0

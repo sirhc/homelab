@@ -1,0 +1,37 @@
+---
+- name: Find drop-in files
+  ansible.builtin.find:
+    paths: "{{ role_path }}/templates/drop-in/{{ item }}"
+    patterns: "*.j2"
+    recurse: true
+  loop: "{{ enabled_services }}"
+  register: drop_in_files
+  delegate_to: localhost
+  become: false
+
+- name: Create drop-in directories
+  ansible.builtin.file:
+    path: "{{ homelab_quadlet_dir }}/{{ item }}.container.d"
+    state: directory
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: >-
+    {{ drop_in_files.results | selectattr('matched', 'gt', 0)
+       | map(attribute='item') | list }}
+
+- name: Deploy drop-in files
+  vars:
+    rel: "{{ item.path | relpath(role_path ~ '/templates/drop-in') }}"
+  ansible.builtin.template:
+    src: "{{ item.path }}"
+    dest: >-
+      {{ homelab_quadlet_dir }}/{{ rel.split('/')[0] }}.container.d/{{
+         rel.split('/')[1:] | join('/') | regex_replace('\.j2$', '') }}
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ drop_in_files.results | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | relpath(role_path ~ '/templates/drop-in') }}"
+  notify: Reload systemd user daemon

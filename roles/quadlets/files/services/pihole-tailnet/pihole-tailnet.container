@@ -8,6 +8,9 @@ ExecStartPre=mkdir -p %E/%N/dnsmasq.d
 
 [Container]
 
+# Required for first-time run so Gravity can create the database.
+# DNS=1.1.1.1
+
 # Environment=FTLCONF_dns_upstreams=
 # Environment=FTLCONF_webserver_api_password=
 EnvironmentFile=./%N.env

@@ -1,0 +1,66 @@
+---
+# files/config/<service>/* -> ~homelab/.config/<service>/*
+
+- name: Find per-service configuration files
+  ansible.builtin.stat:
+    path: "{{ role_path }}/files/config/{{ item }}"
+  loop: "{{ enabled_services }}"
+  register: config_dirs
+  delegate_to: localhost
+  become: false
+
+- name: Create per-service configuration directories
+  ansible.builtin.file:
+    path: "{{ homelab_xdg_config_home }}/{{ item.item }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ config_dirs.results | selectattr('stat.exists') | list }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+- name: Deploy per-service configuration files
+  ansible.builtin.copy:
+    src: "config/{{ item.item }}/"
+    dest: "{{ homelab_xdg_config_home }}/{{ item.item }}/"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ config_dirs.results | selectattr('stat.exists') | list }}"
+  loop_control:
+    label: "{{ item.item }}"
+
+# templates/config/<service>/*.j2 -> ~homelab/.config/<service>/*
+
+- name: Find per-service configuration templates
+  ansible.builtin.find:
+    paths: "{{ role_path }}/templates/config/{{ item }}"
+    patterns: "*.j2"
+    recurse: true
+  loop: "{{ enabled_services }}"
+  register: config_files
+  delegate_to: localhost
+  become: false
+
+- name: Create per-service configuration directories
+  ansible.builtin.file:
+    path: "{{ homelab_xdg_config_home }}/{{ item.path | relpath(role_path ~ '/templates/config') | dirname }}"
+    state: directory
+    mode: "0755"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ config_files.results | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | relpath(role_path ~ '/templates/config') }}"
+
+- name: Deploy per-service configuration templates
+  ansible.builtin.template:
+    src: "{{ item.path }}"
+    dest: "{{ homelab_xdg_config_home }}/{{ item.path | relpath(role_path ~ '/templates/config') | regex_replace('\\.j2$', '') }}"
+    mode: "0644"
+    owner: "{{ homelab_user }}"
+    group: "{{ homelab_group }}"
+  loop: "{{ config_files.results | map(attribute='files') | flatten }}"
+  loop_control:
+    label: "{{ item.path | relpath(role_path ~ '/templates/config') }}"
