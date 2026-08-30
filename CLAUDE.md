@@ -6,35 +6,38 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 This repository is the **single source of truth** for all homelab devices and configuration. Everything needed to manage, configure, and deploy any device should live here.
 
-Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. All deployment and configuration is managed through **Ansible**; **Just** wraps the common invocations.
+Homelab infrastructure managed with **rootless Podman Quadlets** on Fedora. Services are defined as systemd-style `.container` files and orchestrated via `systemctl --user`. All deployment and configuration is managed through **Ansible**, run from the laptop with `ansible-playbook` directly.
 
 Nothing is placed on a host by hand. If a file needs to exist on a target, Ansible puts it there.
 
 ## Prerequisites
 
 ```bash
-sudo dnf install podman just ansible-core ansible-lint
+sudo dnf install podman ansible-core ansible-lint
 ansible-galaxy collection install -r requirements.yml
 echo 'yourpassword' > ~/.ansible/vault_pass && chmod 600 ~/.ansible/vault_pass
-just install-hooks   # enables the ansible-lint pre-commit hook
+git config core.hooksPath .githooks   # enables the ansible-lint pre-commit hook
 ```
 
 The vault password file path is `~/.ansible/vault_pass` (configured in `ansible.cfg`).
 
 ## Common Commands
 
+Run from the laptop, from the repo root:
+
 ```bash
-just update <host>        # Run system.yml   (host omitted = all hosts)
-just deploy <host>        # Run homelab.yml
-just provision <host>     # Run site.yml — system + homelab
-just check <host>         # Dry-run site.yml
-just lint                 # Run ansible-lint
-just list-services        # List all services with descriptions
+ansible-playbook system.yml [--limit <host>]     # host OS baseline + backups (all hosts)
+ansible-playbook homelab.yml [--limit <host>]    # quadlet host setup + containers (quadlet_hosts)
+ansible-playbook site.yml [--limit <host>]       # both, in order
+ansible-playbook site.yml --check                # dry run
+ansible-lint                                     # lint playbooks and roles
 ```
 
 Linting is configured by two files. `.ansible-lint` sets exclusions and the rule skip list; `.yamllint` pins the YAML style. The `.yamllint` file exists so a developer's personal `~/.config/yamllint/config` can't override repo style — without it `ansible-lint` disables `--fix` and rejects `{ port: 80, proto: tcp }`.
 
-The remaining recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-media`, `debug`, `mkcert`, `enable-auto-update`) operate on the **local** machine's user services via `systemctl --user`, so they are run on the host itself, not from the laptop. `just --list` is authoritative.
+### On the quadlet host
+
+`roles/quadlets/files/Justfile` is deployed by Ansible to `~homelab/Justfile`. Its recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-all`, `restart-all`, `stop-media`, `debug`, `mkcert`, `initialize-isponsorblocktv`, `install-jellyfin`) act on the local `systemctl --user` services, so they run on the host as the `homelab` user, never from the laptop. Most need `fd`/`fzf` installed. `just --list` is authoritative. This Justfile is a deployed artifact — it is not run against this repo.
 
 ## Architecture
 

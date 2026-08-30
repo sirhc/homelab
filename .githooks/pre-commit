@@ -1,5 +1,5 @@
 #!/bin/sh
-# Runs ansible-lint before allowing a commit. Enable with `just install-hooks`.
+# Runs ansible-lint before allowing a commit. Enable with `git config core.hooksPath .githooks`.
 set -e
 
 if ! command -v ansible-lint >/dev/null 2>&1; then

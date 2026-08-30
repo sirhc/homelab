@@ -6,17 +6,18 @@ I run my development and homelab environments on Fedora, so all of my assumption
 [Podman Quadlets](https://docs.podman.io/en/latest/markdown/podman-systemd.unit.5.html) to implement the services.
 
 ```
-❯ sudo dnf install podman just ansible-core ansible-lint
+❯ sudo dnf install podman ansible-core ansible-lint
 ❯ ansible-galaxy collection install -r requirements.yml
-❯ just install-hooks
+❯ git config core.hooksPath .githooks
 ```
 
-`just install-hooks` points Git at the `.githooks/` directory so `ansible-lint` runs automatically before each commit. Run `just lint` to lint on demand.
+`git config core.hooksPath .githooks` points Git at the `.githooks/` directory so `ansible-lint` runs automatically
+before each commit. Run `ansible-lint` to lint on demand.
 
 ## Deployment
 
-Everything is deployed with Ansible, run from the laptop against any target in `inventory/hosts.yml`. The Justfile wraps
-the common invocations. Nothing gets placed on a host by hand — if a file needs to exist on a target, Ansible puts it
+Everything is deployed with Ansible, run from the laptop with `ansible-playbook` against any target in
+`inventory/hosts.yml`. Nothing gets placed on a host by hand — if a file needs to exist on a target, Ansible puts it
 there.
 
 ### Hosts
@@ -77,15 +78,15 @@ via `DBUS_SESSION_BUS_ADDRESS` and `XDG_RUNTIME_DIR`.
 
 ### Commands
 
-| Command | Playbook | Hosts touched |
+| Command | What it does | Hosts touched |
 | --- | --- | --- |
-| `just update [host]` | `system.yml` | all three |
-| `just deploy [host]` | `homelab.yml` | `media` — the playbook targets `quadlet_hosts` |
-| `just provision [host]` | `site.yml` | all three |
-| `just check [host]` | `site.yml --check` | all three, dry run |
+| `ansible-playbook system.yml` | host OS baseline + backups | all three |
+| `ansible-playbook homelab.yml` | host setup + containers | `media` — targets `quadlet_hosts` |
+| `ansible-playbook site.yml` | both, in order | all three |
+| `ansible-playbook site.yml --check` | dry run | all three |
 
-Omitting the host argument runs against every host the playbook targets; passing one adds `--limit`. Since
-`homelab.yml` already targets `quadlet_hosts`, plain `just deploy` and `just deploy media` currently do the same thing.
+Add `--limit <host>` to scope any of these to one host; without it the playbook runs against every host it targets.
+`homelab.yml` already targets `quadlet_hosts`, so `--limit media` changes nothing there today.
 
 Which containers run on a host comes from `enabled_services` in `host_vars/<host>.yml` — the `quadlets` role only
 touches services in that list.
@@ -112,24 +113,25 @@ value and will silently break authentication later.
 **2. Provision**
 
 ```
-❯ just provision          # system + homelab, all hosts
-❯ just provision media    # single host
+❯ ansible-playbook site.yml                 # system + homelab, all hosts
+❯ ansible-playbook site.yml --limit media   # single host
 ```
 
-Or run the halves separately: `just update` (host OS, backups) and `just deploy` (the quadlets).
+Or run the halves separately: `ansible-playbook system.yml` (host OS, backups) and `ansible-playbook homelab.yml`
+(the quadlets).
 
 ### Day-to-day
 
 After changing a `.container` file, a config, or a secret:
 
 ```
-❯ just deploy media
+❯ ansible-playbook homelab.yml
 ```
 
 ### Dry run
 
 ```
-❯ just check media
+❯ ansible-playbook site.yml --check --limit media
 ```
 
 ## Configuration
@@ -180,10 +182,10 @@ I use [Restic](https://restic.net/) to back up to my [Synology NAS](https://www.
 
 To automatically update the containers, the shared `container.d/homelab.conf` drop-in includes the line
 `AutoUpdate=registry`. This applies to all of the containers run by the user. To enable automatic updates, the
-`podman-auto-update` timer needs to be enabled.
+`podman-auto-update` timer needs to be enabled — on the host, as the `homelab` user:
 
 ```
-❯ just enable-auto-update
+❯ systemctl --user enable --now podman-auto-update.timer
 ```
 
 ## Miscellanea
@@ -195,7 +197,8 @@ devices:
 ❯ sudo chmod o+rw /dev/ttyUSB?
 ```
 
-To configure local TLS certificates for use with testing Traefik:
+To configure local TLS certificates for use with testing Traefik, on the host as the `homelab` user (`just` recipes
+live in the Ansible-deployed `~homelab/Justfile`):
 
 ```
 ❯ just mkcert localhost
