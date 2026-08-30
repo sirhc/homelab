@@ -40,3 +40,5 @@ plex_allowed_networks:
   - 172.18.0.0/16
 
 openweather_city: "San Marcos, CA"
+
+tududi_user_email: chris@grau.org
