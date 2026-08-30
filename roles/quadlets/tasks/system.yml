@@ -7,6 +7,19 @@
     owner: "{{ homelab_user }}"
     group: "{{ homelab_group }}"
 
+# Containers carry AutoUpdate=registry so `podman auto-update` (invoked by hand via
+# the Justfile) can act on them. Mask the timer so updates never run on a schedule.
+- name: Mask the podman auto-update timer
+  ansible.builtin.systemd:
+    name: podman-auto-update.timer
+    scope: user
+    masked: true
+  become: true
+  become_user: "{{ homelab_user }}"
+  environment:
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ homelab_uid }}/bus"
+    XDG_RUNTIME_DIR: "/run/user/{{ homelab_uid }}"
+
 - name: Create XDG and Quadlet directories
   ansible.builtin.file:
     path: "{{ item }}"

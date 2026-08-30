@@ -37,7 +37,7 @@ Linting is configured by two files. `.ansible-lint` sets exclusions and the rule
 
 ### On the quadlet host
 
-`roles/quadlets/files/Justfile` is deployed by Ansible to `~homelab/Justfile`. Its recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-all`, `restart-all`, `stop-media`, `debug`, `mkcert`, `initialize-isponsorblocktv`, `install-jellyfin`) act on the local `systemctl --user` services, so they run on the host as the `homelab` user, never from the laptop. Most need `fd`/`fzf` installed. `just --list` is authoritative. This Justfile is a deployed artifact — it is not run against this repo.
+`roles/quadlets/files/Justfile` is deployed by Ansible to `~homelab/Justfile`. Its recipes (`start`, `stop`, `restart`, `logs`, `status`, `cat`, `inspect`, `shell`, `verify`, `remove`, `stop-all`, `restart-all`, `updates`, `update`, `update-all`, `stop-media`, `debug`, `mkcert`, `initialize-isponsorblocktv`, `install-jellyfin`) act on the local `systemctl --user` services, so they run on the host as the `homelab` user, never from the laptop. Most need `fd`/`fzf` installed. `just --list` is authoritative. This Justfile is a deployed artifact — it is not run against this repo.
 
 ## Architecture
 
@@ -74,6 +74,7 @@ Key patterns:
 - **Systemd specifiers**: `%E` (config dir), `%L` (logs), `%C` (cache), `%D` (state), `%t` (runtime dir), `%N` (unit name)
 - **Traefik routing**: services expose themselves via labels, e.g. ``traefik.http.routers.%N.rule=Host(`service.${DOMAIN}`)``
 - **Shared defaults**: `files/shared/container.d/homelab.conf` applies `AutoUpdate=registry` to every container; `files/shared/service.d/homelab.conf` sets `Restart=on-failure`
+- **Image updates are manual**: the `AutoUpdate=registry` label only lets `podman auto-update` find the containers. `roles/quadlets/tasks/system.yml` masks the `podman-auto-update.timer`, so nothing updates on a schedule. Updates are run by hand via the Justfile (`updates`, `update`, `update-all`).
 - **Pruning**: `tasks/prune.yml` removes quadlet files the repo no longer defines, so a rename or deletion doesn't leave an old unit running. It always *reports* stale entries but only deletes when `quadlet_prune: true` (default off). Scope is the quadlet dir only — service data in `~homelab/.config/<service>` and Podman volumes are never touched.
 - **Per-unit drop-ins** are *generated* by Ansible, not committed. See `tasks/pihole_dropin.yml`, which writes each Pi-hole's `PublishPort` lines from a template.
 

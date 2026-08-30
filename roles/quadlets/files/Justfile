@@ -43,6 +43,28 @@ restart service:
 restart-all:
   just _list_services | xargs -I % {{ systemctl }} restart %.service
 
+# List services with a newer image available upstream
+updates:
+  podman auto-update --dry-run --format '{{{{ .Unit }}\t{{{{ .Image }}\t{{{{ .Updated }}'
+
+# Pull the latest image for a service and restart it if the image changed
+# (podman auto-update has no per-unit filter, so this pulls and restarts directly)
+update service=`just _list_services | fzf`:
+  #!/usr/bin/env zsh
+  image=$(podman container inspect "systemd-{{ service }}" | jq -r '.[0].ImageName')
+  before=$(podman image inspect "$image" 2>/dev/null | jq -r '.[0].Id')
+  podman pull "$image"
+  if [[ "$before" == "$(podman image inspect "$image" | jq -r '.[0].Id')" ]]; then
+    print -r -- '{{ service }}: already up to date'
+  else
+    {{ systemctl }} restart {{ service }}
+    print -r -- '{{ service }}: updated and restarted'
+  fi
+
+# Pull the latest images for all services and restart the ones that changed
+update-all:
+  podman auto-update
+
 # Stop, disable, and remove a service's Quadlet files
 remove service=`just _list_services | fzf`:
   -{{ systemctl }} stop {{ service }}.service
