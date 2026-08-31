@@ -45,7 +45,8 @@ restart-all:
 
 # List services with a newer image available upstream
 updates:
-  podman auto-update --dry-run --format '{{{{ .Unit }}\t{{{{ .Image }}\t{{{{ .Updated }}'
+  podman auto-update --dry-run --format '{{{{ .Unit }}\t{{{{ .Image }}\t{{{{ .Updated }}' | \
+    mlr --t2p --hi --barred label Service,Image,Updated then sort -f Service then sort -r Updated
 
 # Pull the latest image for a service and restart it if the image changed
 # (podman auto-update has no per-unit filter, so this pulls and restarts directly)

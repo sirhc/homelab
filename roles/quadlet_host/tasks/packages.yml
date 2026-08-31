@@ -10,4 +10,5 @@
       - fd-find
       - fzf
       - just
+      - miller
     state: present
