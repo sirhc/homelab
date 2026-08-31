@@ -1,0 +1,2 @@
+# Drop shared git hooks here (e.g. post-receive). Justfile `install-hook` copies
+# them from ~git/hooks into a repo's hooks/ directory.

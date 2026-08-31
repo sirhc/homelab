@@ -59,3 +59,19 @@
     owner: git
     group: git
     mode: "0755"
+
+- name: Create hooks directory
+  ansible.builtin.file:
+    path: "{{ git_home }}/hooks"
+    state: directory
+    owner: git
+    group: git
+    mode: "0755"
+
+- name: Deploy shared hooks
+  ansible.builtin.copy:
+    src: hooks/
+    dest: "{{ git_home }}/hooks/"
+    owner: git
+    group: git
+    mode: "0755"

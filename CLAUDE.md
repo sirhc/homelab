@@ -58,7 +58,7 @@ Inventory groups name a **capability, not a location**: `workstations` (`laptop`
 - **`roles/system/`** — host OS baseline: third-party repos, packages, Tailscale (daemon enabled; `tailscale up` is manual), passwordless-sudo admin user. OS updates are left manual on purpose — no `dnf-automatic`.
 - **`roles/restic/`** — backups: `restic` user, restic binary with `cap_dac_read_search=+ep`, resticprofile config and scheduling.
 - **`roles/mail/`** — Postfix relay (outpost only).
-- **`roles/git/`** — `git-shell` user and bare-repo directory (media only). Installs `git` and `just`, and deploys `files/Justfile` to `~git/Justfile` for repo maintenance (e.g. `create-repo`). The `git` user's shell is `git-shell`, so run recipes as `sudo -u git -- just -f ~git/Justfile <recipe>`. Authorized keys come from `git_authorized_keys`.
+- **`roles/git/`** — `git-shell` user and bare-repo directory (media only). Installs `git` and `just`, and deploys `files/Justfile` to `~git/Justfile` for repo maintenance (inventory, `gc`/`fsck`/`repack`, lifecycle, `bundle` backups, hook install). Shared hooks in `files/hooks/` deploy to `~git/hooks/`; `install-hook` copies them into a repo. The `git` user's shell is `git-shell`, so run recipes as `sudo -u git -- just -f ~git/Justfile <recipe>`. Authorized keys come from `git_authorized_keys`.
 - **`roles/quadlet_host/`** — host prerequisites for rootless Podman: user (in `dialout` for serial devices), linger, sysctl, firewall, machinectl Polkit rule, Podman service override, Justfile toolchain.
 - **`roles/quadlets/`** — deploys quadlet files, env files, configs, and starts services.
 

@@ -1,10 +1,155 @@
 gitroot := x'~/repos'
+archivedir := gitroot / 'archive'
+bundledir := x'~/bundles'
+hookdir := x'~/hooks'
 
 _list:
   @just --list
+
+### Inventory / inspection
+
+# List every repo with its last-commit age and on-disk size
+list:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for d in '{{ gitroot }}'/*/; do
+    name=$(basename "$d")
+    [ "$name" = archive ] && continue
+    age=$(git -C "$d" log -1 --all --format='%cr' 2>/dev/null || echo 'no commits')
+    size=$(du -sh "$d" | cut -f1)
+    printf '%-30s %-20s %s\n' "$name" "$size" "$age"
+  done
+
+# Show detail for one repo: recent log, branches, on-disk size
+info name:
+  @echo '== {{ name }} =='
+  @du -sh '{{ gitroot / name }}'
+  git -C '{{ gitroot / name }}' log -5 --all --format='%h %cr %s'
+  @echo '-- branches --'
+  git -C '{{ gitroot / name }}' branch -a
+
+# Disk usage of every repo, largest first
+du:
+  @du -sh '{{ gitroot }}'/*/ | sort -rh
+
+### Housekeeping
+
+# Garbage-collect one repo
+gc name:
+  git -C '{{ gitroot / name }}' gc --aggressive --prune=now
+
+# Garbage-collect every repo
+gc-all:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for d in '{{ gitroot }}'/*/; do
+    [ "$(basename "$d")" = archive ] && continue
+    echo "== $(basename "$d") =="
+    git -C "$d" gc --aggressive --prune=now
+  done
+
+# Integrity-check one repo
+fsck name:
+  git -C '{{ gitroot / name }}' fsck --full --strict
+
+# Integrity-check every repo
+fsck-all:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for d in '{{ gitroot }}'/*/; do
+    [ "$(basename "$d")" = archive ] && continue
+    echo "== $(basename "$d") =="
+    git -C "$d" fsck --full --strict
+  done
+
+# Aggressively repack every repo (for repos that never see client-side gc)
+repack-all:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for d in '{{ gitroot }}'/*/; do
+    [ "$(basename "$d")" = archive ] && continue
+    echo "== $(basename "$d") =="
+    git -C "$d" repack -adf
+  done
+
+### Repo lifecycle
 
 # Create a new bare repository at ~/repos
 create-repo name:
   test ! -e '{{ gitroot / name }}'  # ensure the repository doesn't already exist
   mkdir '{{ gitroot / name }}'
   git -C '{{ gitroot / name }}' init --bare
+
+# Rename a repo
+rename old new:
+  test -d '{{ gitroot / old }}'
+  test ! -e '{{ gitroot / new }}'
+  mv '{{ gitroot / old }}' '{{ gitroot / new }}'
+
+# Move a repo into ~/repos/archive
+archive name:
+  test -d '{{ gitroot / name }}'
+  mkdir -p '{{ archivedir }}'
+  mv '{{ gitroot / name }}' '{{ archivedir }}'/
+
+# Delete a repo (prompts for confirmation — there is no undo)
+delete name:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  test -d '{{ gitroot / name }}'
+  read -rp 'Permanently delete {{ name }}? type the name to confirm: ' answer
+  [ "$answer" = '{{ name }}' ] || { echo 'aborted'; exit 1; }
+  rm -rf '{{ gitroot / name }}'
+
+# Mirror an upstream repo into ~/repos (e.g. a GitHub backup)
+mirror name url:
+  test ! -e '{{ gitroot / name }}'
+  git clone --mirror '{{ url }}' '{{ gitroot / name }}'
+
+# Set a repo's description (used by cgit/gitweb)
+set-description name text:
+  echo '{{ text }}' > '{{ gitroot / name }}/description'
+
+### Backup / disaster recovery
+
+# Bundle one repo into ~/bundles
+bundle name:
+  mkdir -p '{{ bundledir }}'
+  git -C '{{ gitroot / name }}' bundle create '{{ bundledir }}/{{ name }}.bundle' --all
+
+# Bundle every repo into ~/bundles
+bundle-all:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  mkdir -p '{{ bundledir }}'
+  for d in '{{ gitroot }}'/*/; do
+    name=$(basename "$d")
+    [ "$name" = archive ] && continue
+    git -C "$d" bundle create '{{ bundledir }}'/"$name".bundle --all
+  done
+
+# Verify every bundle in ~/bundles
+verify-backups:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  for b in '{{ bundledir }}'/*.bundle; do
+    echo "== $(basename "$b") =="
+    git bundle verify "$b"
+  done
+
+### Hooks
+
+# Install a shared hook (from ~/hooks) into one repo
+install-hook name hook:
+  test -f '{{ hookdir / hook }}'
+  install -m 0755 '{{ hookdir / hook }}' '{{ gitroot / name }}/hooks/{{ hook }}'
+
+# Install a shared hook into every repo
+install-hook-all hook:
+  #!/usr/bin/env bash
+  set -euo pipefail
+  test -f '{{ hookdir }}'/'{{ hook }}'
+  for d in '{{ gitroot }}'/*/; do
+    [ "$(basename "$d")" = archive ] && continue
+    install -m 0755 '{{ hookdir }}'/'{{ hook }}' "$d"/hooks/'{{ hook }}'
+  done
