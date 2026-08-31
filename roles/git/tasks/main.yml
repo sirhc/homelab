@@ -1,4 +1,11 @@
 ---
+- name: Install packages
+  ansible.builtin.dnf:
+    name:
+      - git
+      - just
+    state: present
+
 - name: Create git user
   ansible.builtin.user:
     name: git
@@ -33,6 +40,14 @@
   ansible.builtin.copy:
     src: gitconfig
     dest: "{{ git_home }}/.gitconfig"
+    owner: git
+    group: git
+    mode: "0644"
+
+- name: Deploy Justfile
+  ansible.builtin.copy:
+    src: Justfile
+    dest: "{{ git_home }}/Justfile"
     owner: git
     group: git
     mode: "0644"

@@ -1,0 +1,10 @@
+gitroot := x'~/repos'
+
+_list:
+  @just --list
+
+# Create a new bare repository at ~/repos
+create-repo name:
+  test ! -e '{{ gitroot / name }}'  # ensure the repository doesn't already exist
+  mkdir '{{ gitroot / name }}'
+  git -C '{{ gitroot / name }}' init --bare
