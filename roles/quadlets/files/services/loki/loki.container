@@ -15,7 +15,7 @@ Label=traefik.http.services.%N.loadbalancer.server.port=3100
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=loki.volume:/loki:Z
+Volume=loki.volume:/loki:Z,U
 
 [Install]
 WantedBy=default.target

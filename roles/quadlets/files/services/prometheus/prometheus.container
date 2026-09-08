@@ -20,8 +20,8 @@ Label=traefik.http.services.%N.loadbalancer.server.port=9090
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=%E/%N:/etc/prometheus:Z
-Volume=prometheus.volume:/prometheus
+Volume=%E/%N:/etc/prometheus:Z,U
+Volume=prometheus.volume:/prometheus:Z,U
 
 [Install]
 WantedBy=default.target
