@@ -7,6 +7,8 @@ ExecStartPre=mkdir -p %D/%N
 
 [Container]
 
+EnvironmentFile=./%N.env
+
 HostName=%N
 
 Image=docker.io/deluan/navidrome:latest
