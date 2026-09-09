@@ -1,17 +1,27 @@
 ---
 extra_firewall_ports:
-  - { port: 53, proto: tcp }
-  - { port: 53, proto: udp }
-  - { port: 1900, proto: udp }
-  - { port: 7359, proto: udp }
-  - { port: 8096, proto: tcp }
-  - { port: 32400, proto: tcp }
-  - { port: 32410, proto: udp }
-  - { port: 32412, proto: udp }
-  - { port: 32413, proto: udp }
-  - { port: 32414, proto: udp }
-  - { port: 32469, proto: tcp }
-
+  - port: 53
+    proto: tcp
+  - port: 53
+    proto: udp
+  - port: 1900
+    proto: udp
+  - port: 7359
+    proto: udp
+  - port: 8096
+    proto: tcp
+  - port: 32400
+    proto: tcp
+  - port: 32410
+    proto: udp
+  - port: 32412
+    proto: udp
+  - port: 32413
+    proto: udp
+  - port: 32414
+    proto: udp
+  - port: 32469
+    proto: tcp
 traefik_email: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   33333830303237343661623536393139303137396164666466313838653664393861363862633239
@@ -19,10 +29,8 @@ traefik_email: !vault |
   35373137383961633765346563333062656437333462346139353063353838336164306430306362
   6361643663393861340a333230323236363036646631636130363739303236653531356235653064
   61303634353836626538636334663233623430646231626465346337646564343338
-
 restic_repo_nas: /media/Backups/restic-repo
 restic_schedule_offset: 1
-
 enabled_services:
   - calibre
   - glances
@@ -52,11 +60,9 @@ enabled_services:
   - tududi
   - whoami
   - zwave-js-ui
-
 # Public keys are not secrets; no vault needed.
 git_authorized_keys:
-  - "ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA4ajZst20m3Bvzd4dP4sBoxKkY71AfQkp8E4wG7vWIC0R3snDmT/zLJcxg9d9B3PVIrcwF+LhgZeO/hblUdb3KlGIdZbSeJR0YOKy/2sjlSzIdVeN1rjXFnsx4VM7+Lc4sTswC2/zAvxQRq6hNrtrViGkiTNapKaOOI7msaM9IV9/X7F4d2gCJJwhEtUEK5nKDaH6NtscL1/egevfCUh2pQ0lSHYEhrXqqCFAek/fIbLHjgqEYvw9wYRq1CVrmlXEKiRG42edYd9bIC50QhbpAppzG4klOgNWI4gLpZfoft2t/2JTfQRW7Fx7W7aAJNbLTCIcJ9zet8QHBFEuem7e3Q== cgrau@home"
-
+  - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA4ajZst20m3Bvzd4dP4sBoxKkY71AfQkp8E4wG7vWIC0R3snDmT/zLJcxg9d9B3PVIrcwF+LhgZeO/hblUdb3KlGIdZbSeJR0YOKy/2sjlSzIdVeN1rjXFnsx4VM7+Lc4sTswC2/zAvxQRq6hNrtrViGkiTNapKaOOI7msaM9IV9/X7F4d2gCJJwhEtUEK5nKDaH6NtscL1/egevfCUh2pQ0lSHYEhrXqqCFAek/fIbLHjgqEYvw9wYRq1CVrmlXEKiRG42edYd9bIC50QhbpAppzG4klOgNWI4gLpZfoft2t/2JTfQRW7Fx7W7aAJNbLTCIcJ9zet8QHBFEuem7e3Q== cgrau@home
 pihole_local_ip: 192.168.86.56
 pihole_tailnet_ip: 100.107.61.32
 pihole_cnames:
