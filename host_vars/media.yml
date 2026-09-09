@@ -27,6 +27,7 @@ enabled_services:
   - calibre
   - glances
   - grafana
+  - hister
   - home-assistant
   - homebridge
   - homepage
@@ -62,6 +63,7 @@ pihole_cnames:
   - calibre
   - glances
   - grafana
+  - hister
   - home
   - homebridge
   - jellyfin
