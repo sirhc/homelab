@@ -67,6 +67,7 @@ pihole_local_ip: 192.168.86.56
 pihole_tailnet_ip: 100.107.61.32
 pihole_cnames:
   - calibre
+  - git
   - glances
   - grafana
   - hister
