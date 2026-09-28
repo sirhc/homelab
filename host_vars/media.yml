@@ -41,6 +41,9 @@ enabled_services:
   - homepage
   - isponsorblocktv
   - jellyfin
+  - karakeep
+  - karakeep-chrome
+  - karakeep-meilisearch
   - lidarr
   - loki
   - mealie
@@ -74,6 +77,7 @@ pihole_cnames:
   - home
   - homebridge
   - jellyfin
+  - keep
   - lidarr
   - loki
   - mealie

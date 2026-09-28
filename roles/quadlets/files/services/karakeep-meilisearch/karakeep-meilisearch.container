@@ -1,0 +1,19 @@
+[Unit]
+Description=Karakeep Meilisearch
+Documentation=https://docs.karakeep.app/
+
+[Container]
+
+ContainerName=%N
+HostName=%N
+
+Image=docker.io/getmeili/meilisearch:v1.41.0
+
+EnvironmentFile=./%N.env
+
+Network=homelab.network
+
+Volume=karakeep-meilisearch.volume:/meili_data:Z
+
+[Install]
+WantedBy=default.target

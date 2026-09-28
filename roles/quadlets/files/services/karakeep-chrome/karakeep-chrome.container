@@ -1,0 +1,18 @@
+[Unit]
+Description=Karakeep Chrome
+Documentation=https://docs.karakeep.app/
+
+[Container]
+
+ContainerName=%N
+HostName=%N
+
+Image=ghcr.io/karakeep-app/karakeep-chrome:release
+
+RunInit=yes
+Exec=--disable-gpu --disable-dev-shm-usage --hide-scrollbars --disable-blink-features=AutomationControlled --window-size=1440,900
+
+Network=homelab.network
+
+[Install]
+WantedBy=default.target
