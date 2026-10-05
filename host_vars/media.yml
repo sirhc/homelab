@@ -32,6 +32,9 @@ traefik_email: !vault |
 restic_repo_nas: /media/Backups/restic-repo
 restic_schedule_offset: 1
 enabled_services:
+  - audiomuse
+  - audiomuse-postgres
+  - audiomuse-worker
   - calibre
   - glances
   - grafana
@@ -69,6 +72,7 @@ git_authorized_keys:
 pihole_local_ip: 192.168.86.56
 pihole_tailnet_ip: 100.107.61.32
 pihole_cnames:
+  - audiomuse
   - calibre
   - git
   - glances

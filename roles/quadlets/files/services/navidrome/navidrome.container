@@ -3,7 +3,10 @@ Description=Navidrome
 Documentation=https://www.navidrome.org/docs/
 
 [Service]
-ExecStartPre=mkdir -p %D/%N
+ExecStartPre=mkdir -p %D/%N/plugins
+# Fetch the AudioMuse-AI sonic similarity plugin (pinned). Leading '-' keeps Navidrome
+# starting if GitHub is unreachable; any previously downloaded copy stays in place.
+ExecStartPre=-curl -fsSL -o %D/%N/plugins/audiomuseai.ndp https://github.com/NeptuneHub/AudioMuse-AI-NV-plugin/releases/download/v10/audiomuseai.ndp
 
 [Container]
 

@@ -1,0 +1,22 @@
+[Unit]
+Description=AudioMuse-AI Worker
+Documentation=https://github.com/NeptuneHub/AudioMuse-AI
+After=audiomuse-postgres.service
+Requires=audiomuse-postgres.service
+
+[Container]
+
+ContainerName=%N
+HostName=%N
+
+Image=ghcr.io/neptunehub/audiomuse-ai:latest
+
+EnvironmentFile=./%N.env
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=audiomuse-worker.volume:/app/temp_audio:Z
+
+[Install]
+WantedBy=default.target
