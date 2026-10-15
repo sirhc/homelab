@@ -69,7 +69,7 @@ enabled_services:
 # Public keys are not secrets; no vault needed.
 git_authorized_keys:
   - ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEA4ajZst20m3Bvzd4dP4sBoxKkY71AfQkp8E4wG7vWIC0R3snDmT/zLJcxg9d9B3PVIrcwF+LhgZeO/hblUdb3KlGIdZbSeJR0YOKy/2sjlSzIdVeN1rjXFnsx4VM7+Lc4sTswC2/zAvxQRq6hNrtrViGkiTNapKaOOI7msaM9IV9/X7F4d2gCJJwhEtUEK5nKDaH6NtscL1/egevfCUh2pQ0lSHYEhrXqqCFAek/fIbLHjgqEYvw9wYRq1CVrmlXEKiRG42edYd9bIC50QhbpAppzG4klOgNWI4gLpZfoft2t/2JTfQRW7Fx7W7aAJNbLTCIcJ9zet8QHBFEuem7e3Q== cgrau@home
-pihole_local_ip: 192.168.86.56
+pihole_local_ip: 192.168.86.23
 pihole_tailnet_ip: 100.107.61.32
 pihole_cnames:
   - audiomuse
