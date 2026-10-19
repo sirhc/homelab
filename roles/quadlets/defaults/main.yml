@@ -27,10 +27,10 @@ quadlet_prune_keep:
 
 pihole_cnames: []
 pihole_upstreams:
-  - 208.67.222.222
-  - 208.67.220.220
-  - 2620:119:35::35
-  - 2620:119:53::53
+  - 1.1.1.1
+  - 1.0.0.1
+  - 2606:4700:4700::1111
+  - 2606:4700:4700::1001
 
 plex_advertise_ip: "https://127.0.0.1:32400/"
 plex_allowed_networks:
