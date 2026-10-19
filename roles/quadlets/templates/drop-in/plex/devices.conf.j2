@@ -1,3 +1,4 @@
 [Container]
-AddDevice=/dev/dri/card1:/dev/dri/card1
-AddDevice=/dev/dri/renderD128:/dev/dri/renderD128
+# Pass the whole directory: DRM minor numbers aren't stable across boots
+# (card1 became card0 after a reboot), so naming nodes breaks Plex.
+AddDevice=/dev/dri:/dev/dri
