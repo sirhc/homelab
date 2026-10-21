@@ -7,3 +7,6 @@
 
 - name: Install packages
   ansible.builtin.import_tasks: packages.yml
+
+- name: Configure CA trust
+  ansible.builtin.import_tasks: ca_trust.yml
