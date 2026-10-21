@@ -1,7 +1,3 @@
 ---
 # Files in files/ca-blocklist/ to distrust. See tasks/ca_trust.yml.
-ca_blocklist:
-  - name: comodo-aaa.pem
-    state: present
-  - name: emsign-ecc-g3.pem
-    state: present
+ca_blocklist: []

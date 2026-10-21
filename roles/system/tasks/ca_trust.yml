@@ -3,17 +3,9 @@
 # the system store (curl, dnf, OpenSSL, Python, git), not Firefox or Chrome,
 # which bundle their own roots.
 #
-# comodo-aaa.pem: "Comodo AAA Services root" (CN=AAA Certificate Services),
-# blocked after intermediates under it were compromised (Red Hat solution
-# 7149312).
-#
-# emsign-ecc-g3.pem: "emSign ECC Root CA - G3", the root above the eight
-# eMudhra G3B/G3C intermediates whose keys were compromised (October 2026).
-# Mozilla and Chrome are removing it; the AAA block above covers the Sectigo
-# cross-signed copies of the same intermediates.
-#
-# Once a fixed ca-certificates package ships, set an entry's state in
-# defaults/main.yml to "absent" for one run, then delete the entry and the file.
+# To block a root, add its PEM to files/ca-blocklist/ and an entry to
+# defaults/main.yml. Once a fixed ca-certificates package ships, set the
+# entry's state to "absent" for one run, then delete the entry and the file.
 - name: Block distrusted CA roots
   ansible.builtin.copy:
     src: "ca-blocklist/{{ item.name }}"
