@@ -3,3 +3,5 @@
 ca_blocklist:
   - name: comodo-aaa.pem
     state: present
+  - name: emsign-ecc-g3.pem
+    state: present
