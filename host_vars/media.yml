@@ -64,6 +64,7 @@ enabled_services:
   - sonarr
   - traefik
   - tududi
+  - vikunja
   - whoami
   - zwave-js-ui
 # Public keys are not secrets; no vault needed.
@@ -96,6 +97,7 @@ pihole_cnames:
   - sonarr
   - traefik
   - todo
+  - vikunja
   - whoami
   - zwave
 

@@ -1,0 +1,29 @@
+[Unit]
+Description=Vikunja
+Documentation=https://vikunja.io/docs/
+
+[Container]
+
+# Environment=VIKUNJA_SERVICE_PUBLICURL=...
+# Environment=VIKUNJA_SERVICE_SECRET=...
+# Environment=VIKUNJA_SERVICE_TIMEZONE=...
+# Environment=VIKUNJA_SERVICE_ENABLEREGISTRATION=...
+EnvironmentFile=./%N.env
+
+HostName=%N
+
+Image=docker.io/vikunja/vikunja:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=3456
+
+Network=homelab.network
+
+# The image runs as UID 1000; :U chowns the volumes to match.
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=vikunja-db.volume:/db:Z,U
+Volume=vikunja-files.volume:/app/vikunja/files:Z,U
+
+[Install]
+WantedBy=default.target
