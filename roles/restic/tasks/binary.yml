@@ -50,5 +50,5 @@
 - name: Set restic capabilities
   community.general.capabilities:
     path: "{{ restic_home }}/bin/restic"
-    capability: "cap_dac_read_search=+ep"
+    capability: "cap_dac_read_search=ep"
     state: present
