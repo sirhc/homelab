@@ -1,0 +1,27 @@
+[Unit]
+Description=Audiobookshelf
+Documentation=https://www.audiobookshelf.org/docs
+
+[Service]
+ExecStartPre=mkdir -p %D/%N/config
+ExecStartPre=mkdir -p %D/%N/metadata
+
+[Container]
+
+HostName=%N
+
+Image=ghcr.io/advplyr/audiobookshelf:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=80
+
+Network=homelab.network
+
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=/media/Podcasts:/podcasts
+Volume=%D/%N/config:/config:Z
+Volume=%D/%N/metadata:/metadata:Z
+
+[Install]
+WantedBy=default.target
