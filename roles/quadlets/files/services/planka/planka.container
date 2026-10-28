@@ -1,0 +1,31 @@
+[Unit]
+Description=Planka
+Documentation=https://docs.planka.cloud/
+After=planka-postgres.service
+Requires=planka-postgres.service
+
+[Container]
+
+ContainerName=%N
+HostName=%N
+
+# Environment=BASE_URL=...
+# Environment=DATABASE_URL=...
+# Environment=SECRET_KEY=...
+# Environment=DEFAULT_ADMIN_*=...
+EnvironmentFile=./%N.env
+
+Image=ghcr.io/plankanban/planka:latest
+
+Label=traefik.enable=true
+Label=traefik.http.routers.%N.rule=Host'(`%N.${DOMAIN}`)'
+Label=traefik.http.services.%N.loadbalancer.server.port=1337
+
+Network=homelab.network
+
+# :U chowns the volume to the image's non-root user.
+Volume=/etc/localtime:/etc/localtime:ro
+Volume=planka.volume:/app/data:Z,U
+
+[Install]
+WantedBy=default.target

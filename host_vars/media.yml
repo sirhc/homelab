@@ -54,6 +54,8 @@ enabled_services:
   - navidrome
   - pihole-local
   - pihole-tailnet
+  - planka
+  - planka-postgres
   - plex
   - prometheus
   - prometheus-exporter-nws
@@ -61,6 +63,7 @@ enabled_services:
   - prometheus-exporter-solaredge
   - prowlarr
   - radarr
+  - radicale
   - sabnzbd
   - sonarr
   - traefik
@@ -91,10 +94,12 @@ pihole_cnames:
   - dns
   - dnsts
   - navidrome
+  - planka
   - plex
   - prometheus
   - prowlarr
   - radarr
+  - radicale
   - sabnzbd
   - sonarr
   - traefik
