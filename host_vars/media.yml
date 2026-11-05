@@ -68,6 +68,7 @@ enabled_services:
   - sonarr
   - traefik
   - tududi
+  - tududi-postgres
   - vikunja
   - whoami
   - zwave-js-ui

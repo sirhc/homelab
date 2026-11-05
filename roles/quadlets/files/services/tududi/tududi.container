@@ -1,6 +1,8 @@
 [Unit]
 Description=tududi
 Documentation=https://docs.tududi.com/
+After=tududi-postgres.service
+Requires=tududi-postgres.service
 
 [Container]
 
@@ -8,6 +10,7 @@ Documentation=https://docs.tududi.com/
 # Environment=TUDUDI_USER_PASSWORD=...
 # Environment=TUDUDI_SESSION_SECRET=...
 # Environment=TUDUDI_ALLOWED_ORIGINS=...
+# Environment=DATABASE_URL=...
 EnvironmentFile=./%N.env
 
 HostName=%N
@@ -21,8 +24,9 @@ Label=traefik.http.services.%N.loadbalancer.server.port=3002
 Network=homelab.network
 
 Volume=/etc/localtime:/etc/localtime:ro
-Volume=tududi-db.volume:/app/backend/db:Z
-Volume=tududi-uploads.volume:/app/backend/uploads:Z
+# 2.0 moved these out of /app/backend and keeps its data in tududi-postgres.
+Volume=tududi-uploads.volume:/app/uploads:Z
+Volume=tududi-backups.volume:/app/backups:Z
 
 [Install]
 WantedBy=default.target
