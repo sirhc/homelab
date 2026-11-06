@@ -1,0 +1,28 @@
+# {{ ansible_managed }}
+[general]
+status_path = "~/.local/share/vdirsyncer/status/"
+
+[pair tasks]
+a = "tasks_local"
+b = "tasks_radicale"
+# Radicale decides which lists exist. Tasks.org creates them there; they appear
+# here on the next run. See vdirsyncer.service before changing this.
+collections = ["from b"]
+# todoman shows a list's displayname. Without this, lists are named after their
+# folder ("inbox", not "Inbox") and default_list stops matching.
+metadata = ["displayname", "color"]
+# Same task edited on both sides between syncs: keep the Radicale copy. The
+# default is to fail, which on a timer means syncing quietly stops.
+conflict_resolution = "b wins"
+
+[storage tasks_local]
+type = "filesystem"
+path = "~/{{ todoman_calendars_dir }}/"
+fileext = ".ics"
+
+[storage tasks_radicale]
+type = "caldav"
+item_types = ["VTODO"]
+url = "{{ todoman_radicale_url }}"
+username = "{{ radicale_user }}"
+password = {{ radicale_password | to_json }}

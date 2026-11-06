@@ -24,7 +24,7 @@ there.
 
 | Host | Connection | Role in the homelab |
 | --- | --- | --- |
-| `laptop` | local | Daily driver. OS baseline and backups, nothing else. |
+| `laptop` | local | Daily driver. OS baseline, backups, and task sync. |
 | `media` | SSH (tailnet) | The homelab box. Runs every container, plus the Git server. |
 | `outpost` | SSH (tailnet) | VPS. Runs the Postfix relay. |
 
@@ -34,7 +34,7 @@ several groups:
 
 | Group | Members | Meaning |
 | --- | --- | --- |
-| `workstations` | `laptop` | Daily drivers — baseline and backups only |
+| `workstations` | `laptop` | Daily drivers — baseline, backups, and task sync |
 | `quadlet_hosts` | `media` | Runs the Podman Quadlet container stack |
 | `git_servers` | `media` | Hosts a bare-repo Git server over `git-shell` |
 | `mail_servers` | `outpost` | Runs the Postfix relay |

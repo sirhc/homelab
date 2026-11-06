@@ -47,7 +47,7 @@ Three playbooks, all run from the laptop against `inventory/hosts.yml`.
 
 Inventory groups name a **capability, not a location**: `workstations` (`laptop`), `quadlet_hosts` (`media`), `git_servers` (`media`), `mail_servers` (`outpost`). Hosts belong to several groups, and connection vars are declared once under `all.hosts`. Plays target groups — never a bare hostname — so a new box is an inventory edit. (An earlier inventory used `local`/`remote`/`workstation`; `local` confusingly held only `media`, a remote SSH host.)
 
-- **`system.yml`** — host OS baseline for `all` (`system`, `restic`), plus `mail` on `mail_servers` and `git` on `git_servers`.
+- **`system.yml`** — host OS baseline for `all` (`system`, `restic`), plus `mail` on `mail_servers`, `git` on `git_servers`, and `todoman` on `workstations`.
 - **`homelab.yml`** — two plays against `quadlet_hosts`, both as root:
   1. `quadlet_host` — creates the `homelab` user, enables linger, sets sysctl, opens firewall ports, installs the machinectl Polkit rule and the Justfile toolchain, tunes the Podman API log level.
   2. `quadlets` — deploys the quadlet files and starts services. Runs as root and steps down with `become_user: homelab`, talking to the user's session bus via `DBUS_SESSION_BUS_ADDRESS` / `XDG_RUNTIME_DIR`. (Ansible no longer *connects* over `machinectl`, but the Polkit rule stays so `machinectl shell` works for interactive login to the `homelab` and `restic` accounts.)
@@ -59,6 +59,7 @@ Inventory groups name a **capability, not a location**: `workstations` (`laptop`
 - **`roles/restic/`** — backups: `restic` user, restic binary with `cap_dac_read_search=ep`, resticprofile config and scheduling.
 - **`roles/mail/`** — Postfix relay (outpost only).
 - **`roles/git/`** — `git-shell` user and bare-repo directory (media only). Installs `git` and `just`, and deploys `files/Justfile` to `~git/Justfile` for repo maintenance (inventory, `gc`/`fsck`/`repack`, lifecycle, `bundle` backups, hook install). Shared hooks in `files/hooks/` deploy to `~git/hooks/`; `install-hook` copies them into a repo. The `git` user's shell is `git-shell`, so run recipes as `sudo -u git -- just -f ~git/Justfile <recipe>`. Authorized keys come from `git_authorized_keys`.
+- **`roles/todoman/`** — task sync for workstations: `todoman` plus `vdirsyncer` against Radicale, driven by a `systemd --user` timer in the admin user's session (no linger, so it only runs while logged in). Radicale decides which lists exist (`collections = ["from b"]`); that is what makes the `yes | vdirsyncer discover` in the unit safe. The rendered `~/.config/vdirsyncer/config` holds the Radicale password and is `0600`.
 - **`roles/quadlet_host/`** — host prerequisites for rootless Podman: user (in `dialout` for serial devices), linger, sysctl, firewall, machinectl Polkit rule, Podman service override, Justfile toolchain.
 - **`roles/quadlets/`** — deploys quadlet files, env files, configs, and starts services.
 

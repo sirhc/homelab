@@ -1,0 +1,3 @@
+---
+todoman_calendars_dir: ".local/share/calendars"
+todoman_radicale_url: "https://radicale.{{ domain }}/"

@@ -1,0 +1,20 @@
+[Unit]
+Description=Sync tasks with Radicale
+Documentation=https://vdirsyncer.pimutils.org/
+After=network-online.target
+
+[Service]
+Type=oneshot
+# `sync` only sees collections it already knows about, so a list created on the
+# phone needs a `discover` first. It asks before creating each new collection
+# and has no setting to skip that. `yes` is safe only because the pair says
+# `collections = ["from b"]`: the prompts can create local folders, never
+# remote ones.
+ExecStartPre=/bin/sh -c 'yes | /usr/bin/vdirsyncer discover'
+ExecStart=/usr/bin/vdirsyncer metasync
+ExecStart=/usr/bin/vdirsyncer sync
+# Radicale is only reachable over the tailnet, which may not be up yet just
+# after a resume.
+Restart=on-failure
+RestartSec=60
+TimeoutStartSec=5min

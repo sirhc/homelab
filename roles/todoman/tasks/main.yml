@@ -1,0 +1,71 @@
+---
+- name: Install todoman and vdirsyncer
+  ansible.builtin.dnf:
+    name:
+      - python3-todoman
+      - vdirsyncer
+    state: present
+
+- name: Get admin user info
+  ansible.builtin.getent:
+    database: passwd
+    key: "{{ admin_user }}"
+
+- name: Set admin user facts
+  ansible.builtin.set_fact:
+    todoman_home: "{{ ansible_facts.getent_passwd[admin_user][4] }}"
+    todoman_uid: "{{ ansible_facts.getent_passwd[admin_user][1] }}"
+
+- name: Configure as the admin user
+  become: true
+  become_user: "{{ admin_user }}"
+  environment:
+    XDG_RUNTIME_DIR: "/run/user/{{ todoman_uid }}"
+    DBUS_SESSION_BUS_ADDRESS: "unix:path=/run/user/{{ todoman_uid }}/bus"
+  block:
+    - name: Create configuration and data directories
+      ansible.builtin.file:
+        path: "{{ todoman_home }}/{{ item.path }}"
+        mode: "{{ item.mode }}"
+        state: directory
+      loop:
+        - { path: .config/systemd/user, mode: "0755" }
+        - { path: .config/todoman, mode: "0755" }
+        - { path: .config/vdirsyncer, mode: "0700" }
+        - { path: "{{ todoman_calendars_dir }}", mode: "0755" }
+      loop_control:
+        label: "{{ item.path }}"
+
+    - name: Deploy todoman config
+      ansible.builtin.copy:
+        src: todoman.py
+        dest: "{{ todoman_home }}/.config/todoman/config.py"
+        mode: "0644"
+
+    # Holds the Radicale password, hence 0600 and no_log (--diff would print it).
+    - name: Deploy vdirsyncer config
+      ansible.builtin.template:
+        src: vdirsyncer.conf.j2
+        dest: "{{ todoman_home }}/.config/vdirsyncer/config"
+        mode: "0600"
+      no_log: true
+
+    - name: Deploy sync units
+      ansible.builtin.copy:
+        src: "{{ item }}"
+        dest: "{{ todoman_home }}/.config/systemd/user/{{ item }}"
+        mode: "0644"
+      loop:
+        - vdirsyncer.service
+        - vdirsyncer.timer
+      notify: Reload user systemd daemon
+
+    - name: Apply pending unit changes
+      ansible.builtin.meta: flush_handlers
+
+    - name: Enable and start the sync timer
+      ansible.builtin.systemd:
+        name: vdirsyncer.timer
+        scope: user
+        enabled: true
+        state: started

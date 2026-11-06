@@ -312,9 +312,10 @@ planka_admin_password: !vault |
   6630303535623631390a353837373533643163656234666237343639613639353138616330666463
   66383132666136653633306264306366636364313437346635653731363663343531
 
-# Radicale (CalDAV for Tasks.org). radicale_password is the login;
+# Radicale (CalDAV for Tasks.org and todoman). radicale_password is the login;
 # radicale_password_hash is its bcrypt hash (htpasswd -nbB) and is what
 # the server sees. Change both together.
+radicale_user: chris
 radicale_password: !vault |
   $ANSIBLE_VAULT;1.1;AES256
   32613333383666663565303565333635396333343130613231646463363663316563643364623639

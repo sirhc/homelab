@@ -1,0 +1,12 @@
+[Unit]
+Description=Sync tasks with Radicale every 15 minutes
+
+[Timer]
+# Calendar-based and persistent so it catches up straight after a resume; a
+# monotonic timer would sit out the rest of its interval.
+OnCalendar=*:0/15
+Persistent=true
+RandomizedDelaySec=1min
+
+[Install]
+WantedBy=timers.target

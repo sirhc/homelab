@@ -23,3 +23,11 @@
     ansible_user: "{{ admin_user }}"
   roles:
     - git
+
+- name: Workstation
+  hosts: workstations
+  become: true
+  vars:
+    ansible_user: "{{ admin_user }}"
+  roles:
+    - todoman
