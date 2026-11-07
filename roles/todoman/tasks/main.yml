@@ -1,7 +1,8 @@
 ---
-- name: Install todoman and vdirsyncer
+- name: Install todoman, its repl extra, and vdirsyncer
   ansible.builtin.dnf:
     name:
+      - python3-click-repl
       - python3-todoman
       - vdirsyncer
     state: present
